@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notify Me! · Don't automate tasks. Rebuild the system.</title>
+<link rel="stylesheet" href="vendor/reset.css">
+<link rel="stylesheet" href="vendor/reveal.css">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/walkthrough.css?v=9">
+<link rel="stylesheet" href="css/bento.css">
+</head>
+<body>
+<div class="bg-aurora"></div>
+<div class="bg-grain"></div>
+
+<div class="reveal">
+<div class="slides">
+
+<!-- ================= 01 · COVER ================= -->
+<section class="slide center">
+  <!-- event badge (host): kept small so the Notify Me! mark stays the hero -->
+  <div style="position:absolute; top:54px; right:60px; display:flex; align-items:center; gap:12px; z-index:3; opacity:.92">
+    <img src="img/nosto-mark.png" alt="Nosto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" style="width:28px; height:28px; object-fit:contain; filter:drop-shadow(0 3px 10px rgba(248,75,192,.4))">
+    <svg viewBox="0 0 100 100" style="display:none; width:28px; height:28px; filter:drop-shadow(0 3px 10px rgba(248,75,192,.4))"><polygon points="15,18 85,14 74,80" fill="#F84BC0" stroke="#F84BC0" stroke-width="24" stroke-linejoin="round"/></svg>
+    <span style="font-family:var(--font-mono); font-size:12px; letter-spacing:.05em; line-height:1.35; text-align:left; color:var(--g2)"><b style="color:#fff; font-weight:600">Nosto</b> Partner Day<br><span style="color:var(--g3); letter-spacing:.08em">TORONTO · 2026</span></span>
+  </div>
+  <p class="eyebrow" style="margin-bottom:40px">Notify&nbsp;Me!&nbsp;&nbsp;keynote</p>
+  <div class="hero-mark float" style="margin-bottom:44px">
+    <span class="bloom"></span>
+    <img src="img/mark-white.png" alt="Notify Me!" style="height:120px">
+  </div>
+  <h1 style="font-size:104px; text-align:center; line-height:1.02">Don't automate tasks.<br><b class="grad-text" style="color:#fff">Rebuild the system.</b></h1>
+  <p class="lead" style="text-align:center; margin-left:auto; margin-right:auto">How we rebuilt Notify&nbsp;Me! around AI agents, and what it taught us about the agentic era.</p>
+  <div class="pill" style="margin-top:52px"><span class="dot"></span>Hamidreza&nbsp;&nbsp;·&nbsp;&nbsp;CEO &amp; Co-founder, Notify&nbsp;Me!</div>
+</section>
+
+<!-- ================= 02 · HOOK ================= -->
+<section class="slide">
+  <span class="ghost" style="font-size:300px; right:-40px; top:120px">NATIVE</span>
+  <p class="eyebrow">The problem</p>
+  <h2 style="font-size:78px; position:relative; z-index:2">Your people are AI-native.<br><b>Your organization isn't.</b></h2>
+  <p class="lead" style="position:relative; z-index:2">Everyone's using AI. Everyone feels faster. But step back and look at the business as a whole, and the speed isn't showing up where it matters. From the outside, it's often hard to tell AI is being used at all.</p>
+  <div class="foot"><img src="img/lockup-white.png" alt="Notify Me!"><span class="sep"></span><span class="pg">The problem</span></div>
+</section>
+
+<!-- ================= 03 · THREE REASONS ================= -->
+<section class="slide">
+  <p class="eyebrow">Why the speed disappears</p>
+  <h3 style="font-size:44px; margin-bottom:44px">We found several causes. These were the three biggest.</h3>
+  <div class="grid-3">
+    <div class="glass card-pad accent-blue card-glow fragment fade-in-up">
+      <div class="card-top"><span class="idx">01</span><span class="chip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16"/><path d="M12 20V10"/><path d="M7 14l5-5 5 5"/></svg></span></div>
+      <h3 style="font-size:28px; margin:24px 0 12px">Humans are the bottleneck</h3>
+      <p class="muted" style="font-size:19px; line-height:1.5">Every agent output still routes back to a person to plan, decide, connect the dots, and move it forward.</p>
+    </div>
+    <div class="glass card-pad accent-purple card-glow fragment fade-in-up">
+      <div class="card-top"><span class="idx">02</span><span class="chip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="12" r="2.2"/><path d="M8.2 6.9 15.8 11.2M8.2 17.1 15.8 12.8"/></svg></span></div>
+      <h3 style="font-size:28px; margin:24px 0 12px">Uneven AI maturity</h3>
+      <p class="muted" style="font-size:19px; line-height:1.5">Departments adopt AI at very different speeds. Engineering races ahead; Product and Marketing can't keep pace.</p>
+    </div>
+    <div class="glass card-pad accent-coral card-glow fragment fade-in-up">
+      <div class="card-top"><span class="idx">03</span><span class="chip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.6"/><path d="M20 4v6h-6"/></svg></span></div>
+      <h3 style="font-size:28px; margin:24px 0 12px">Agents still make mistakes</h3>
+      <p class="muted" style="font-size:19px; line-height:1.5">Fast, but wrong often enough that people spend real time reviewing outputs and going back and forth to fix them.</p>
+    </div>
+  </div>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">The problem</span></div>
+</section>
+
+<!-- ================= 04 · STATEMENT ================= -->
+<section class="slide center">
+  <span class="ghost" style="font-size:300px; top:180px">AGENTIC</span>
+  <h1 style="text-align:center; font-size:80px; position:relative; z-index:2; max-width:1400px">Until this is solved, you can't honestly say your company is ready for the <b>agentic era.</b></h1>
+  <div class="foot-r">Notify Me!</div>
+</section>
+
+<!-- ================= 05 · SPEAKER ================= -->
+<section class="slide">
+  <div class="row between center-x" style="width:100%">
+    <div class="col" style="max-width:840px">
+      <p class="eyebrow">Who's talking</p>
+      <h1 style="font-size:104px"><b>Hamidreza</b></h1>
+      <p class="lead" style="margin-top:18px; font-size:28px; color:var(--g1)">CEO &amp; Co-founder at Notify&nbsp;Me!, building it for almost four years.</p>
+      <p class="lead" style="margin-top:22px">The next 13 minutes: how we orchestrate AI agents across a department, and ultimately an entire organization.</p>
+    </div>
+    <div class="portrait float"><span class="bloom"></span><img src="img/hamidreza.jpeg" alt="Hamidreza, CEO and Co-founder of Notify Me!"></div>
+  </div>
+  <div class="foot"><img src="img/lockup-white.png" alt=""></div>
+</section>
+
+<!-- ================= 06 · DIVIDER PART 1 ================= -->
+<section class="slide">
+  <span class="ghost" style="font-size:420px; right:-30px; bottom:-60px">01</span>
+  <p class="idx" style="font-size:20px; letter-spacing:.3em">PART 01</p>
+  <h1 style="font-size:100px; margin-top:20px">How we got here</h1>
+  <div class="acc-bar" style="margin-top:36px"></div>
+  <div class="foot-r">Part 01&nbsp;·&nbsp;How we got here</div>
+</section>
+
+<!-- ================= 07 · WHAT NOTIFY ME! IS ================= -->
+<section class="slide">
+  <p class="eyebrow">The company</p>
+  <div class="row between" style="width:100%; align-items:flex-start">
+    <div class="col" style="max-width:820px">
+      <h2 style="font-size:60px">We help merchants <b>recapture lost revenue.</b></h2>
+      <p class="lead">A Shopify &amp; BigCommerce app, live since 2020. Our mission is simple: recapture the revenue merchants would otherwise lose, more of it than anyone else.</p>
+      <div class="row" style="margin-top:52px; gap:56px">
+        <div class="col"><span class="metric">30K<span class="unit">+</span></span><span class="metric-label">Merchants</span></div>
+        <div class="col"><span class="metric">8K<span class="unit">+</span></span><span class="metric-label">Paying customers</span></div>
+        <div class="col"><span class="metric">2020</span><span class="metric-label">Live since</span></div>
+      </div>
+    </div>
+    <div class="glass card-glow accent-blue" style="width:420px; height:360px; overflow:hidden; display:flex; flex-direction:column; padding:0">
+      <img src="img/image-1784070873002.webp" alt="Notify Me! on the Shopify App Store" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" style="width:100%; flex:1; min-height:0; object-fit:cover; object-position:left top; display:block">
+      <div style="display:none; flex:1; min-height:0; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:9px; color:var(--g3); font-family:var(--font-mono)">
+        <span style="font-size:12px; letter-spacing:.14em">SAVE SCREENSHOT TO</span>
+        <span style="font-size:12px; color:var(--g2)">deck/img/shopify-listing.png</span>
+      </div>
+      <div style="flex:none; padding:13px 18px; display:flex; align-items:center; gap:11px; background:rgba(9,13,24,.55); border-top:1px solid rgba(255,255,255,.08); backdrop-filter:blur(6px)">
+        <span class="chip-ic" style="width:30px;height:30px"><svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/><path d="M9 21h6M12 17v4"/></svg></span>
+        <span style="font-size:15px; color:#fff; font-weight:500">#1 on the Shopify App Store</span>
+        <span style="margin-left:auto; font-family:var(--font-mono); font-size:12px; color:var(--g2)">4.9&#9733;&nbsp;·&nbsp;3,383</span>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 01</span></div>
+</section>
+
+<!-- ================= 08 · FIVE BUSINESS LINES ================= -->
+<section class="slide">
+  <p class="eyebrow">Five core products · one platform</p>
+  <h3 style="font-size:40px; margin-bottom:22px">Together, they capture revenue that would otherwise be lost.</h3>
+  <div class="bento-fit">
+    <div class="nm-bento nm-bento--drift" role="list" aria-label="The four ways Notify Me! recovers lost sales">
+
+      <!-- 1 · Back in Stock — flagship, wide top-left -->
+      <a href="https://notify-me.io/back-in-stock" target="_blank" rel="noopener noreferrer" role="listitem" class="nm-bento__cell nm-bento__cell--bis" aria-label="Back in Stock">
+        <div class="nm-bento__head">
+          <h3 class="nm-bento__title">Never lose a sale to &ldquo;Sold&nbsp;out&rdquo; again</h3>
+          <img class="nm-bento__logo" src="img/back-in-stock-logo.svg" width="288" height="86" alt="Notify Me! Back in Stock">
+        </div>
+        <div class="nm-bento__stage nm-shop" aria-hidden="true">
+          <div class="nm-shop__frame">
+            <div class="nm-shop__pdp">
+              <span class="nm-shop__brand">Maison&nbsp;Stella</span>
+              <span class="nm-shop__photo"><img src="img/maison-stella-suzie.webp" alt="" width="540" height="810"></span>
+              <span class="nm-shop__row">
+                <span class="nm-shop__name">Suzie Knit Top</span>
+                <span class="nm-shop__price">$128.00</span>
+              </span>
+              <span class="nm-shop__soldout">Sold out</span>
+              <span class="nm-shop__notify">Notify me when available</span>
+              <div class="nm-shop__scrim"></div>
+              <div class="nm-shop__modal">
+                <span class="nm-shop__modal-close" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+                <span class="nm-shop__modal-h">Get notified when it&rsquo;s back</span>
+                <span class="nm-shop__field">lily@studio.com</span>
+                <span class="nm-shop__field">+1 (555) 240-1180</span>
+                <div class="nm-shop__chips">
+                  <span class="nm-shop__chip is-on">Email</span>
+                  <span class="nm-shop__chip is-on">SMS</span>
+                  <span class="nm-shop__chip">Push</span>
+                  <span class="nm-shop__chip">WhatsApp</span>
+                </div>
+                <span class="nm-shop__submit">Notify me</span>
+              </div>
+            </div>
+            <div class="nm-shop__lock">
+              <span class="nm-shop__lock-clock">
+                <span class="nm-shop__lock-time">9:41</span>
+                <span class="nm-shop__lock-date">Tuesday, April 18</span>
+              </span>
+              <div class="nm-shop__notif">
+                <span class="nm-shop__notif-ico"><img src="img/notifylogo.svg" alt="" width="36" height="34"></span>
+                <span class="nm-shop__notif-body">
+                  <span class="nm-shop__notif-top"><span class="nm-shop__notif-app">Notify Me!</span><span class="nm-shop__notif-time">now</span></span>
+                  <span class="nm-shop__notif-text">Suzie Knit Top is back in stock. Shop now &rarr;</span>
+                </span>
+              </div>
+            </div>
+            <div class="nm-shop__done">
+              <span class="nm-shop__done-check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="nm-shop__done-h">Order placed!</span>
+              <span class="nm-shop__done-sub">Suzie Knit Top is on its way.</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- 2 · Preorder — narrow top-right -->
+      <a href="https://notify-me.io/shopify-preorder" target="_blank" rel="noopener noreferrer" role="listitem" class="nm-bento__cell nm-bento__cell--pre" aria-label="Preorder">
+        <div class="nm-bento__head">
+          <h3 class="nm-bento__title">Keep selling while you wait on stock</h3>
+          <img class="nm-bento__logo" src="img/preorder-logo.svg" width="232" height="86" alt="Notify Me! Preorder">
+        </div>
+        <div class="nm-bento__stage nm-preshop" aria-hidden="true">
+          <div class="nm-preshop__frame">
+            <div class="nm-preshop__pdp">
+              <span class="nm-preshop__brand">Lune&nbsp;Atelier</span>
+              <span class="nm-preshop__photo"><img src="img/roller-rabbit-product.webp" alt="" width="600" height="917"></span>
+              <span class="nm-preshop__row">
+                <span class="nm-preshop__name">Bloom Print Dress</span>
+                <span class="nm-preshop__price">$168.00</span>
+              </span>
+              <span class="nm-preshop__ship">
+                <span class="nm-preshop__ship-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l8 4v10l-8 4-8-4V7l8-4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 7l8 4 8-4M12 11v9" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+                <span class="nm-preshop__ship-body">
+                  <span class="nm-preshop__ship-main">Ships by Apr 18</span>
+                  <span class="nm-preshop__ship-sub">50% deposit today</span>
+                </span>
+              </span>
+              <span class="nm-preshop__btn">Pre-order</span>
+            </div>
+            <div class="nm-preshop__checkout">
+              <span class="nm-preshop__co-h">Checkout</span>
+              <div class="nm-preshop__inv">
+                <span class="nm-preshop__inv-row">
+                  <span class="nm-preshop__inv-label">Bloom Print Dress</span>
+                  <span class="nm-preshop__inv-val">$168.00</span>
+                </span>
+                <span class="nm-preshop__inv-row nm-preshop__inv-row--due">
+                  <span class="nm-preshop__inv-label">50% deposit<span class="nm-preshop__inv-tag">Due today</span></span>
+                  <span class="nm-preshop__inv-val">$84.00</span>
+                </span>
+              </div>
+              <span class="nm-preshop__card">
+                <span class="nm-preshop__card-mc" aria-hidden="true"><i></i><i></i></span>
+                <span class="nm-preshop__card-txt">Mastercard &middot;&middot;&middot;&middot; 4242</span>
+                <span class="nm-preshop__card-tag">Saved</span>
+              </span>
+              <span class="nm-preshop__pay">Place preorder</span>
+            </div>
+            <div class="nm-preshop__done">
+              <span class="nm-preshop__done-check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="nm-preshop__done-h">Preorder confirmed</span>
+              <span class="nm-preshop__done-sub">Arrives by Apr 18</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- 3 · Low Stock — narrow bottom-left -->
+      <a href="https://notify-me.io/low-stock" target="_blank" rel="noopener noreferrer" role="listitem" class="nm-bento__cell nm-bento__cell--low" aria-label="Low Stock">
+        <div class="nm-bento__head">
+          <h3 class="nm-bento__title">A little urgency goes a long way</h3>
+          <img class="nm-bento__logo" src="img/low-stock-logo.svg" width="229" height="89" alt="Notify Me! Low Stock">
+        </div>
+        <div class="nm-bento__stage nm-lowshop" aria-hidden="true">
+          <div class="nm-lowshop__frame">
+            <div class="nm-lowshop__pdp">
+              <img class="nm-lowshop__brand" src="img/atari.svg" alt="Atari" width="68" height="16">
+              <span class="nm-lowshop__photo"><img src="img/atari-product.webp" alt="" width="900" height="1200"></span>
+              <span class="nm-lowshop__row">
+                <span class="nm-lowshop__name">Atari 2600+ Console</span>
+                <span class="nm-lowshop__price">$129.99</span>
+              </span>
+              <span class="nm-lowshop__stock">
+                <i class="nm-lowshop__dot" aria-hidden="true"></i> Only 3 left in stock
+              </span>
+              <span class="nm-lowshop__cart">Add to cart</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- 4 · Wishlist — wide bottom-right -->
+      <a href="https://notify-me.io/wishlist" target="_blank" rel="noopener noreferrer" role="listitem" class="nm-bento__cell nm-bento__cell--wish" aria-label="Wishlist">
+        <div class="nm-bento__head">
+          <h3 class="nm-bento__title">Let shoppers save now, buy later</h3>
+          <img class="nm-bento__logo" src="img/wishlist-logo.svg" width="212" height="89" alt="Notify Me! Wishlist">
+        </div>
+        <div class="nm-bento__stage nm-wishshop" aria-hidden="true">
+          <div class="nm-wishshop__frame">
+            <div class="nm-wishshop__pdp">
+              <span class="nm-wishshop__brand">Stanley</span>
+              <span class="nm-wishshop__photo"><img src="img/stanley-product.webp" alt="" width="900" height="1200"></span>
+              <span class="nm-wishshop__row">
+                <span class="nm-wishshop__name">Classic Legendary Bottle</span>
+                <span class="nm-wishshop__price">$50.00</span>
+              </span>
+              <span class="nm-wishshop__cart">Add to cart</span>
+              <span class="nm-wishshop__wish">
+                <span class="nm-wishshop__heart" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <span class="nm-wishshop__wish-txt">Add to wishlist</span>
+              </span>
+            </div>
+            <div class="nm-wishshop__email">
+              <div class="nm-wishshop__mail-head">
+                <span class="nm-wishshop__mail-field"><span class="nm-wishshop__mail-k">From</span><span class="nm-wishshop__mail-v">Stanley 1913</span></span>
+                <span class="nm-wishshop__mail-field"><span class="nm-wishshop__mail-k">To</span><span class="nm-wishshop__mail-v">you@email.com</span></span>
+                <span class="nm-wishshop__mail-field"><span class="nm-wishshop__mail-k">Subject</span><span class="nm-wishshop__mail-v nm-wishshop__mail-subj">Price drop on your wishlist</span></span>
+              </div>
+              <span class="nm-wishshop__mail-h">Your wishlisted item is on sale</span>
+              <span class="nm-wishshop__mail-prod">
+                <span class="nm-wishshop__mail-thumb"><img src="img/stanley-product.webp" alt="" width="900" height="1200"></span>
+                <span class="nm-wishshop__mail-body">
+                  <span class="nm-wishshop__mail-name">Classic Legendary Bottle</span>
+                  <span class="nm-wishshop__mail-prices">
+                    <span class="nm-wishshop__was">$50.00</span>
+                    <span class="nm-wishshop__now">$40.00</span>
+                    <span class="nm-wishshop__sale">&minus;20%</span>
+                  </span>
+                </span>
+              </span>
+              <span class="nm-wishshop__buy">
+                <span class="nm-wishshop__buy-default">Buy it now</span>
+                <span class="nm-wishshop__buy-placed"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Order placed!</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- 5 · Hueshi — narrow full-height card (right rail); animation TBD -->
+      <div role="listitem" class="nm-bento__cell nm-bento__cell--hue" aria-label="Merchant Intelligence">
+        <div class="nm-bento__head">
+          <h3 class="nm-bento__title">Turn store data into decisions</h3>
+        </div>
+        <div class="nm-bento__stage nm-hue" aria-hidden="true">
+          <div class="nm-hue__frame">
+            <span class="nm-hue__orb"></span>
+            <span class="nm-hue__label">Animation coming</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 01</span></div>
+</section>
+
+<!-- ================= 09 · THE 2025 REORG ================= -->
+<section class="slide">
+  <p class="eyebrow">2025 · the AI pivot</p>
+  <h2 style="font-size:50px; max-width:1500px">We paused for a week, then rebuilt the org.</h2>
+  <p class="lead" style="margin-top:16px; max-width:1240px">Normal work on hold for a full week: everyone learned AI, experimented, and had to ship something real. Then we restructured, starting with <b>Technical &amp; Product</b>, our largest team at <b>38%</b>. We bet AI would make people broader, so we merged specialties instead of adding them.</p>
+
+  <div class="merge">
+    <!-- column captions -->
+    <div class="merge-grid merge-heads">
+      <div class="cap before"><span class="n">4</span><span>specialized roles</span></div>
+      <div></div>
+      <div class="cap after"><span>versatile roles</span><span class="n">2</span></div>
+    </div>
+
+    <!-- track 1 · engineering -->
+    <div class="merge-track">
+      <div class="merge-grid acc">
+        <div class="pair">
+          <div class="role"><span class="rd"></span><span class="rn">Frontend</span><span class="rt">specialist</span></div>
+          <span class="plus">+</span>
+          <div class="role"><span class="rd"></span><span class="rn">Backend</span><span class="rt">specialist</span></div>
+        </div>
+        <svg class="funnel" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><linearGradient id="fg1" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="var(--ac)" stop-opacity=".15"/>
+            <stop offset="1" stop-color="var(--ac)" stop-opacity=".95"/></linearGradient></defs>
+          <path d="M0 34 C70 34 78 75 128 75" stroke="url(#fg1)" stroke-width="2"/>
+          <path d="M0 116 C70 116 78 75 128 75" stroke="url(#fg1)" stroke-width="2"/>
+          <path d="M128 75 L196 75" stroke="var(--ac)" stroke-width="2"/>
+          <path d="M188 69 L198 75 L188 81" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle class="fnode" cx="128" cy="75" r="5"/>
+        </svg>
+        <div class="merged">
+          <div class="mn">Full-stack Engineer</div>
+          <div class="mfrom"><b>Frontend</b> &amp; <b>Backend</b>, one owner end to end</div>
+          <span class="mtool">Enabled by Cursor Rules</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- track 2 · product -->
+    <div class="merge-track t-purple">
+      <div class="merge-grid acc">
+        <div class="pair">
+          <div class="role"><span class="rd"></span><span class="rn">Product</span><span class="rt">specialist</span></div>
+          <span class="plus">+</span>
+          <div class="role"><span class="rd"></span><span class="rn">Design</span><span class="rt">specialist</span></div>
+        </div>
+        <svg class="funnel" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><linearGradient id="fg2" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="var(--ac)" stop-opacity=".15"/>
+            <stop offset="1" stop-color="var(--ac)" stop-opacity=".95"/></linearGradient></defs>
+          <path d="M0 34 C70 34 78 75 128 75" stroke="url(#fg2)" stroke-width="2"/>
+          <path d="M0 116 C70 116 78 75 128 75" stroke="url(#fg2)" stroke-width="2"/>
+          <path d="M128 75 L196 75" stroke="var(--ac)" stroke-width="2"/>
+          <path d="M188 69 L198 75 L188 81" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle class="fnode" cx="128" cy="75" r="5"/>
+        </svg>
+        <div class="merged">
+          <div class="mn">Product Designer</div>
+          <div class="mfrom"><b>Product</b> &amp; <b>Design</b>, one owner end to end</div>
+          <span class="mtool">Enabled by Figma Make + Shopify Polaris</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- outcome -->
+    <div class="merge-out">
+      <div class="mstat"><span class="mv">2</span><span class="ml">people own each line</span></div>
+      <div class="mstat"><span class="mv">~2<span class="u">×</span></span><span class="ml">development speed</span></div>
+      <div class="mstat"><span class="mv">0</span><span class="ml">cross-team dependencies</span></div>
+    </div>
+  </div>
+
+  <p class="lead" style="margin:30px auto 0; text-align:center; color:var(--g3)">At first, it looked like a win.</p>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 01</span></div>
+</section>
+
+<!-- ================= 10 · THE NEW BOTTLENECK ================= -->
+<section class="slide">
+  <p class="eyebrow">The unexpected problem</p>
+  <div class="journey" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:40px">
+    <span class="jchip">Signal</span><span class="jarr">→</span>
+    <span class="jchip">Research</span><span class="jarr">→</span>
+    <span class="jchip">Analyze</span><span class="jarr">→</span>
+    <span class="jchip">Design</span><span class="jarr">→</span>
+    <span class="jchip">Plan</span><span class="jarr">→</span>
+    <span class="jchip">Build</span><span class="jarr">→</span>
+    <span class="jchip">QA</span><span class="jarr">→</span>
+    <span class="jchip">Release</span><span class="jarr">→</span>
+    <span class="jchip">Learn</span>
+  </div>
+  <h2 style="font-size:62px; max-width:1400px">Our ability to <b>build</b> had outrun our ability to <b>decide what to build.</b></h2>
+  <p class="lead">We had upgraded the people and the tools, but not the process. Teams adopted AI unevenly, and the agents still made mistakes. We hadn't removed the bottlenecks. We'd only <b>moved</b> them.</p>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 01</span></div>
+</section>
+
+<!-- ================= 11 · DIVIDER PART 2 ================= -->
+<section class="slide">
+  <span class="ghost" style="font-size:420px; right:-30px; bottom:-60px">02</span>
+  <p class="idx" style="font-size:20px; letter-spacing:.3em">PART 02</p>
+  <h1 style="font-size:100px; margin-top:20px">So we built a factory</h1>
+  <p class="lead" style="font-family:var(--font-mono); color:var(--blue-elec); margin-top:24px; letter-spacing:.1em">internal name&nbsp;·&nbsp;"OusMous"</p>
+  <div class="foot-r">Part 02&nbsp;·&nbsp;The factory</div>
+</section>
+
+<!-- ================= 12 · FACTORY CONCEPT ================= -->
+<section class="slide">
+  <p class="eyebrow">The model</p>
+  <h2 style="font-size:58px; max-width:1300px">Not an AI programmer. <b>An entire AI product &amp; engineering team.</b></h2>
+  <div class="grid-3" style="margin-top:52px">
+    <div class="glass card-pad accent-blue fragment fade-in-up">
+      <span class="chip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5-9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 16l9 5 9-5"/></svg></span>
+      <h3 style="font-size:24px; margin:20px 0 10px">Specialization moved</h3>
+      <p class="muted" style="font-size:18px; line-height:1.5">The specialist roles didn't disappear. They moved from people to agents.</p>
+    </div>
+    <div class="glass card-pad accent-purple fragment fade-in-up">
+      <span class="chip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3-6 7-6s7 2.4 7 6"/></svg></span>
+      <h3 style="font-size:24px; margin:20px 0 10px">Humans lead</h3>
+      <p class="muted" style="font-size:18px; line-height:1.5">People didn't disappear either. They became the managers and leaders of the agents.</p>
+    </div>
+    <div class="glass card-pad accent-mint fragment fade-in-up">
+      <span class="chip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h11"/><path d="M10.5 8.5 14 12l-3.5 3.5"/><circle cx="19" cy="12" r="2.2"/></svg></span>
+      <h3 style="font-size:24px; margin:20px 0 10px">Everything flows</h3>
+      <p class="muted" style="font-size:18px; line-height:1.5">Every request travels through production stations, from signal to shipped feature.</p>
+    </div>
+  </div>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 02</span></div>
+</section>
+
+<!-- ================= 13 · THE PRODUCTION LINE ================= -->
+<section class="slide">
+  <p class="eyebrow">The production line · mapped to a car factory</p>
+  <h3 style="font-size:40px; margin-bottom:64px">From customer signal to shipped feature.</h3>
+  <div class="line-map">
+    <div class="station"><span class="node"></span><span class="st-name">Research</span><span class="st-sub">Market Research · PRD</span></div>
+    <div class="station"><span class="node"></span><span class="st-name">Design</span><span class="st-sub">UI/UX · Review · Handoff</span></div>
+    <div class="station"><span class="node"></span><span class="st-name">Engineering</span><span class="st-sub">Tech DoD · DoD Review · Planning · Plan Review</span></div>
+    <div class="station"><span class="node"></span><span class="st-name">Production</span><span class="st-sub">Coding · Code Review</span></div>
+    <div class="station"><span class="node"></span><span class="st-name">Testing</span><span class="st-sub">Technical QA · Product QA · Visual QA</span></div>
+    <div class="station"><span class="node last"></span><span class="st-name">Delivery &amp;<br>Learning</span><span class="st-sub">Release · Announcement · Docs · Learning</span></div>
+  </div>
+  <p class="idx" style="position:absolute; right:110px; top:96px; font-size:14px; color:var(--blue-elec)">Live walkthrough next&nbsp;&nbsp;→</p>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 02</span></div>
+</section>
+
+<!-- ================= 13.5 · LIVE WALKTHROUGH (VS Code builds Hueshi) ================= -->
+<section class="slide wt-slide" id="walkthrough" data-autoslide="0">
+  <p class="eyebrow">Live walkthrough&nbsp;·&nbsp;the factory builds Hueshi, our in-app AI copilot</p>
+  <h3 class="wt-title">From customer signal to <b>shipped feature.</b></h3>
+
+  <div class="wt-stage">
+    <!-- LEFT: the 7 stations as a stepper -->
+    <ol class="wt-steps" id="wtSteps"></ol>
+
+    <!-- RIGHT: the OusMous workspace in VS Code -->
+    <div class="vscode" id="vscode">
+      <div class="vs-titlebar">
+        <div class="vs-lights"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+        <div class="vs-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3l5 2v14l-5 2-9-6 3-3-3-3 9-6z"/><path d="M7 9l9 7V5L7 9z" fill="currentColor" stroke="none" opacity=".35"/></svg>
+          Hooshang&nbsp;&nbsp;—&nbsp;&nbsp;NOTIFY-ME&nbsp;[SSH: ousmousa]
+        </div>
+        <span class="vs-update" id="vsClock">agent · OusMous</span>
+      </div>
+
+      <div class="vs-body">
+        <!-- activity bar -->
+        <div class="vs-activity">
+          <span class="ic on" title="Explorer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h6l2 3h8v12H4z"/></svg></span>
+          <span class="ic" title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>
+          <span class="ic" title="Source Control"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="9" r="2.4"/><path d="M6 8.4V15.6M18 11.4c0 3-3 3.6-6 3.6"/></svg><span class="badge" id="vsGitBadge">9</span></span>
+          <span class="ic" title="Run"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 4l14 8-14 8z"/></svg></span>
+          <span class="ic" title="Extensions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="14" y="14" width="6" height="6" rx="3"/></svg></span>
+          <span class="sp"></span>
+          <span class="ic" title="Claude"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" style="color:#D97757"><line x1="20" y1="3.5" x2="20" y2="14"/><line x1="28.5" y1="5.8" x2="23" y2="14.8"/><line x1="34.2" y1="11.5" x2="25.2" y2="17"/><line x1="36.5" y1="20" x2="26" y2="20"/><line x1="34.2" y1="28.5" x2="25.2" y2="23"/><line x1="28.5" y1="34.2" x2="23" y2="25.2"/><line x1="20" y1="36.5" x2="20" y2="26"/><line x1="11.5" y1="34.2" x2="17" y2="25.2"/><line x1="5.8" y1="28.5" x2="14.8" y2="23"/><line x1="3.5" y1="20" x2="14" y2="20"/><line x1="5.8" y1="11.5" x2="14.8" y2="17"/><line x1="11.5" y1="5.8" x2="17" y2="14.8"/></svg></span>
+        </div>
+
+        <!-- explorer -->
+        <div class="vs-sidebar">
+          <div class="vs-side-head">Explorer<span class="dots">···</span></div>
+          <div class="vs-tree" id="vsTree"></div>
+        </div>
+
+        <!-- editor + agent -->
+        <div class="vs-work">
+          <div class="vs-main" id="vsMain">
+            <div class="vs-tabs" id="vsTabs"></div>
+            <div class="vs-crumbs" id="vsCrumbs"></div>
+            <div class="vs-view" id="vsView">
+              <div class="vs-editor">
+                <div class="vs-gutter" id="vsGutter"></div>
+                <div class="vs-code" id="vsCode"></div>
+              </div>
+              <div class="vs-preview" id="vsPreview"></div>
+            </div>
+            <div class="vs-term">
+              <div class="vs-term-head"><span class="on">Terminal</span><span>Problems</span><span>Output</span><span>Ports</span></div>
+              <div class="vs-term-body" id="vsTermBody"></div>
+            </div>
+          </div>
+
+          <!-- Claude Code panel -->
+          <div class="vs-agent" id="vsAgent" data-state="run">
+            <div class="vs-agent-head">
+              <svg class="cl-logo" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="20" y1="3.5" x2="20" y2="14"/><line x1="28.5" y1="5.8" x2="23" y2="14.8"/><line x1="34.2" y1="11.5" x2="25.2" y2="17"/><line x1="36.5" y1="20" x2="26" y2="20"/><line x1="34.2" y1="28.5" x2="25.2" y2="23"/><line x1="28.5" y1="34.2" x2="23" y2="25.2"/><line x1="20" y1="36.5" x2="20" y2="26"/><line x1="11.5" y1="34.2" x2="17" y2="25.2"/><line x1="5.8" y1="28.5" x2="14.8" y2="23"/><line x1="3.5" y1="20" x2="14" y2="20"/><line x1="5.8" y1="11.5" x2="14.8" y2="17"/><line x1="11.5" y1="5.8" x2="17" y2="14.8"/></svg>
+              <span class="cl-title">Claude Code</span>
+              <span class="st"><span class="d"></span><span id="vsAgentState">running</span></span>
+            </div>
+            <div class="vs-agent-body" id="vsAgentBody"></div>
+            <div class="cl-composer">
+              <div class="cl-input">
+                <span class="cl-gt">&gt;</span>
+                <span class="cl-ph">Ask Claude to build the next feature…</span>
+                <span class="cl-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V6M6 12l6-6 6 6"/></svg></span>
+              </div>
+              <div class="cl-meta">
+                <span class="cl-model"><svg class="cl-logo-sm" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><line x1="20" y1="3.5" x2="20" y2="14"/><line x1="28.5" y1="5.8" x2="23" y2="14.8"/><line x1="34.2" y1="11.5" x2="25.2" y2="17"/><line x1="36.5" y1="20" x2="26" y2="20"/><line x1="34.2" y1="28.5" x2="25.2" y2="23"/><line x1="28.5" y1="34.2" x2="23" y2="25.2"/><line x1="20" y1="36.5" x2="20" y2="26"/><line x1="11.5" y1="34.2" x2="17" y2="25.2"/><line x1="5.8" y1="28.5" x2="14.8" y2="23"/><line x1="3.5" y1="20" x2="14" y2="20"/><line x1="5.8" y1="11.5" x2="14.8" y2="17"/><line x1="11.5" y1="5.8" x2="17" y2="14.8"/></svg>claude-opus-4.6</span>
+                <span class="cl-ctx">context 38%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vs-status">
+        <span class="seg acc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="9" r="2.4"/><path d="M6 8.4V15.6M18 11.4c0 3-3 3.6-6 3.6"/></svg>main*</span>
+        <span class="seg" id="vsStatusTask">orchestrator idle</span>
+        <span class="sp"></span>
+        <span class="seg">SSH: ousmousa</span>
+        <span class="seg">UTF-8</span>
+        <span class="seg" id="vsStatusLang">Markdown</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 02 · Live build</span></div>
+</section>
+
+<!-- ================= 14 · DIVIDER PART 3 ================= -->
+<section class="slide">
+  <span class="ghost" style="font-size:420px; right:-30px; bottom:-60px">03</span>
+  <p class="idx" style="font-size:20px; letter-spacing:.3em">PART 03</p>
+  <h1 style="font-size:100px; margin-top:20px">Four core components</h1>
+  <p class="lead" style="margin-top:24px">All coordinated by one Orchestrator. (You already know these from tools like Claude Code.)</p>
+  <div class="foot-r">Part 03&nbsp;·&nbsp;The components</div>
+</section>
+
+<!-- ================= 15 · ORCHESTRATOR ================= -->
+<section class="slide">
+  <div class="row between center-x" style="width:100%">
+    <div class="col" style="max-width:640px">
+      <p class="eyebrow">The orchestrator</p>
+      <h2 style="font-size:58px">A decision engine.<br><b>Not a person, not one agent.</b></h2>
+      <p class="lead">It answers the questions that hold the whole line together.</p>
+    </div>
+    <div class="col gap-s" style="max-width:600px; gap:12px">
+      <div class="pill"><span class="dot"></span>What kind of request entered the system?</div>
+      <div class="pill"><span class="dot"></span>Which workflow should run?</div>
+      <div class="pill"><span class="dot"></span>Which skills &amp; agents, in what order?</div>
+      <div class="pill"><span class="dot"></span>Is the output actually good enough to move on?</div>
+      <div class="pill"><span class="dot"></span>If a review or QA check fails, who fixes it?</div>
+    </div>
+  </div>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 03</span></div>
+</section>
+
+<!-- ================= 16 · SKILLS / AGENTS / HOOKS / REPORTS ================= -->
+<section class="slide">
+  <p class="eyebrow">The building blocks</p>
+  <div class="grid-4" style="margin-top:14px">
+    <div class="glass card-pad accent-blue card-glow fragment fade-in-up">
+      <div class="acc-bar"></div>
+      <h3 style="font-size:26px; margin:20px 0 12px">Skills</h3>
+      <p class="muted" style="font-size:17px; line-height:1.5">Standardized SOPs: what to do, how, with which tools, and the expected output.</p>
+      <p class="idx" style="margin-top:16px; font-size:13px">product-research · prd · design · code-review</p>
+    </div>
+    <div class="glass card-pad accent-purple card-glow fragment fade-in-up">
+      <div class="acc-bar"></div>
+      <h3 style="font-size:26px; margin:20px 0 12px">Agents</h3>
+      <p class="muted" style="font-size:17px; line-height:1.5">Specialists, each in an isolated context so mistakes don't bleed across the line.</p>
+      <p class="idx" style="margin-top:16px; font-size:13px">backend · frontend · SDK · QA · reviewer</p>
+    </div>
+    <div class="glass card-pad accent-coral card-glow fragment fade-in-up">
+      <div class="acc-bar"></div>
+      <h3 style="font-size:26px; margin:20px 0 12px">Hooks</h3>
+      <p class="muted" style="font-size:17px; line-height:1.5">Automated safety rails that stop mistakes, skipped steps, and false "done."</p>
+      <p class="idx" style="margin-top:16px; font-size:13px">branch-guard · verify-on-stop · deploy-guard</p>
+    </div>
+    <div class="glass card-pad accent-mint card-glow fragment fade-in-up">
+      <div class="acc-bar"></div>
+      <h3 style="font-size:26px; margin:20px 0 12px">Agent Reports</h3>
+      <p class="muted" style="font-size:17px; line-height:1.5">Every agent must prove its work. <b>Evidence, not claims.</b></p>
+      <p class="idx" style="margin-top:16px; font-size:13px">tests ran · file created · endpoint live</p>
+    </div>
+  </div>
+  <p class="lead" style="margin-top:38px; font-size:22px">A Skill is <b>how</b> a task is done. An Agent is <b>who</b> does it. Hooks keep it honest. Reports make it prove it.</p>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 03</span></div>
+</section>
+
+<!-- ================= 17 · RESULTS ================= -->
+<section class="slide">
+  <p class="eyebrow">Part 04 · what it delivered</p>
+  <h2 style="font-size:52px; margin-bottom:40px">The bottlenecks between research, design &amp; engineering: <b>gone.</b></h2>
+  <div class="grid-4">
+    <div class="glass card-pad accent-blue">
+      <span class="metric-label" style="margin:0 0 14px">Lead time</span>
+      <div class="metric" style="font-size:40px">6.3d&nbsp;<span class="unit">→</span>&nbsp;3.2d</div>
+      <p class="idx" style="margin-top:16px; font-size:13px">almost 50% faster</p>
+    </div>
+    <div class="glass card-pad accent-purple">
+      <span class="metric-label" style="margin:0 0 14px">Release frequency</span>
+      <div class="metric" style="font-size:40px">10&nbsp;<span class="unit">→</span>&nbsp;26</div>
+      <p class="idx" style="margin-top:16px; font-size:13px">releases per month</p>
+    </div>
+    <div class="glass card-pad accent-mint">
+      <span class="metric-label" style="margin:0 0 14px">Churn</span>
+      <div class="metric" style="font-size:40px"><span class="unit">-</span>30%</div>
+      <p class="idx" style="margin-top:16px; font-size:13px">down to ~2% / month</p>
+    </div>
+    <div class="glass card-pad accent-coral">
+      <span class="metric-label" style="margin:0 0 14px">Free → paid</span>
+      <div class="metric" style="font-size:40px"><span class="unit">+</span>20%</div>
+      <p class="idx" style="margin-top:16px; font-size:13px">conversion, now 23%</p>
+    </div>
+  </div>
+  <p class="lead" style="margin-top:38px; font-size:24px">Features that used to take <b>months</b> now reach production in <b>under seven days.</b> We spend ~<b>CAD $20K/month</b> on AI, 3 to 10 times a single-agent setup, because the bottlenecks and rework it replaced cost far more.</p>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 04</span></div>
+</section>
+
+<!-- ================= 18 · THE MOAT ================= -->
+<section class="slide">
+  <p class="eyebrow">"So where's your moat?"</p>
+  <h2 style="font-size:60px; max-width:1300px">The tools give you the parts.<br><b>We built the process.</b></h2>
+  <div class="grid-2" style="margin-top:44px; max-width:1400px">
+    <div class="pill"><span class="dot"></span><span>Skills, Agents &amp; Hooks aren't ours. The <b>workflow</b> is.</span></div>
+    <div class="pill"><span class="dot"></span><span>Workflows are easy to copy. <b>Compounding experience</b> isn't.</span></div>
+    <div class="pill"><span class="dot"></span><span>Every feature leaves behind a better rule, eval &amp; safeguard.</span></div>
+    <div class="pill"><span class="dot"></span><span>Same model, other departments: <b>OusMous</b> product &amp; eng · <b>Jamshid</b> business &amp; growth · <b>Hueshi</b> customer success</span></div>
+  </div>
+  <p class="lead" style="margin-top:36px">We didn't replace our departments with AI. We <b>embedded</b> AI inside every one.</p>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 04</span></div>
+</section>
+
+<!-- ================= 19 · THREE BELIEFS ================= -->
+<section class="slide">
+  <p class="eyebrow">What changed</p>
+  <h3 style="font-size:40px; margin-bottom:34px">The roles didn't disappear. They shifted.</h3>
+  <div class="col" style="gap:22px; margin-top:4px; max-width:1500px">
+    <div class="belief fragment fade-in-up"><span class="idx">01</span><span class="old">People did the work.</span><span class="jarr" style="margin:0 22px">→</span><span class="new">AI agents do the work.</span></div>
+    <div class="belief fragment fade-in-up"><span class="idx">02</span><span class="old">Managers coordinated it.</span><span class="jarr" style="margin:0 22px">→</span><span class="new">The system coordinates it.</span></div>
+    <div class="belief fragment fade-in-up"><span class="idx">03</span><span class="old">Systems recorded what happened.</span><span class="jarr" style="margin:0 22px">→</span><span class="new">People lead.</span></div>
+  </div>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Conclusion</span></div>
+</section>
+
+<!-- ================= 20 · THE LINE ================= -->
+<section class="slide center">
+  <span class="ghost" style="font-size:340px; top:150px">REBUILD</span>
+  <h1 style="text-align:center; font-size:100px; position:relative; z-index:2">Don't automate tasks.<br><b>Rebuild the system.</b></h1>
+  <p class="lead" style="text-align:center; margin:36px auto 0; position:relative; z-index:2; font-size:26px">The winners of the agentic era won't build the best agents.<br>They'll build the best <b>learning workflows.</b></p>
+  <div class="foot-r">Notify Me!</div>
+</section>
+
+<!-- ================= 21 · THREE TAKEAWAYS ================= -->
+<section class="slide">
+  <p class="eyebrow">If you take three things</p>
+  <div class="grid-3" style="margin-top:20px">
+    <div class="glass card-pad accent-blue card-glow fragment fade-in-up">
+      <span class="idx" style="font-size:16px">STEP 01</span>
+      <h3 style="font-size:27px; margin:16px 0 12px">Standardize before you optimize</h3>
+      <p class="muted" style="font-size:18px; line-height:1.5">Write the SOP before you hire the agent. Know what "good work" looks like first.</p>
+    </div>
+    <div class="glass card-pad accent-coral card-glow fragment fade-in-up">
+      <span class="idx" style="font-size:16px">STEP 02</span>
+      <h3 style="font-size:27px; margin:16px 0 12px">Don't trust the agent</h3>
+      <p class="muted" style="font-size:18px; line-height:1.5">When it says "done," ask for evidence. Add hooks. Require reports. Verify.</p>
+    </div>
+    <div class="glass card-pad accent-mint card-glow fragment fade-in-up">
+      <span class="idx" style="font-size:16px">STEP 03</span>
+      <h3 style="font-size:27px; margin:16px 0 12px">Don't automate everything</h3>
+      <p class="muted" style="font-size:18px; line-height:1.5">Find your single biggest bottleneck, just one, and turn it into a factory first.</p>
+    </div>
+  </div>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Takeaways</span></div>
+</section>
+
+<!-- ================= 22 · CLOSE ================= -->
+<section class="slide center">
+  <div class="hero-mark float" style="margin-bottom:40px"><span class="bloom"></span><img src="img/lockup-white.png" style="height:70px" alt="Notify Me!"></div>
+  <h2 style="text-align:center; font-size:72px">Let's rebuild it together.</h2>
+  <p class="lead" style="text-align:center; margin:28px auto 0">If this is the transition you're navigating, or you'd just like to keep talking, I'd love to connect.</p>
+  <div class="pill" style="margin-top:46px"><span class="dot"></span>Hamidreza · Notify&nbsp;Me! · notify-me.io</div>
+  <p class="eyebrow" style="justify-content:center; margin-top:40px">Thank you</p>
+</section>
+
+</div>
+</div>
+
+<script src="vendor/reveal.js"></script>
+<script src="js/deck.js"></script>
+<script src="js/walkthrough.js?v=9"></script>
+</body>
+</html>

@@ -1,0 +1,839 @@
+/* ============================================================
+   Product bento — four animated feature cards (dark deck build)
+   Card SHELL restyled dark to match the keynote theme; the
+   storefront ANIMATIONS (nm-shop / nm-preshop / nm-lowshop /
+   nm-wishshop) are ported verbatim from the Notify Me! site and
+   kept exactly as-is (light product mockups on the dark card).
+   ============================================================ */
+
+/* --- Fit wrapper: zoom the whole bento down to fit one slide --- */
+.reveal .bento-fit{
+  position:relative;
+  width:100%;
+  height:738px;             /* reserves the scaled bento height (tuned for foot clearance) */
+  margin-top:24px;          /* breathing room under the title */
+  margin-bottom:56px;       /* clear the corner logo / page footer */
+}
+/* transform:scale (not zoom) so hit-testing composes correctly with
+   Reveal's own slide transform — keeps the cards clickable. */
+.reveal .bento-fit .nm-bento{
+  position:absolute; top:0; left:0;
+  width:3580px;             /* × .475 scale = full content width, left-aligned */
+  transform:scale(.475);
+  transform-origin:top left;
+}
+
+/* --- Grid + local tokens (the --b-* light tokens drive the inner
+       product mockups and MUST stay light) --------------------------- */
+.reveal .nm-bento{
+  --v2-display:'TT Drugs','Inter Tight',sans-serif;
+  --v2-blue:#003baf;
+  --b-ink:#1c1b22; --b-muted:#767a82; --b-faint:#f0f0f3;
+  --b-line:#ececef; --b-accent:#003baf; --b-ok:#1f9a68;
+  display:grid;
+  grid-template-columns:repeat(16,1fr);
+  grid-template-rows:auto auto;
+  gap:26px;
+}
+
+/* --- Dark card shell ------------------------------------------------- */
+.reveal .nm-bento__cell{
+  position:relative; isolation:isolate; overflow:hidden;
+  display:flex; flex-direction:column;
+  padding:34px 42px;
+  border-radius:22px;
+  background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.018));
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 40px 80px -38px rgba(0,0,0,.65);
+  backdrop-filter:blur(7px);
+  color:var(--g1);
+  text-decoration:none;
+}
+/* Per-cell brand glow, from the lower-right — brighter on dark. */
+.reveal .nm-bento__cell::before{
+  content:""; position:absolute; inset:-22%; z-index:0; pointer-events:none;
+  filter:blur(38px); background-repeat:no-repeat; background-color:transparent;
+}
+.reveal .nm-bento__cell > *{ position:relative; z-index:1; }
+/* Clickable cards: cursor + a subtle lift/brighten on hover. */
+.reveal a.nm-bento__cell{ cursor:pointer; transition:transform .3s cubic-bezier(.2,.7,.2,1), border-color .3s, box-shadow .3s; }
+.reveal a.nm-bento__cell:hover{
+  transform:translateY(-6px);
+  border-color:rgba(255,255,255,.26);
+  box-shadow:0 1px 0 rgba(255,255,255,.07) inset, 0 52px 96px -34px rgba(0,0,0,.72);
+}
+
+/* Pinwheel placement (pinwheel fills cols 1–14; Hueshi rail is 14–17) */
+.reveal .nm-bento__cell--bis  { grid-column:1 / 8;  grid-row:1; }
+.reveal .nm-bento__cell--pre  { grid-column:8 / 14; grid-row:1; }
+.reveal .nm-bento__cell--low  { grid-column:1 / 6;  grid-row:2; }
+.reveal .nm-bento__cell--wish { grid-column:6 / 14; grid-row:2; }
+.reveal .nm-bento__cell--hue  { grid-column:14 / 17; grid-row:1 / 3; }
+
+.reveal .nm-bento__cell--bis::before{
+  background-image:
+    radial-gradient(38% 34% at 22% 30%, rgba(76,135,255,.30), transparent 60%),
+    radial-gradient(46% 42% at 78% 18%, rgba(76,135,255,.18), transparent 62%),
+    radial-gradient(55% 50% at 58% 90%, rgba(76,135,255,.34), transparent 64%);
+}
+.reveal .nm-bento__cell--pre::before{
+  background-image:
+    radial-gradient(50% 46% at 82% 24%, rgba(95,208,166,.30), transparent 62%),
+    radial-gradient(46% 42% at 40% 96%, rgba(95,208,166,.24), transparent 64%),
+    radial-gradient(30% 28% at 14% 20%, rgba(95,208,166,.16), transparent 58%);
+}
+.reveal .nm-bento__cell--low::before{
+  background-image:
+    radial-gradient(48% 44% at 72% 84%, rgba(238,68,46,.32), transparent 63%),
+    radial-gradient(42% 38% at 24% 26%, rgba(238,68,46,.20), transparent 60%),
+    radial-gradient(36% 32% at 92% 34%, rgba(238,68,46,.18), transparent 60%);
+}
+.reveal .nm-bento__cell--wish::before{
+  background-image:
+    radial-gradient(58% 52% at 92% 8%, rgba(171,86,255,.32), transparent 64%),
+    radial-gradient(40% 36% at 20% 90%, rgba(171,86,255,.20), transparent 60%);
+}
+.reveal .nm-bento__cell--hue::before{
+  background-image:
+    radial-gradient(60% 40% at 50% 6%, rgba(245,183,72,.30), transparent 62%),
+    radial-gradient(55% 30% at 50% 96%, rgba(245,183,72,.22), transparent 62%),
+    radial-gradient(46% 26% at 50% 52%, rgba(245,183,72,.14), transparent 60%);
+}
+
+/* Slow drift on the pre-blurred glow (calm, barely-there) */
+@media (prefers-reduced-motion: no-preference){
+  .reveal .nm-bento--drift .nm-bento__cell::before{
+    will-change:transform; animation:nm-bento-drift 22s ease-in-out infinite;
+  }
+  .reveal .nm-bento--drift .nm-bento__cell--bis::before  { animation-duration:23s; animation-delay:-3s; }
+  .reveal .nm-bento--drift .nm-bento__cell--pre::before  { animation-duration:19s; animation-delay:-8s;  animation-direction:reverse; }
+  .reveal .nm-bento--drift .nm-bento__cell--wish::before { animation-duration:26s; animation-delay:-5s; }
+  .reveal .nm-bento--drift .nm-bento__cell--low::before  { animation-duration:21s; animation-delay:-12s; animation-direction:reverse; }
+  .reveal .nm-bento--drift .nm-bento__cell--hue::before  { animation-duration:24s; animation-delay:-6s; }
+}
+@keyframes nm-bento-drift{
+  0%   { transform:translate3d(0,0,0) scale(1.03); }
+  25%  { transform:translate3d(3.4%,-2.6%,0) scale(1.08); }
+  50%  { transform:translate3d(-3%,3%,0) scale(1.05); }
+  75%  { transform:translate3d(2.4%,2.2%,0) scale(1.085); }
+  100% { transform:translate3d(0,0,0) scale(1.03); }
+}
+
+/* --- Card header: benefit line + brand lockup ----------------------- */
+.reveal .nm-bento__head{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:26px;
+}
+.reveal .nm-bento__logo{
+  flex:none; height:52px; width:auto;   /* real service badge in its true brand colour */
+}
+/* Back in Stock is deep navy (#003BAF) — lift it so it reads on the dark card. */
+.reveal .nm-bento__cell--bis .nm-bento__logo{ filter:brightness(1.5) saturate(1.15); }
+.reveal .nm-bento__title{
+  margin:0; font-family:var(--v2-display); font-weight:500;
+  font-size:38px; line-height:1.12; letter-spacing:-.01em;
+  color:#fff; text-wrap:balance; min-width:0; max-width:20ch;
+}
+.reveal .nm-bento__more{
+  margin-top:auto; padding-top:26px;
+  display:inline-flex; align-items:center; gap:9px;
+  font-weight:500; font-size:21px; color:var(--blue-elec);
+}
+.reveal .nm-bento__more svg{ width:22px; height:22px; }
+
+/* --- Stage: the animated mockup, centered --------------------------- */
+.reveal .nm-bento__stage{
+  flex:1 1 auto; position:relative;
+  display:flex; align-items:center; justify-content:center;
+  min-height:17rem; margin:26px 0 6px;
+}
+
+/* --- Hueshi: narrow full-height rail (placeholder until animation) --- */
+.reveal .nm-bento__cell--hue{ align-items:stretch; }
+.reveal .nm-hue{ flex:1 1 auto; }
+.reveal .nm-hue__frame{
+  position:relative; width:100%; height:100%; min-height:36rem;
+  border-radius:1.4rem; overflow:hidden;
+  background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.012));
+  border:1px dashed rgba(245,183,72,.35);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.5rem;
+}
+.reveal .nm-hue__orb{
+  width:7rem; height:7rem; border-radius:50%;
+  background:radial-gradient(circle at 38% 34%, #ffe0a0, #f5b748 46%, #b9741a 100%);
+  box-shadow:0 0 3rem rgba(245,183,72,.55), inset 0 0 1.4rem rgba(255,255,255,.35);
+}
+@media (prefers-reduced-motion: no-preference){
+  .reveal .nm-bento.is-playing .nm-hue__orb{ animation:nm-hue-pulse 2.6s ease-in-out infinite; }
+}
+@keyframes nm-hue-pulse{ 0%,100%{ transform:scale(1); opacity:.9; } 50%{ transform:scale(1.12); opacity:1; } }
+.reveal .nm-hue__label{
+  font-family:var(--v2-display); font-size:1.45rem; letter-spacing:.02em;
+  color:rgba(245,183,72,.85);
+}
+
+/* ========== 1b - BACK IN STOCK - storefront scenes (Shop-style) ===========
+   The first bento's Back-in-Stock card runs a story inside ONE constant-size
+   frame (.nm-shop__frame never changes size => nothing shifts): sold-out PDP ->
+   sign-up modal -> phone lock screen (SMS arrives after a beat) -> tap the
+   notification -> "Order placed!". Corners: frames are rounded; ALL inner UI
+   shares one MINIMAL radius (--shop-r); the product photo is intentionally
+   sharp. A click is shown by pressing (de-scaling) the tapped control. Scoped
+   to .nm-shop so the duplicated bento (.nm-bis) is untouched. ================ */
+.reveal .nm-bento__cell--bis:has(.nm-shop) { min-height: 44rem; }
+/* Compact chrome so the redesigned bento cards sit ~20% shorter. */
+.reveal .nm-bento:has(.nm-shop) .nm-bento__cell { padding: clamp(1.8rem, 2vw, 2.4rem); }
+.reveal .nm-bento:has(.nm-shop) .nm-bento__stage { margin: clamp(0.97rem, 1.33vw, 1.45rem) 0 0.5rem; }
+.reveal .nm-bento:has(.nm-shop) .nm-bento__more { padding-top: 1.1rem; }
+.reveal .nm-shop {
+  --shop-r: 0.6rem;
+  position: relative; width: 100%;
+}
+.reveal .nm-shop::before {
+  content: ""; position: absolute; z-index: 0; pointer-events: none;
+  inset: -14% -10%;
+  background: radial-gradient(56% 50% at 50% 40%, rgba(67, 128, 249, 0.18), rgba(67, 128, 249, 0) 70%);
+  filter: blur(28px);
+}
+.reveal .nm-shop__frame {
+  position: relative; z-index: 1;
+  width: min(27rem, 94%); height: 30rem;
+}
+.reveal .nm-shop__pdp,
+.reveal .nm-shop__lock,
+.reveal .nm-shop__done {
+  position: absolute; inset: 0;
+  transition: opacity 0.45s ease, visibility 0.45s;
+}
+
+/* --- Scene 1 - storefront PDP (rounded frame; sharp photo) --------------- */
+.reveal .nm-shop__pdp {
+  z-index: 1;
+  padding: 1.7rem 1.7rem 1.9rem;
+  background: #fff;
+  border: 1px solid rgba(20, 20, 30, 0.06);
+  border-radius: 1.8rem;
+  box-shadow: 0 1px 2px rgba(20, 20, 30, 0.04), 0 22px 48px -22px rgba(20, 20, 30, 0.34);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.reveal .nm-shop[data-shop="lock"] .nm-shop__pdp,
+.reveal .nm-shop[data-shop="lockn"] .nm-shop__pdp,
+.reveal .nm-shop[data-shop="tapN"] .nm-shop__pdp,
+.reveal .nm-shop[data-shop="done"] .nm-shop__pdp { opacity: 0; visibility: hidden; }
+.reveal .nm-shop__brand {
+  font-family: var(--v2-display); font-weight: 500; font-size: 1.05rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--b-ink);
+  text-align: center; margin-bottom: 1.5rem;
+}
+.reveal .nm-shop__photo {
+  display: block; overflow: hidden; border-radius: 0;
+  background: var(--b-faint); aspect-ratio: 2.5 / 1;
+}
+.reveal .nm-shop__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; display: block; }
+.reveal .nm-shop__row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-top: 1.7rem; }
+.reveal .nm-shop__name { font-weight: 500; font-size: 1.3rem; color: var(--b-ink); }
+.reveal .nm-shop__price { font-size: 1.25rem; color: var(--b-ink); }
+.reveal .nm-shop__soldout {
+  display: block; margin-top: auto; padding: 0.85rem 1rem; border-radius: var(--shop-r);
+  background: var(--b-faint); color: var(--b-muted); font-size: 1.1rem; font-weight: 500;
+  text-align: center; cursor: not-allowed;
+}
+.reveal .nm-shop__notify {
+  display: block; margin-top: 0.6rem; padding: 0.85rem 1rem; border-radius: var(--shop-r);
+  background: var(--b-ink); color: #fff; font-size: 1.1rem; font-weight: 500; text-align: center;
+}
+.reveal .nm-shop[data-shop="tapA"] .nm-shop__notify { animation: nm-shop-press 0.34s ease; }
+
+/* --- Sign-up modal: centered dialog over the dimmed PDP ------------------ */
+.reveal .nm-shop__scrim {
+  position: absolute; inset: 0; z-index: 2; background: rgba(18, 17, 28, 0.45);
+  opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s;
+}
+.reveal .nm-shop__modal {
+  position: absolute; z-index: 3; left: 1.4rem; right: 1.4rem; top: 50%;
+  padding: 1.7rem; background: #fff; border-radius: 1.3rem;
+  box-shadow: 0 24px 50px -16px rgba(20, 20, 30, 0.5);
+  display: flex; flex-direction: column; gap: 0.95rem;
+  opacity: 0; visibility: hidden; transform: translateY(calc(-50% + 14px));
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.5s;
+}
+.reveal .nm-shop[data-shop="form"] .nm-shop__scrim,
+.reveal .nm-shop[data-shop="tapB"] .nm-shop__scrim { opacity: 1; visibility: visible; }
+.reveal .nm-shop[data-shop="form"] .nm-shop__modal,
+.reveal .nm-shop[data-shop="tapB"] .nm-shop__modal { opacity: 1; visibility: visible; transform: translateY(-50%); }
+.reveal .nm-shop__modal-h { font-weight: 500; font-size: 1.2rem; color: var(--b-ink); margin-bottom: 0.1rem; padding-right: 2rem; }
+.reveal .nm-shop__modal-close {
+  position: absolute; top: 1.3rem; right: 1.3rem; width: 1.7rem; height: 1.7rem;
+  color: var(--b-muted); display: flex; align-items: center; justify-content: center;
+}
+.reveal .nm-shop__modal-close svg { width: 100%; height: 100%; }
+.reveal .nm-shop__field {
+  padding: 0.65rem 1rem; border: 1px solid var(--b-line); border-radius: var(--shop-r);
+  font-size: 1.1rem; color: var(--b-ink); background: #fff;
+}
+.reveal .nm-shop__chips { display: flex; flex-wrap: nowrap; gap: 0.45rem; margin-top: 0.1rem; }
+.reveal .nm-shop__chip {
+  flex: 0 1 auto; padding: 0.38rem 0.8rem; border-radius: var(--shop-r);
+  border: 1px solid var(--b-line); font-size: 0.95rem; font-weight: 500; color: var(--b-muted);
+  background: #fff; white-space: nowrap; text-align: center;
+}
+.reveal .nm-shop__chip.is-on { background: var(--b-ink); border-color: var(--b-ink); color: #fff; }
+.reveal .nm-shop__submit {
+  margin-top: 0.5rem; padding: 0.8rem 1rem; border-radius: var(--shop-r);
+  background: var(--v2-blue); color: #fff; font-size: 1.1rem; font-weight: 500; text-align: center;
+}
+.reveal .nm-shop[data-shop="tapB"] .nm-shop__submit { animation: nm-shop-press 0.34s ease; }
+
+/* --- Scene 2 - phone lock screen ----------------------------------------- */
+.reveal .nm-shop__lock {
+  z-index: 0; padding: 2.2rem 1.7rem;
+  border-radius: 1.8rem;
+  background: linear-gradient(165deg, #20222e 0%, #12111c 72%);
+  overflow: hidden;
+  display: flex; flex-direction: column; align-items: center;
+  opacity: 0; visibility: hidden;
+}
+.reveal .nm-shop[data-shop="lock"] .nm-shop__lock,
+.reveal .nm-shop[data-shop="lockn"] .nm-shop__lock,
+.reveal .nm-shop[data-shop="tapN"] .nm-shop__lock { opacity: 1; visibility: visible; }
+.reveal .nm-shop__lock-clock { text-align: center; color: #fff; margin-top: 2rem; }
+.reveal .nm-shop__lock-time {
+  display: block; font-family: var(--v2-display); font-weight: 300;
+  font-size: 5rem; line-height: 1; letter-spacing: -0.01em;
+}
+.reveal .nm-shop__lock-date { display: block; margin-top: 0.6rem; font-size: 1.1rem; color: rgba(255, 255, 255, 0.7); }
+.reveal .nm-shop__notif {
+  margin-top: auto; width: 100%; display: flex; align-items: flex-start; gap: 1rem;
+  padding: 1.1rem 1.2rem; border-radius: var(--shop-r);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 42px -16px rgba(0, 0, 0, 0.55);
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 0.45s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal .nm-shop[data-shop="lockn"] .nm-shop__notif,
+.reveal .nm-shop[data-shop="tapN"] .nm-shop__notif { opacity: 1; transform: translateY(0); }
+.reveal .nm-shop[data-shop="tapN"] .nm-shop__notif { animation: nm-shop-press 0.34s ease; }
+.reveal .nm-shop__notif-ico {
+  flex: none; width: 3.4rem; height: 3.4rem; border-radius: var(--shop-r);
+  background: var(--v2-blue); display: flex; align-items: center; justify-content: center;
+}
+.reveal .nm-shop__notif-ico img { width: 2rem; height: 2rem; }
+.reveal .nm-shop__notif-body { min-width: 0; flex: 1; }
+.reveal .nm-shop__notif-top { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.reveal .nm-shop__notif-app { font-weight: 600; font-size: 1.1rem; color: var(--b-ink); }
+.reveal .nm-shop__notif-time { font-size: 1rem; color: var(--b-muted); }
+.reveal .nm-shop__notif-text { display: block; margin-top: 0.3rem; font-size: 1.1rem; line-height: 1.45; color: var(--b-ink); }
+
+/* --- Scene 3 - "Order placed!" confirmation ------------------------------ */
+.reveal .nm-shop__done {
+  z-index: 1;
+  padding: 2.4rem 1.8rem;
+  background: #fff;
+  border: 1px solid rgba(20, 20, 30, 0.06);
+  border-radius: 1.8rem;
+  box-shadow: 0 1px 2px rgba(20, 20, 30, 0.04), 0 22px 48px -22px rgba(20, 20, 30, 0.34);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  opacity: 0; visibility: hidden;
+}
+.reveal .nm-shop[data-shop="done"] .nm-shop__done { opacity: 1; visibility: visible; }
+.reveal .nm-shop__done-check {
+  width: 4.6rem; height: 4.6rem; border-radius: 50%; background: var(--b-ok);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;
+}
+.reveal .nm-shop__done-check svg { width: 2.3rem; height: 2.3rem; }
+.reveal .nm-shop[data-shop="done"] .nm-shop__done-check { animation: nm-shop-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.reveal .nm-shop__done-h { font-family: var(--v2-display); font-weight: 500; font-size: 1.9rem; color: var(--b-ink); }
+.reveal .nm-shop__done-sub { margin-top: 0.6rem; font-size: 1.1rem; color: var(--b-muted); }
+
+/* --- Click = press (de-scale); confirmation pop; no cursor -------------- */
+@keyframes nm-shop-press { 0%, 100% { transform: scale(1); } 40% { transform: scale(0.95); } }
+@keyframes nm-shop-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* Reduced motion / JS off: hold the static sold-out PDP only. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal .nm-shop__scrim,
+  .reveal .nm-shop__modal,
+  .reveal .nm-shop__lock,
+  .reveal .nm-shop__done { display: none; }
+}
+
+/* ========== 2b · PREORDER — storefront scenes (Shop-style) ================
+   The first bento's Preorder card runs a 3-scene story inside ONE constant-
+   size frame (.nm-preshop__frame never changes size => nothing shifts): a PDP
+   with a Pre-order button + delivery details -> a checkout showing the 50%
+   deposit-today / 50% before-shipment split -> "Preorder confirmed · Arrives
+   by Apr 18". Corners match .nm-shop: the frame is rounded; inner UI shares one
+   MINIMAL radius (--pre-r); the product photo is intentionally sharp. A click
+   presses (de-scales) the tapped control (reusing nm-shop-press / nm-shop-pop).
+   The story plays only while the card is hovered/focused (driver in the bento
+   IIFE) — no idle loop. New root (.nm-preshop) so the duplicated second bento's
+   legacy .nm-pre is left untouched. ===================================== */
+.reveal .nm-bento__cell--pre:has(.nm-preshop) { min-height: 44rem; }
+.reveal .nm-preshop {
+  --pre-r: 0.6rem;
+  position: relative; width: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.reveal .nm-preshop::before {
+  content: ""; position: absolute; z-index: 0; pointer-events: none;
+  inset: -14% -10%;
+  background: radial-gradient(56% 50% at 50% 42%, rgba(63, 199, 156, 0.20), rgba(63, 199, 156, 0) 70%);
+  filter: blur(28px);
+}
+/* One fixed frame for all three scenes — a touch narrower than its cell so the
+   card keeps real breathing room on either side. Scenes lay their content out
+   on a single, even spacing rhythm and sit vertically centred — never stretched
+   to the edges. */
+.reveal .nm-preshop__frame {
+  position: relative; z-index: 1;
+  width: min(24rem, 88%); height: 27rem;
+}
+.reveal .nm-preshop__pdp,
+.reveal .nm-preshop__checkout,
+.reveal .nm-preshop__done {
+  position: absolute; inset: 0;
+  transition: opacity 0.45s ease, visibility 0.45s;
+}
+
+/* --- Scene 1 - PDP (rounded frame; sharp photo) ------------------------- */
+.reveal .nm-preshop__pdp {
+  z-index: 1;
+  padding: 1.7rem;
+  background: #fff;
+  border: 1px solid rgba(20, 20, 30, 0.06);
+  border-radius: 1.8rem;
+  box-shadow: 0 1px 2px rgba(20, 20, 30, 0.04), 0 22px 48px -22px rgba(20, 20, 30, 0.34);
+  display: flex; flex-direction: column; justify-content: center; gap: 1.15rem;
+  overflow: hidden;
+}
+.reveal .nm-preshop[data-pshop="checkout"] .nm-preshop__pdp,
+.reveal .nm-preshop[data-pshop="tapB"] .nm-preshop__pdp,
+.reveal .nm-preshop[data-pshop="done"] .nm-preshop__pdp { opacity: 0; visibility: hidden; }
+.reveal .nm-preshop__brand {
+  font-family: var(--v2-display); font-weight: 500; font-size: 1.05rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--b-ink);
+  text-align: center;
+}
+.reveal .nm-preshop__photo {
+  display: block; overflow: hidden; border-radius: 0;
+  background: var(--b-faint); aspect-ratio: 2.5 / 1;
+}
+.reveal .nm-preshop__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; display: block; }
+.reveal .nm-preshop__row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.reveal .nm-preshop__name { font-weight: 500; font-size: 1.3rem; color: var(--b-ink); }
+.reveal .nm-preshop__price { font-size: 1.25rem; color: var(--b-ink); }
+/* Delivery details, given some eye-catch: a brand-green icon tile + a two-line
+   promise, sitting on a soft tinted chip (echoes the BIS "Sold out" pill slot). */
+.reveal .nm-preshop__ship {
+  display: flex; align-items: center; gap: 0.65rem;
+  padding: 0.7rem 0.85rem; border-radius: var(--pre-r);
+  background: rgba(31, 154, 104, 0.08);
+}
+.reveal .nm-preshop__ship-ico {
+  flex: none; display: flex; align-items: center; justify-content: center; color: var(--b-ok);
+}
+.reveal .nm-preshop__ship-ico svg { width: 1.7rem; height: 1.7rem; }
+.reveal .nm-preshop__ship-body { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; line-height: 1.2; }
+.reveal .nm-preshop__ship-main { font-size: 1.05rem; font-weight: 500; color: var(--b-ink); }
+.reveal .nm-preshop__ship-sub { font-size: 0.92rem; font-weight: 500; color: var(--b-ok); }
+.reveal .nm-preshop__btn {
+  display: block; padding: 0.85rem 1rem; border-radius: var(--pre-r);
+  background: var(--b-ink); color: #fff; font-size: 1.1rem; font-weight: 500; text-align: center;
+}
+.reveal .nm-preshop[data-pshop="tapA"] .nm-preshop__btn { animation: nm-shop-press 0.34s ease; }
+
+/* --- Scene 2 - checkout: the 50% / 50% deposit split -------------------- */
+.reveal .nm-preshop__checkout {
+  z-index: 2;
+  padding: 1.7rem;
+  background: #fff;
+  border: 1px solid rgba(20, 20, 30, 0.06);
+  border-radius: 1.8rem;
+  box-shadow: 0 1px 2px rgba(20, 20, 30, 0.04), 0 22px 48px -22px rgba(20, 20, 30, 0.34);
+  display: flex; flex-direction: column; justify-content: center;
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity 0.45s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.5s;
+}
+.reveal .nm-preshop[data-pshop="checkout"] .nm-preshop__checkout,
+.reveal .nm-preshop[data-pshop="tapB"] .nm-preshop__checkout { opacity: 1; visibility: visible; transform: translateY(0); }
+.reveal .nm-preshop__co-h {
+  font-family: var(--v2-display); font-weight: 500; font-size: 1.05rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--b-ink);
+  text-align: center; margin-bottom: 1.2rem;
+}
+/* Invoice-style order summary: a quiet list of receipt rows — NOT bordered
+   "option" cards. Line items, then the order total, then the payment schedule
+   with the 50% deposit as the focal row (green, bolder, larger amount), and a
+   single saved Mastercard chip below. */
+.reveal .nm-preshop__inv { display: flex; flex-direction: column; gap: 0.55rem; }
+.reveal .nm-preshop__inv-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+  font-size: 1.05rem; color: var(--b-muted);
+}
+.reveal .nm-preshop__inv-val { color: var(--b-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.reveal .nm-preshop__inv-row:first-child { color: var(--b-ink); }
+.reveal .nm-preshop__inv-row:first-child .nm-preshop__inv-label { font-weight: 500; }
+.reveal .nm-preshop__inv-row--due {
+  margin-top: 0.45rem; padding-top: 0.85rem; border-top: 1px solid var(--b-line);
+  align-items: center; color: var(--b-ink); font-weight: 500;
+}
+.reveal .nm-preshop__inv-row--due .nm-preshop__inv-label { display: inline-flex; align-items: center; }
+.reveal .nm-preshop__inv-row--due .nm-preshop__inv-val { color: var(--b-ok); font-weight: 600; font-size: 1.3rem; }
+/* Minimal status pill: line-height:1 so the box hugs the text (otherwise the
+   inherited line-height inflates its height), horizontal padding > vertical,
+   modest radius — compact, never a chunky stadium. */
+.reveal .nm-preshop__inv-tag {
+  display: inline-flex; align-items: center;
+  margin-left: 0.5rem; padding: 0.18rem 0.45rem; border-radius: 0.4rem;
+  background: rgba(31, 154, 104, 0.12); color: var(--b-ok);
+  font-size: 0.78rem; font-weight: 600; line-height: 1; letter-spacing: 0.04em; text-transform: uppercase;
+}
+/* Saved payment method — a single chip (one item, so it can't read as a choice) */
+.reveal .nm-preshop__card {
+  display: flex; align-items: center; gap: 0.7rem; margin-top: 1.1rem;
+  padding: 0.7rem 0.85rem; border-radius: var(--pre-r); border: 1px solid var(--b-line);
+}
+.reveal .nm-preshop__card-mc { position: relative; flex: none; width: 2.6rem; height: 1.6rem; }
+.reveal .nm-preshop__card-mc i { position: absolute; top: 0; width: 1.6rem; height: 1.6rem; border-radius: 50%; }
+.reveal .nm-preshop__card-mc i:first-child { left: 0; background: #eb001b; }
+.reveal .nm-preshop__card-mc i:last-child { right: 0; background: #f79e1b; mix-blend-mode: multiply; }
+.reveal .nm-preshop__card-txt { flex: 1; font-size: 1.05rem; font-weight: 500; color: var(--b-ink); letter-spacing: 0.02em; }
+.reveal .nm-preshop__card-tag { flex: none; font-size: 0.9rem; color: var(--b-muted); }
+.reveal .nm-preshop__pay {
+  margin-top: 1.2rem; padding: 0.85rem 1rem; border-radius: var(--pre-r);
+  background: var(--b-ink); color: #fff; font-size: 1.1rem; font-weight: 500; text-align: center;
+}
+.reveal .nm-preshop[data-pshop="tapB"] .nm-preshop__pay { animation: nm-shop-press 0.34s ease; }
+
+/* --- Scene 3 - "Preorder confirmed" ------------------------------------ */
+.reveal .nm-preshop__done {
+  z-index: 3;
+  padding: 2.4rem 1.8rem;
+  background: #fff;
+  border: 1px solid rgba(20, 20, 30, 0.06);
+  border-radius: 1.8rem;
+  box-shadow: 0 1px 2px rgba(20, 20, 30, 0.04), 0 22px 48px -22px rgba(20, 20, 30, 0.34);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  opacity: 0; visibility: hidden;
+}
+.reveal .nm-preshop[data-pshop="done"] .nm-preshop__done { opacity: 1; visibility: visible; }
+.reveal .nm-preshop__done-check {
+  width: 4.6rem; height: 4.6rem; border-radius: 50%; background: var(--b-ok);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;
+}
+.reveal .nm-preshop__done-check svg { width: 2.3rem; height: 2.3rem; }
+.reveal .nm-preshop[data-pshop="done"] .nm-preshop__done-check { animation: nm-shop-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.reveal .nm-preshop__done-h { font-family: var(--v2-display); font-weight: 500; font-size: 1.9rem; color: var(--b-ink); }
+.reveal .nm-preshop__done-sub { margin-top: 0.6rem; font-size: 1.15rem; color: var(--b-muted); }
+
+/* Reduced motion / JS off: hold the static Pre-order PDP only. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal .nm-preshop__checkout,
+  .reveal .nm-preshop__done { display: none; }
+}
+
+/* ========== 2 · PREORDER ================================================ */
+.reveal .nm-pre__pdp { position: relative; width: min(28rem, 96%); padding: 1.8rem; }
+.reveal .nm-pre__img { width: 100%; aspect-ratio: 5 / 3; margin-bottom: 1.4rem; }
+.reveal .nm-pre__row { margin-bottom: 1.2rem; }
+.reveal .nm-pre__btn {
+  display: block; padding: 1.05rem; border-radius: 1rem; background: var(--b-ink);
+  color: #fff; font-size: 1.35rem; font-weight: 500; text-align: center;
+}
+.reveal .nm-pre__ships { display: block; margin-top: 0.9rem; font-size: 1.25rem; color: var(--b-muted); text-align: center; }
+.reveal .nm-pre__ok {
+  position: absolute; left: 1.8rem; right: 1.8rem; bottom: 1.8rem; padding: 1.05rem;
+  border-radius: 1rem; background: rgba(31, 154, 104, 0.1); color: var(--b-ok);
+  font-size: 1.3rem; font-weight: 500; text-align: center; opacity: 0;
+}
+/* The first bento's Preorder card is now the .nm-preshop storefront story
+   (above). This legacy .nm-pre survives only in the duplicated second bento,
+   which stays static (it never receives .anim-ready), so no ambient loop runs. */
+
+/* ========== 3b · WISHLIST — storefront scenes (Shop-style) ================
+   The Wishlist card runs a 3-scene story inside ONE constant-size frame
+   (.nm-wishshop__frame never changes size => nothing shifts): a PDP with an
+   "Add to cart" primary + a ghost "Add to wishlist" (its heart fills red on
+   tap) -> a price-drop email "Your wishlisted item is on sale" with a "Buy it
+   now" button -> "Order placed!". Corners match .nm-shop: the frame is rounded;
+   inner UI shares one MINIMAL radius (--wish-r); the product photo is
+   intentionally sharp. A click presses (de-scales) the tapped control (reusing
+   nm-shop-press / nm-shop-pop). The story plays only while the card is hovered/
+   focused (driver in the bento IIFE) — no idle loop. New root (.nm-wishshop). */
+.reveal .nm-bento__cell--wish:has(.nm-wishshop) { min-height: 44rem; }
+.reveal .nm-wishshop {
+  --wish-r: 0.6rem;
+  --wish-red: #e11d48;
+  position: relative; width: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.reveal .nm-wishshop::before {
+  content: ""; position: absolute; z-index: 0; pointer-events: none;
+  inset: -14% -10%;
+  background: radial-gradient(56% 50% at 50% 42%, rgba(155, 38, 240, 0.18), rgba(155, 38, 240, 0) 70%);
+  filter: blur(28px);
+}
+.reveal .nm-wishshop__frame {
+  position: relative; z-index: 1;
+  width: min(27rem, 94%); height: 31rem;
+}
+.reveal .nm-wishshop__pdp,
+.reveal .nm-wishshop__email,
+.reveal .nm-wishshop__done {
+  position: absolute; inset: 0;
+  transition: opacity 0.45s ease, visibility 0.45s;
+}
+
+/* --- Scene 1 - PDP: Add to cart + ghost Add to wishlist ----------------- */
+.reveal .nm-wishshop__pdp {
+  z-index: 1;
+  padding: 1.7rem;
+  background: #fff;
+  border: 1px solid rgba(20, 20, 30, 0.06);
+  border-radius: 1.8rem;
+  box-shadow: 0 1px 2px rgba(20, 20, 30, 0.04), 0 22px 48px -22px rgba(20, 20, 30, 0.34);
+  display: flex; flex-direction: column; gap: 1.15rem;
+  overflow: hidden;
+}
+.reveal .nm-wishshop[data-wshop="email"] .nm-wishshop__pdp,
+.reveal .nm-wishshop[data-wshop="tapB"] .nm-wishshop__pdp,
+.reveal .nm-wishshop[data-wshop="done"] .nm-wishshop__pdp { opacity: 0; visibility: hidden; }
+/* Store wordmark at the top of the scene — same treatment as the other cards
+   (.nm-shop__brand "Maison Stella" / .nm-preshop__brand "Lune Atelier"). */
+.reveal .nm-wishshop__brand {
+  font-family: var(--v2-display); font-weight: 500; font-size: 1.05rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--b-ink);
+  text-align: center;
+}
+.reveal .nm-wishshop__photo {
+  display: block; overflow: hidden; border-radius: 0;
+  background: var(--b-faint); aspect-ratio: 2.5 / 1;
+}
+.reveal .nm-wishshop__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 58%; display: block; }
+.reveal .nm-wishshop__row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.reveal .nm-wishshop__name { font-weight: 500; font-size: 1.3rem; color: var(--b-ink); }
+.reveal .nm-wishshop__price { font-size: 1.25rem; color: var(--b-ink); }
+/* One button size across the whole story (matches .nm-shop__notify). */
+.reveal .nm-wishshop__cart,
+.reveal .nm-wishshop__wish,
+.reveal .nm-wishshop__buy {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.85rem 1rem; border: 1px solid transparent; border-radius: var(--wish-r);
+  font-size: 1.1rem; font-weight: 500; text-align: center;
+}
+/* Push the button group to the bottom so the brand logo sits at the very top. */
+.reveal .nm-wishshop__cart { margin-top: auto; background: var(--b-ink); color: #fff; }
+/* Ghost button: no fill, ink text + a visible border and a leading heart. */
+.reveal .nm-wishshop__wish {
+  margin-top: -0.35rem; background: #fff; color: var(--b-ink);
+  border-color: var(--b-line);
+}
+.reveal .nm-wishshop__heart { flex: none; display: inline-flex; }
+.reveal .nm-wishshop__heart svg { width: 1.35rem; height: 1.35rem; }
+.reveal .nm-wishshop__heart svg path {
+  fill: transparent; stroke: var(--b-ink); stroke-width: 1.7;
+  transition: fill 0.4s ease, stroke 0.4s ease;
+}
+/* Tap "Add to wishlist": press the control; the heart fills red and stays
+   saved through the rest of the story. */
+.reveal .nm-wishshop[data-wshop="tapW"] .nm-wishshop__wish { animation: nm-shop-press 0.34s ease; }
+.reveal .nm-wishshop[data-wshop="tapW"] .nm-wishshop__heart svg path,
+.reveal .nm-wishshop[data-wshop="email"] .nm-wishshop__heart svg path,
+.reveal .nm-wishshop[data-wshop="tapB"] .nm-wishshop__heart svg path,
+.reveal .nm-wishshop[data-wshop="done"] .nm-wishshop__heart svg path {
+  fill: var(--wish-red); stroke: var(--wish-red);
+}
+.reveal .nm-wishshop[data-wshop="tapW"] .nm-wishshop__heart { animation: nm-shop-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* --- Scene 2 - price-drop email ----------------------------------------- */
+.reveal .nm-wishshop__email {
+  z-index: 2;
+  padding: 1.7rem;
+  background: #fff;
+  border: 1px solid rgba(20, 20, 30, 0.06);
+  border-radius: 1.8rem;
+  box-shadow: 0 1px 2px rgba(20, 20, 30, 0.04), 0 22px 48px -22px rgba(20, 20, 30, 0.34);
+  display: flex; flex-direction: column; justify-content: flex-start; gap: 1.15rem;
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity 0.45s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.5s;
+}
+.reveal .nm-wishshop[data-wshop="email"] .nm-wishshop__email,
+.reveal .nm-wishshop[data-wshop="tapB"] .nm-wishshop__email,
+.reveal .nm-wishshop[data-wshop="done"] .nm-wishshop__email { opacity: 1; visibility: visible; transform: translateY(0); }
+/* Email-client header: From / To / Subject fields, label + value per row, on a
+   tinted slip with a divider below — reads unmistakably as an opened email. */
+.reveal .nm-wishshop__mail-head {
+  display: flex; flex-direction: column; gap: 0.5rem;
+  margin: -0.2rem -0.2rem 0.2rem; padding: 0.85rem 0.95rem;
+  background: var(--b-faint); border-radius: var(--wish-r);
+}
+.reveal .nm-wishshop__mail-field {
+  display: flex; align-items: baseline; gap: 0.55rem;
+  font-size: 1rem; line-height: 1.25;
+}
+.reveal .nm-wishshop__mail-k {
+  flex: none; width: 4.8rem; color: var(--b-muted);
+  font-size: 0.82rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.reveal .nm-wishshop__mail-v {
+  min-width: 0; color: var(--b-ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.reveal .nm-wishshop__mail-subj { font-weight: 600; }
+/* Extra breathing room between the alert header and the email title. */
+.reveal .nm-wishshop__mail-h {
+  margin-top: 0.7rem;
+  font-family: var(--v2-display); font-weight: 500; font-size: 1.45rem;
+  line-height: 1.2; color: var(--b-ink);
+}
+/* Product strip: a sharp thumbnail + name + was/now price and a sale pill. */
+.reveal .nm-wishshop__mail-prod { display: flex; align-items: center; gap: 0.85rem; }
+.reveal .nm-wishshop__mail-thumb {
+  flex: none; width: 4.4rem; height: 4.4rem; overflow: hidden; border-radius: 0; background: var(--b-faint);
+}
+.reveal .nm-wishshop__mail-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 58%; display: block; }
+.reveal .nm-wishshop__mail-body { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+.reveal .nm-wishshop__mail-name { font-size: 1.1rem; font-weight: 500; color: var(--b-ink); }
+.reveal .nm-wishshop__mail-prices { display: flex; align-items: center; gap: 0.5rem; }
+.reveal .nm-wishshop__was { font-size: 1.05rem; color: var(--b-muted); text-decoration: line-through; }
+.reveal .nm-wishshop__now { font-size: 1.25rem; font-weight: 600; color: var(--wish-red); font-variant-numeric: tabular-nums; }
+/* Minimal sale pill: line-height:1 so the box hugs the text. */
+.reveal .nm-wishshop__sale {
+  display: inline-flex; align-items: center;
+  padding: 0.18rem 0.45rem; border-radius: 0.4rem;
+  background: rgba(225, 29, 72, 0.1); color: var(--wish-red);
+  font-size: 0.78rem; font-weight: 600; line-height: 1; letter-spacing: 0.04em;
+}
+/* Buy it now sits at the bottom of the email; on tap (data-wshop="done") it
+   turns green and swaps its label to "Order placed!" in place — no extra scene. */
+.reveal .nm-wishshop__buy {
+  margin-top: auto; background: var(--b-ink); color: #fff;
+  transition: background-color 0.35s ease;
+}
+.reveal .nm-wishshop[data-wshop="tapB"] .nm-wishshop__buy { animation: nm-shop-press 0.34s ease; }
+.reveal .nm-wishshop__buy-default { display: inline-flex; align-items: center; }
+.reveal .nm-wishshop__buy-placed { display: none; align-items: center; gap: 0.4rem; }
+.reveal .nm-wishshop__buy-placed svg { width: 1.35rem; height: 1.35rem; }
+.reveal .nm-wishshop[data-wshop="done"] .nm-wishshop__buy { background: var(--b-ok); }
+.reveal .nm-wishshop[data-wshop="done"] .nm-wishshop__buy-default { display: none; }
+.reveal .nm-wishshop[data-wshop="done"] .nm-wishshop__buy-placed { display: inline-flex; }
+.reveal .nm-wishshop[data-wshop="done"] .nm-wishshop__buy-placed svg { animation: nm-shop-pop 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* Reduced motion / JS off: hold the static PDP only (email hidden). */
+@media (prefers-reduced-motion: reduce) {
+  .reveal .nm-wishshop__email { display: none; }
+}
+
+/* ========== 4 · LOW STOCK — storefront scene (Shop-style, single scene) ====
+   The Low Stock card holds ONE storefront PDP inside a fixed-size frame
+   (.nm-lowshop__frame): Atari brand logo, product photo (sharp), name + price,
+   an "Add to cart" primary, and an "Only 3 left in stock" scarcity line whose
+   red dot blinks while the card is hovered/focused. Single scene => no scene
+   swap; the dot blink is the only motion (gated to hover/focus behind
+   no-preference, so reduced motion / JS off renders a static PDP). Corners match
+   .nm-shop: rounded frame, one MINIMAL inner radius (--low-r), the product photo
+   intentionally sharp. New root (.nm-lowshop). ========================= */
+.reveal .nm-bento__cell--low:has(.nm-lowshop) { min-height: 44rem; }
+.reveal .nm-lowshop {
+  --low-r: 0.6rem;
+  --low-red: #ee442e;
+  position: relative; width: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.reveal .nm-lowshop::before {
+  content: ""; position: absolute; z-index: 0; pointer-events: none;
+  inset: -14% -10%;
+  background: radial-gradient(56% 50% at 50% 42%, rgba(238, 68, 46, 0.16), rgba(238, 68, 46, 0) 70%);
+  filter: blur(28px);
+}
+.reveal .nm-lowshop__frame {
+  position: relative; z-index: 1;
+  width: min(27rem, 94%); height: 30rem;
+}
+.reveal .nm-lowshop__pdp {
+  position: absolute; inset: 0;
+  padding: 1.7rem 1.7rem 1.9rem;
+  background: #fff;
+  border: 1px solid rgba(20, 20, 30, 0.06);
+  border-radius: 1.8rem;
+  box-shadow: 0 1px 2px rgba(20, 20, 30, 0.04), 0 22px 48px -22px rgba(20, 20, 30, 0.34);
+  display: flex; flex-direction: column; gap: 1.15rem;
+  overflow: hidden;
+}
+/* Brand pinned at the top (matches .nm-shop / .nm-preshop). atari.svg ships
+   white (for the dark brand band); brightness(0) renders the mark as ink. */
+.reveal .nm-lowshop__brand { display: block; height: 1.5rem; width: auto; margin: 0 auto 0.4rem; filter: brightness(0); }
+.reveal .nm-lowshop__photo {
+  display: block; overflow: hidden; border-radius: 0;
+  background: var(--b-faint); aspect-ratio: 2.5 / 1;
+}
+.reveal .nm-lowshop__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; display: block; }
+.reveal .nm-lowshop__row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.reveal .nm-lowshop__name { font-weight: 500; font-size: 1.3rem; color: var(--b-ink); }
+.reveal .nm-lowshop__price { font-size: 1.25rem; color: var(--b-ink); }
+/* Scarcity line: a blinking red dot + "Only N left". margin-top:auto floats the
+   stock line + button to the bottom so the brand/photo sit at the top. */
+.reveal .nm-lowshop__stock {
+  display: flex; align-items: center; gap: 0.6rem; margin-top: auto;
+  font-size: 1.1rem; font-weight: 500; line-height: 1; color: var(--low-red);
+}
+.reveal .nm-lowshop__dot {
+  flex: none; width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--low-red);
+}
+/* One button size across the bento (matches .nm-shop__notify / .nm-wishshop__cart). */
+.reveal .nm-lowshop__cart {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0.85rem 1rem; border-radius: var(--low-r);
+  background: var(--b-ink); color: #fff;
+  font-size: 1.1rem; font-weight: 500; text-align: center;
+}
+/* The red dot blinks only while the card is hovered/focused — no idle loop.
+   Gated behind no-preference so reduced motion holds a steady dot. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal .nm-bento__cell--low:hover .nm-lowshop__dot,
+  .reveal .nm-bento__cell--low:focus-within .nm-lowshop__dot { animation: nm-low-dot 1.8s ease-in-out infinite; }
+}
+@keyframes nm-low-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* --- Staggered entrance (gated; default state stays fully visible) ------- */
+.reveal .nm-bento.anim-ready .nm-bento__cell {
+  opacity: 0;
+  transform: translateY(18px) scale(0.99);
+  transition: opacity 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal .nm-bento.anim-ready.is-in .nm-bento__cell { opacity: 1; transform: none; }
+.reveal .nm-bento.anim-ready.is-in .nm-bento__cell--pre  { transition-delay: 0.08s; }
+.reveal .nm-bento.anim-ready.is-in .nm-bento__cell--low  { transition-delay: 0.16s; }
+.reveal .nm-bento.anim-ready.is-in .nm-bento__cell--wish { transition-delay: 0.24s; }
+
+/* --- Responsive ---------------------------------------------------------- */
+@media (max-width: 991px) {
+  .reveal .nm-bento { grid-template-columns: 1fr; gap: 1.4rem; }
+  .reveal .nm-bento__cell--bis,
+  .reveal .nm-bento__cell--pre,
+  .reveal .nm-bento__cell--wish,
+  .reveal .nm-bento__cell--low { grid-column: 1 / -1; }
+  .reveal .nm-bento__cell { min-height: 38rem; }
+}
+@media (max-width: 575px) {
+  .reveal .nm-bento__cell { min-height: 36rem; padding: 2.4rem; border-radius: 0; }
+}
+
+/* --- Reduced motion: hold a sensible static frame ----------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .reveal .nm-bento__cell { opacity: 1 !important; transform: none !important; }
+  .reveal .nm-pre__ok { opacity: 0 !important; }
+  .reveal .nm-pre__btn { opacity: 1 !important; }
+  .reveal .nm-pre__ok,
+  .reveal .nm-pre__btn,
+  .reveal .nm-bis__cursor { animation: none !important; }
+}
+
+
+/* --- Deck build: auto-play polish -----------------------------------
+   The site blinks the Low-Stock scarcity dot only on hover; the deck
+   auto-plays with no cursor, so blink it while the slide is live. */
+@media (prefers-reduced-motion: no-preference){
+  .reveal .nm-bento.is-playing .nm-lowshop__dot{ animation: nm-low-dot 1.8s ease-in-out infinite; }
+}
