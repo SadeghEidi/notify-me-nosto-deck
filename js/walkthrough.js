@@ -4,12 +4,13 @@
    (Research → Design → Engineering → Production → Testing →
    Delivery → Learning), building "Ask Hushi", our in-app AI copilot.
 
-   On slide enter, the first station plays its build animation, then WAITS.
-   Stations never auto-advance — the presenter moves forward manually:
-     → / space / PageDown / s  → advance to the next station
-     r                         → replay from the top
-   After the last station, → leaves the slide normally (reveal.js).
-   ?qa or reduced-motion       → renders the finished state, no timers.
+   On slide enter, the first station plays its build animation, then LOOPS
+   that animation in place. Stations never auto-advance — each step keeps
+   replaying until the presenter passes it manually:
+     click / → / space / PageDown / s  → advance to the next station
+     r                                 → replay from the first station
+   After the last station, click / → leaves the slide normally (reveal.js).
+   ?qa or reduced-motion               → renders the finished state, no timers.
    ============================================================ */
 (function () {
   'use strict';
@@ -693,8 +694,9 @@
         this.at(function () { self.playBeat(k + 1); }, end + PAUSE);
       } else {
         this.at(function () { self.els.agent.setAttribute('data-state', 'done'); self.els.agentState.textContent = 'done'; self.stationDone = true; }, end - 40);
-        // hold on the finished station, then auto-advance (loops back at the end)
-        this.at(function () { self.advanceStation(); }, end + STATION_HOLD);
+        // station finished — hold on the completed state, then LOOP this station's
+        // animation in place. Moving to the next station happens only on a manual pass.
+        this.at(function () { self.playStation(self.si); }, end + STATION_HOLD);
       }
     },
 
@@ -752,19 +754,16 @@
       this.setFillPx((active.offsetTop + 16) - (first.offsetTop + 16));
     },
 
-    /* ---- skip: first press finishes the station, next press advances ---- */
-    skip: function () {
-      if (this.finished) { if (window.Reveal) Reveal.next(); return; }
-      if (!this.stationDone) { this.gen++; this.clearTimers(); this.renderStationFinal(this.si); return; }
-      this.advanceStation();
-    },
-
+    /* ---- manual pass: interrupt the current loop and move to the next
+           station; on the last station, leave the slide via reveal.js ---- */
     advanceStation: function () {
-      var next = this.si + 1;
+      if (STATIC) { if (window.Reveal) Reveal.next(); return; }
       this.gen++; this.clearTimers();
-      if (next >= STEPS.length) { this.reset(); this.playStation(0); return; }  // loop
+      var next = this.si + 1;
+      if (next >= STEPS.length) { if (window.Reveal) Reveal.next(); return; }  // last → leave slide
       this.playStation(next);
     },
+    skip: function () { this.advanceStation(); },
 
     finish: function () {
       this.finished = true;
@@ -800,8 +799,25 @@
 
   function onSlide() { return window.Reveal && Reveal.getCurrentSlide && Reveal.getCurrentSlide() === SLIDE; }
 
-  // The walkthrough auto-plays and loops on its own, so keys are NOT intercepted —
-  // arrow / space navigate slides normally, letting the presenter move on any time.
+  // Each station loops its own animation in place; the presenter passes it manually.
+  // While on the slide we intercept forward navigation so → / space / PageDown / s
+  // (and a click) advance to the NEXT station instead of leaving the slide. Only on
+  // the last station does forward navigation leave the slide. 'r' replays from the top.
+  document.addEventListener('keydown', function (e) {
+    if (!onSlide() || STATIC) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === ' ' || k === 'Spacebar' || k === 'PageDown' || k === 's' || k === 'S') {
+      e.preventDefault(); e.stopImmediatePropagation();
+      WT.advanceStation();
+    } else if (k === 'r' || k === 'R') {
+      e.preventDefault(); e.stopImmediatePropagation();
+      WT.start();
+    }
+  }, true);
+
+  // Click anywhere on the slide advances to the next station too.
+  SLIDE.addEventListener('click', function () { if (!STATIC) WT.advanceStation(); });
 
   function boot() {
     if (!window.Reveal) return;

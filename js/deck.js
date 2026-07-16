@@ -59,7 +59,10 @@ Reveal.initialize({
         [  900,   360,    2200,      360,    2400 ]),
       makeStory(bento.querySelector('.nm-wishshop'), 'data-wshop',
         ['idle', 'tapW', 'email', 'tapB', 'done'],
-        [  900,   1100,   3800,    360,    2400 ])
+        [  900,   1100,   3800,    360,    2400 ]),
+      makeStory(bento.querySelector('.nm-hue'), 'data-hue',
+        ['idle', 'ask', 'answer', 'chart', 'rec', 'apply', 'done'],
+        [ 1500,  1500,   1700,     1600,    1700,   400,    2800 ])
     ];
 
     function bentoIsCurrent() {
