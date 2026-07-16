@@ -4,9 +4,9 @@
    (Research → Design → Engineering → Production → Testing →
    Delivery → Learning), building "Ask Hushi", our in-app AI copilot.
 
-   On slide enter, the first station plays its build animation, then LOOPS
-   that animation in place. Stations never auto-advance — each step keeps
-   replaying until the presenter passes it manually:
+   On slide enter, the first station plays its build animation ONCE and then
+   stops, holding the finished state. Stations never auto-advance and never
+   re-play — each one waits, finished, until the presenter passes it manually:
      click / → / space / PageDown / s  → advance to the next station
      r                                 → replay from the first station
    After the last station, click / → leaves the slide normally (reveal.js).
@@ -675,7 +675,7 @@
     /* ---- play one beat, slowly, then chain to the next (or finish station) ---- */
     playBeat: function (k) {
       var self = this, st = STEPS[this.si], beat = st.beats[k]; this.bi = k;
-      var CODE_MS = 90, AG_MS = 540, TERM_MS = 380, PAUSE = 1000, STATION_HOLD = 2400;
+      var CODE_MS = 90, AG_MS = 540, TERM_MS = 380, PAUSE = 1000;
       this.setChrome(beat);
       var ed = this.buildEditor(beat.editorLang, beat.code), lineEls = ed.lines, caret = ed.caret;
       var termEls = this.buildTerm(beat.term);
@@ -693,10 +693,10 @@
       if (k + 1 < st.beats.length) {
         this.at(function () { self.playBeat(k + 1); }, end + PAUSE);
       } else {
+        // Station finished: it stops here and holds the completed state indefinitely.
+        // No re-play. The presenter passes to the next station manually (click / right /
+        // space / PageDown / s); 'r' replays from the first station.
         this.at(function () { self.els.agent.setAttribute('data-state', 'done'); self.els.agentState.textContent = 'done'; self.stationDone = true; }, end - 40);
-        // station finished — hold on the completed state, then LOOP this station's
-        // animation in place. Moving to the next station happens only on a manual pass.
-        this.at(function () { self.playStation(self.si); }, end + STATION_HOLD);
       }
     },
 
@@ -754,7 +754,7 @@
       this.setFillPx((active.offsetTop + 16) - (first.offsetTop + 16));
     },
 
-    /* ---- manual pass: interrupt the current loop and move to the next
+    /* ---- manual pass: interrupt whatever is still playing and move to the next
            station; on the last station, leave the slide via reveal.js ---- */
     advanceStation: function () {
       if (STATIC) { if (window.Reveal) Reveal.next(); return; }
@@ -799,7 +799,7 @@
 
   function onSlide() { return window.Reveal && Reveal.getCurrentSlide && Reveal.getCurrentSlide() === SLIDE; }
 
-  // Each station loops its own animation in place; the presenter passes it manually.
+  // Each station plays once and stops; the presenter passes it manually.
   // While on the slide we intercept forward navigation so → / space / PageDown / s
   // (and a click) advance to the NEXT station instead of leaving the slide. Only on
   // the last station does forward navigation leave the slide. 'r' replays from the top.

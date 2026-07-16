@@ -85,3 +85,95 @@ Reveal.initialize({
   if (Reveal.isReady()) wire();
   else Reveal.on('ready', wire);
 })();
+
+/* ---------------------------------------------------------------------
+   Process-line driver (the reframe slide). Two rails run the same seven
+   stations. DWELL is identical on both; only TRAVEL differs. That is the
+   argument the slide makes: the doing got ~4x faster, the total barely
+   moved, because the stops are the process. Both rails share one cycle so
+   they restart together, and the fast one visibly waits at Launch.
+   Runs only while the slide is current; QA / reduced-motion paint one
+   static frame instead (see FREEZE_AT).
+   --------------------------------------------------------------------- */
+(function () {
+  // DWELL is the human at the stage. It is deliberately IDENTICAL on both rails: that wait is
+  // what never changed, and it is the bottleneck the slide is about. Only TRAVEL differs.
+  // TRAVEL is halved again here (the progress between stages), while DWELL holds at 1.9s.
+  // Side effect, and a good one: with the movement this slow, the fast rail now spends ~70%
+  // of its run standing still, which is precisely the claim.
+  var DWELL  = 1900;
+  var TRAVEL = { slow: 5600, fast: 960 };  // per gap
+  var CYCLE  = 48000;                      // slow needs 46900, then a beat before the loop
+  var FREEZE_AT = 15500;                   // both dwelling: slow at Design, fast at Documentation
+
+  function wire() {
+    var slide = document.querySelector('.pl-slide');
+    if (!slide) return;
+
+    var reduce = QA || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var rails = [].slice.call(slide.querySelectorAll('.pl-line')).map(function (el) {
+      var steps = [].slice.call(el.querySelectorAll('.pl-step'));
+      return {
+        el: el,
+        fill: el.querySelector('.pl-fill'),
+        orb: el.querySelector('.pl-orb'),
+        steps: steps,
+        n: steps.length,
+        travel: TRAVEL[el.dataset.speed] || TRAVEL.slow
+      };
+    });
+    if (!rails.length) return;
+
+    // where the work is at time t: dwell at a station, then ease across the gap
+    function stateAt(r, t) {
+      var seg = DWELL + r.travel;
+      var last = r.n - 1;
+      if (t >= last * seg + DWELL) return { p: 1, at: last, moving: false };
+      var i = Math.floor(t / seg);
+      var into = t - i * seg;
+      if (into <= DWELL) return { p: i / last, at: i, moving: false };
+      var k = (into - DWELL) / r.travel;
+      var e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;   // easeInOutQuad
+      return { p: (i + e) / last, at: i, moving: true };
+    }
+
+    function paint(t) {
+      rails.forEach(function (r) {
+        var s = stateAt(r, t);
+        var pct = (s.p * 100).toFixed(3) + '%';
+        r.fill.style.width = pct;
+        r.orb.style.left = pct;
+        r.el.classList.toggle('is-moving', s.moving);
+        for (var i = 0; i < r.n; i++) {
+          r.steps[i].classList.toggle('is-done', i <= s.at);
+          r.steps[i].classList.toggle('is-at', i === s.at && !s.moving);
+        }
+      });
+    }
+
+    // setTimeout, not rAF: rAF only ticks for a visible, compositing tab, which makes the
+    // animation impossible to verify in a headless render and freezes it in a background
+    // tab. Date.now() keeps it wall-clock accurate. Same approach as the bento driver above.
+    var timer = null, t0 = 0;
+    function tick() {
+      paint((Date.now() - t0) % CYCLE);
+      timer = setTimeout(tick, 16);
+    }
+    function start() { if (timer) return; t0 = Date.now(); tick(); }
+    function stop()  { clearTimeout(timer); timer = null; }
+
+    function update() {
+      var cur = Reveal.getCurrentSlide();
+      var live = !!(cur && cur === slide);
+      if (live && !reduce) start();
+      else { stop(); if (live) paint(FREEZE_AT); }
+    }
+
+    Reveal.on('slidechanged', update);
+    update();
+    if (reduce) paint(FREEZE_AT);   // QA renders the slide without a slidechange
+  }
+
+  if (Reveal.isReady()) wire();
+  else Reveal.on('ready', wire);
+})();

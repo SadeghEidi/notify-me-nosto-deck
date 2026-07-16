@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archived · The four core components (detail slides)</title>
+<link rel="stylesheet" href="../vendor/reset.css">
+<link rel="stylesheet" href="../vendor/reveal.css">
+<link rel="stylesheet" href="../css/theme.css?v=6">
+</head>
+<body>
+<!--
+  ARCHIVE · The four core-component detail slides (Skills / Agents / Hooks / Agent Reports)
+  ==========================================================================================
+  Pulled out of ../index.html on 2026-07-16 at Sam's request. They were pages 20-23, sitting
+  between the architecture map ("One engine. Four parts. One loop.") and "The bottom line."
+
+  This file RUNS. Open it in a browser and it renders the four slides exactly as they appeared
+  in the deck, using the deck's real theme, fonts and background. It is not a dead fragment.
+
+  WHY THEY CAME OUT: the architecture map already names and glosses all four components, so
+  these four were the deep-dive tour behind it. Removed to keep the 15-minute slot; nothing
+  else in the deck referenced them.
+
+  TO RESTORE:
+    1. Copy everything between the two RESTORE markers below.
+    2. Paste it into ../index.html directly BEFORE the line:
+         <!-- ================= 16B · THE BOTTOM LINE ================= -->
+    3. Rewrite the asset paths back: "../img/  ->  "img/
+  Nothing else is needed. Every rule is scoped `cx-`, no JS touches it, and theme.css was
+  never modified for it, so there is no cache tag to bump and no other slide to fix.
+-->
+<div class="bg-aurora"></div>
+<div class="bg-grain"></div>
+
+<div class="reveal">
+<div class="slides">
+
+<!-- ===================== RESTORE: COPY FROM HERE ===================== -->
+<!-- ============ 19-22 · THE FOUR COMPONENTS, ONE TEMPLATE ============
+     The tour of the map on 19. One skeleton, four fills: the header rail, the
+     glyph, the vertical rule and the ledger grid land on identical pixels on all
+     four, so reveal's cross-fade reads as one object changing state instead of
+     four unrelated layouts. Only the accent, the glyph and the words move.
+     `--ac` comes from the section's existing .accent-* class (the same mapping
+     slide 19 uses: skills blue, agents purple, hooks coral, reports mint).
+     Every rule is scoped `cx-`, so theme.css is untouched and no cache tag moves.
+     ================================================================= -->
+<style>
+/* the bloom behind the hero glyph. Tuned per hue on purpose: purple, coral and
+   mint burn hotter than blue over the deck's blue aurora, so they get less. */
+.cx.accent-blue  { --wash:rgba(45,107,255,.52) }
+.cx.accent-purple{ --wash:rgba(155,38,240,.36) }
+.cx.accent-coral { --wash:rgba(238,68,46,.32) }
+.cx.accent-mint  { --wash:rgba(95,208,166,.30) }
+
+/* ---- header · what this slide answers (left) + where we are (right) ---- */
+/* 1630, not the usual 1700: this lands the rail's right edge exactly on the
+   ledger's right edge below it, so the whole right side reads on one grid line */
+.cx-head{ display:flex; align-items:center; justify-content:space-between;
+  width:100%; max-width:1630px; margin-bottom:56px; }
+.cx .eyebrow{ margin:0; color:var(--ac); }
+.cx .eyebrow::before{ background:var(--ac); }
+
+.cx-rail{ display:flex; align-items:center; }
+.cx-stop{ position:relative; display:flex; align-items:center; gap:10px; white-space:nowrap;
+  font-family:var(--font-body); font-weight:500; font-size:12.5px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--g3); }
+.cx-stop + .cx-stop{ margin-left:52px; }
+.cx-stop + .cx-stop::before{ content:''; position:absolute; left:-52px; top:50%; width:52px;
+  height:1px; background:var(--hair); }
+/* a covered stop keeps its own colour, so by the fourth slide the rail has
+   rebuilt slide 19's palette: the system assembling itself as he walks it */
+.cx-stop.is-done{ color:var(--g2); }
+.cx-stop.is-done i{ background:var(--ac); border-color:var(--ac); opacity:.6; }
+.cx-stop.is-on{ color:#fff; }
+.cx-stop.is-on i{ background:var(--ac); border-color:var(--ac);
+  box-shadow:0 0 14px var(--ac), 0 0 0 5px rgba(255,255,255,.05); }
+.cx-stop.is-done::before, .cx-stop.is-on::before{ opacity:.7;
+  background:linear-gradient(90deg, rgba(255,255,255,.10), var(--ac)); }
+.cx-stop i{ position:relative; width:9px; height:9px; border-radius:50%; flex:none;
+  border:1px solid var(--g3); }
+.cx-stop.is-on i::after{ content:''; position:absolute; inset:-4px; border-radius:50%;
+  border:1px solid var(--ac); animation:cxPing 2.8s ease-out infinite; }
+@keyframes cxPing{ 0%{ transform:scale(.7); opacity:.9 } 70%,100%{ transform:scale(2.6); opacity:0 } }
+
+/* ---- body · fixed height so the four are pixel-identical to each other ---- */
+.cx-body{ display:grid; grid-template-columns:620px 1fr; width:100%; max-width:1700px;
+  height:540px; }
+/* both columns top-align, so the glyph sits on the same line as the first ledger
+   label. .cx-def's pinned height keeps the whole left block a constant size. */
+.cx-left{ display:flex; flex-direction:column; padding-right:110px; }
+.cx-right{ position:relative; display:flex; flex-direction:column; padding-left:110px; }
+/* the rule draws down on entry, then holds. Own pseudo-element, not a border,
+   so it can be animated. */
+.cx-right::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:1px;
+  transform:scaleY(0); transform-origin:top;
+  background:linear-gradient(180deg, transparent, var(--hair) 10%, var(--hair) 90%, transparent); }
+@keyframes cxDrawY{ to{ transform:scaleY(1) } }
+
+/* ---- the hero object: one glowing thing, same pixels on all four ---- */
+.cx-hero{ position:relative; width:132px; height:132px; flex:none; margin-bottom:46px; }
+/* a donut, not a disc: the tile's own backdrop-filter drinks a filled bloom and
+   turns the glass into a solid ball (the trap slide 19's hub hit). This glows at
+   the rim and leaves the centre clear. */
+.cx-halo{ position:absolute; left:50%; top:50%; width:470px; height:470px;
+  margin:-235px 0 0 -235px; border-radius:50%; z-index:0; pointer-events:none;
+  filter:blur(48px);
+  background:radial-gradient(circle, transparent 24%, var(--wash) 46%, transparent 76%); }
+.cx-glyph{ position:relative; z-index:1; width:132px; height:132px; border-radius:34px;
+  display:flex; align-items:center; justify-content:center; color:var(--ac);
+  background:radial-gradient(circle at 50% 28%, rgba(255,255,255,.09), rgba(8,14,28,.55) 74%);
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:inset 0 0 58px -16px var(--ac), 0 0 0 8px rgba(255,255,255,.022),
+             0 26px 62px rgba(0,0,0,.5);
+  backdrop-filter:blur(18px) saturate(120%); -webkit-backdrop-filter:blur(18px) saturate(120%); }
+.cx-glyph svg{ width:66px; height:66px; filter:drop-shadow(0 0 12px var(--ac)); }
+
+.reveal .cx-name{ font-size:78px; font-weight:300; line-height:1; letter-spacing:-.02em;
+  white-space:nowrap; }
+/* min-height pins the block so the glyph and name sit on the same pixels whether
+   the definition runs to two lines or three */
+.reveal .cx-def{ font-size:23px; line-height:1.5; color:var(--g2); margin:24px 0 0;
+  max-width:510px; min-height:104px; }
+
+/* ---- the ledger · same grammar on every slide, key left, value right ---- */
+.cx-group + .cx-group{ margin-top:46px; }
+.cx-glab{ font-family:var(--font-body); font-weight:500; font-size:12.5px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ac); display:flex; align-items:center; gap:11px;
+  margin:0 0 6px; }
+.cx-glab::before{ content:''; width:7px; height:7px; border-radius:50%; flex:none;
+  background:var(--ac); box-shadow:0 0 10px var(--ac); }
+/* capped, so the rules end near the rail's right edge instead of running out to
+   the margin and leaving the ledger stranded in white space. The key column is
+   sized off the longest key in the set, the quoted claim on the reports slide. */
+.cx-rows{ max-width:900px; }
+.cx-row{ display:grid; grid-template-columns:300px 1fr; column-gap:30px; align-items:baseline;
+  padding:17px 0; border-bottom:1px solid var(--hair); }
+.cx-row:last-child{ border-bottom:0; }
+.cx-k{ font-family:var(--font-display); font-weight:400; font-size:22px; color:#fff;
+  line-height:1.25; }
+.cx-v{ font-family:var(--font-body); font-weight:300; font-size:19px; color:var(--g2);
+  line-height:1.45; }
+.cx-v b{ color:var(--g1); font-weight:500; }
+/* a quoted claim is not a fact yet, so it sits dim and the proof answers it lit */
+.cx-k.claim{ color:var(--g3); }
+.cx-v.proof{ color:var(--g1); }
+.cx-ar{ font-style:normal; color:var(--ac); margin-right:11px; }
+.cx-tags{ display:flex; flex-wrap:wrap; gap:9px; }
+.cx-tags .jchip{ font-size:14.5px; padding:7px 13px; border-radius:7px; }
+
+/* ---- motion ----------------------------------------------------------
+   Entrance beats hang off section.present; the two ledger groups are reveal
+   fragments and their motion is keyed to .fragment.visible on the CHILDREN,
+   never to section.present on the group. A `both`-filled animation outranks
+   reveal's .fragment{opacity:0} and would land every beat at once (the trap
+   logged on slides 11 and 19). The group itself carries no animation, and its
+   transition is killed so the rows, not the box, do the moving. */
+.reveal section.present .cx-halo{ animation:cxIn 1s .1s both, cxBreathe 6.5s 1s ease-in-out infinite; }
+.reveal section.present .cx-glyph{ animation:popIn .75s .1s both cubic-bezier(.2,.7,.2,1),
+  float 8s .85s ease-in-out infinite; }
+.reveal section.present .cx-right::before{ animation:cxDrawY .9s .34s both cubic-bezier(.4,0,.1,1); }
+.reveal section.present .cx-stop{ animation:cxIn .5s both ease-out; }
+.reveal section.present .cx-stop:nth-child(2){ animation-delay:.06s }
+.reveal section.present .cx-stop:nth-child(3){ animation-delay:.12s }
+.reveal section.present .cx-stop:nth-child(4){ animation-delay:.18s }
+@keyframes cxIn{ from{ opacity:0 } to{ opacity:1 } }
+@keyframes cxBreathe{ 0%,100%{ transform:scale(1); opacity:.82 } 50%{ transform:scale(1.06); opacity:1 } }
+
+.reveal .cx-group.fragment{ transition:none; }
+.reveal .cx-group.fragment.visible .cx-glab{ animation:riseIn .5s both ease-out; }
+.reveal .cx-group.fragment.visible .cx-row{ animation:riseIn .55s both cubic-bezier(.2,.7,.2,1); }
+.reveal .cx-group.fragment.visible .cx-row:nth-child(1){ animation-delay:.08s }
+.reveal .cx-group.fragment.visible .cx-row:nth-child(2){ animation-delay:.16s }
+.reveal .cx-group.fragment.visible .cx-row:nth-child(3){ animation-delay:.24s }
+.reveal .cx-group.fragment.visible .cx-row:nth-child(4){ animation-delay:.32s }
+
+/* QA renders must be byte-stable. fragments:false adds .visible to every
+   fragment, so the beats settle on their own; only the loops need pinning. */
+.qa .cx-halo, .qa .cx-glyph, .qa .cx-stop.is-on i::after{
+  animation:none !important; transform:none !important; opacity:1 !important; }
+</style>
+
+<!-- ================= 19 · COMPONENT 1 · SKILLS ================= -->
+<section class="slide cx accent-blue">
+  <div class="cx-head">
+    <p class="eyebrow">The how</p>
+    <nav class="cx-rail" aria-label="The four components">
+      <span class="cx-stop accent-blue is-on"><i></i>Skills</span>
+      <span class="cx-stop accent-purple"><i></i>Agents</span>
+      <span class="cx-stop accent-coral"><i></i>Hooks</span>
+      <span class="cx-stop accent-mint"><i></i>Agent Reports</span>
+    </nav>
+  </div>
+
+  <div class="cx-body">
+    <div class="cx-left">
+      <div class="cx-hero">
+        <span class="cx-halo"></span>
+        <span class="cx-glyph">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8.6 4.4H7A1.8 1.8 0 0 0 5.2 6.2v13A1.8 1.8 0 0 0 7 21h10a1.8 1.8 0 0 0 1.8-1.8v-13A1.8 1.8 0 0 0 17 4.4h-1.6"/>
+            <rect x="8.6" y="2.6" width="6.8" height="3.6" rx="1.2"/>
+            <path d="M8.4 10.4h7.2M8.4 13.8h7.2M8.4 17.2h4"/>
+          </svg>
+        </span>
+      </div>
+      <h2 class="cx-name">Skills</h2>
+      <p class="lead cx-def">A Skill is a standard operating procedure. It turns an abstract
+        intent into a process that runs the same way <b>every time</b>.</p>
+    </div>
+
+    <div class="cx-right">
+      <div class="cx-group fragment" data-fragment-index="1">
+        <p class="cx-glab">What a skill defines</p>
+        <div class="cx-rows">
+          <div class="cx-row"><span class="cx-k">Objective</span><span class="cx-v">what the stage is for</span></div>
+          <div class="cx-row"><span class="cx-k">Boundaries</span><span class="cx-v">the data, tools and resources it may touch</span></div>
+          <div class="cx-row"><span class="cx-k">Method</span><span class="cx-v">the steps, and the order they run in</span></div>
+          <div class="cx-row"><span class="cx-k">Definition of done</span><span class="cx-v">the output spec it gets measured against</span></div>
+        </div>
+      </div>
+      <div class="cx-group fragment" data-fragment-index="2">
+        <p class="cx-glab">Three of ours</p>
+        <div class="cx-rows">
+          <div class="cx-row"><span class="cx-k">Product research</span><span class="cx-v">which sources, which competitors, how deep to go</span></div>
+          <div class="cx-row"><span class="cx-k">PRD</span><span class="cx-v">the sections a spec cannot ship without</span></div>
+          <div class="cx-row"><span class="cx-k">Design</span><span class="cx-v">Shopify standards, plus our own visual language</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><img src="../img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 03</span></div>
+</section>
+
+<!-- ================= 20 · COMPONENT 2 · AGENTS ================= -->
+<section class="slide cx accent-purple">
+  <div class="cx-head">
+    <p class="eyebrow">The who</p>
+    <nav class="cx-rail" aria-label="The four components">
+      <span class="cx-stop accent-blue is-done"><i></i>Skills</span>
+      <span class="cx-stop accent-purple is-on"><i></i>Agents</span>
+      <span class="cx-stop accent-coral"><i></i>Hooks</span>
+      <span class="cx-stop accent-mint"><i></i>Agent Reports</span>
+    </nav>
+  </div>
+
+  <div class="cx-body">
+    <div class="cx-left">
+      <div class="cx-hero">
+        <span class="cx-halo"></span>
+        <!-- the same bot mark that sits inside slide 19's hub -->
+        <span class="cx-glyph">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="2.8" r="1.1" fill="currentColor" stroke="none"/>
+            <path d="M12 3.9v2.3"/>
+            <rect x="4" y="6.2" width="16" height="12" rx="4"/>
+            <path d="M2 10.5v3.4M22 10.5v3.4"/>
+            <circle cx="9.2" cy="11.8" r="1.2" fill="currentColor" stroke="none"/>
+            <circle cx="14.8" cy="11.8" r="1.2" fill="currentColor" stroke="none"/>
+            <path d="M9.5 15.2h5"/>
+          </svg>
+        </span>
+      </div>
+      <h2 class="cx-name">Agents</h2>
+      <p class="lead cx-def">A Skill defines how the work gets done. An Agent is the specialist
+        that <b>actually does it</b>.</p>
+    </div>
+
+    <div class="cx-right">
+      <div class="cx-group fragment" data-fragment-index="1">
+        <p class="cx-glab">Who is on the line</p>
+        <div class="cx-rows">
+          <div class="cx-row"><span class="cx-k">Engineering</span>
+            <span class="cx-v cx-tags"><span class="jchip">Backend</span><span class="jchip">Frontend</span><span class="jchip">SDK</span><span class="jchip">App extensions</span></span></div>
+          <div class="cx-row"><span class="cx-k">Quality</span>
+            <span class="cx-v cx-tags"><span class="jchip">Technical QA</span><span class="jchip">Product QA</span></span></div>
+          <div class="cx-row"><span class="cx-k">Review</span>
+            <span class="cx-v cx-tags"><span class="jchip">Code review</span></span></div>
+        </div>
+      </div>
+      <div class="cx-group fragment" data-fragment-index="2">
+        <p class="cx-glab">Every agent runs sealed</p>
+        <div class="cx-rows">
+          <div class="cx-row"><span class="cx-k">Isolated context</span><span class="cx-v">it gets the brief for its stage, and nothing else</span></div>
+          <div class="cx-row"><span class="cx-k">No contamination</span><span class="cx-v">a mistake upstream cannot become an assumption here</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><img src="../img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 03</span></div>
+</section>
+
+<!-- ================= 21 · COMPONENT 3 · HOOKS ================= -->
+<section class="slide cx accent-coral">
+  <div class="cx-head">
+    <p class="eyebrow">The safety</p>
+    <nav class="cx-rail" aria-label="The four components">
+      <span class="cx-stop accent-blue is-done"><i></i>Skills</span>
+      <span class="cx-stop accent-purple is-done"><i></i>Agents</span>
+      <span class="cx-stop accent-coral is-on"><i></i>Hooks</span>
+      <span class="cx-stop accent-mint"><i></i>Agent Reports</span>
+    </nav>
+  </div>
+
+  <div class="cx-body">
+    <div class="cx-left">
+      <div class="cx-hero">
+        <span class="cx-halo"></span>
+        <span class="cx-glyph">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2.6 4.6 5.8v6.3c0 4.5 3.1 8.3 7.4 9.4 4.3-1.1 7.4-4.9 7.4-9.4V5.8L12 2.6Z"/>
+            <path d="M8.9 12.1 11 14.3l4.2-4.6"/>
+          </svg>
+        </span>
+      </div>
+      <h2 class="cx-name">Hooks</h2>
+      <p class="lead cx-def">Automated rails. An agent will call a task done when it is not, so
+        the system does not <b>take&nbsp;its&nbsp;word</b>.</p>
+    </div>
+
+    <div class="cx-right">
+      <div class="cx-group fragment" data-fragment-index="1">
+        <p class="cx-glab">Trust, but verify</p>
+        <div class="cx-rows">
+          <div class="cx-row"><span class="cx-k">The failure</span><span class="cx-v">a stage reports complete, and it is not</span></div>
+          <div class="cx-row"><span class="cx-k">The rail</span><span class="cx-v">a check that runs whether the agent likes it or not</span></div>
+          <div class="cx-row"><span class="cx-k">The result</span><span class="cx-v">avoidable mistakes never reach a human</span></div>
+        </div>
+      </div>
+      <div class="cx-group fragment" data-fragment-index="2">
+        <p class="cx-glab">Two of ours</p>
+        <div class="cx-rows">
+          <div class="cx-row"><span class="cx-k">Branch-guard</span><span class="cx-v">blocks a commit or a push to the wrong branch</span></div>
+          <div class="cx-row"><span class="cx-k">Verify-on-stop</span><span class="cx-v">runs the end to end tests before a task can close</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><img src="../img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 03</span></div>
+</section>
+
+<!-- ================= 22 · COMPONENT 4 · AGENT REPORTS ================= -->
+<section class="slide cx accent-mint">
+  <div class="cx-head">
+    <p class="eyebrow">The proof</p>
+    <nav class="cx-rail" aria-label="The four components">
+      <span class="cx-stop accent-blue is-done"><i></i>Skills</span>
+      <span class="cx-stop accent-purple is-done"><i></i>Agents</span>
+      <span class="cx-stop accent-coral is-done"><i></i>Hooks</span>
+      <span class="cx-stop accent-mint is-on"><i></i>Agent Reports</span>
+    </nav>
+  </div>
+
+  <div class="cx-body">
+    <div class="cx-left">
+      <div class="cx-hero">
+        <span class="cx-halo"></span>
+        <span class="cx-glyph">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M13.4 2.8H7.2A1.8 1.8 0 0 0 5.4 4.6v14.6A1.8 1.8 0 0 0 7.2 21h2.4"/>
+            <path d="M19 12.4V8.4l-5.6-5.6v3.8a1.8 1.8 0 0 0 1.8 1.8H19Z"/>
+            <path d="M8.8 8.2h2.6M8.8 11.6h5.4"/>
+            <circle cx="16" cy="17" r="4.4"/>
+            <path d="M14.1 17.1l1.4 1.4 2.6-2.9"/>
+          </svg>
+        </span>
+      </div>
+      <h2 class="cx-name">Agent Reports</h2>
+      <p class="lead cx-def">The factory does not run on what an agent says. It runs on
+        <b>what it can show</b>.</p>
+    </div>
+
+    <div class="cx-right">
+      <div class="cx-group fragment" data-fragment-index="1">
+        <p class="cx-glab">A claim is not a result</p>
+        <div class="cx-rows">
+          <div class="cx-row"><span class="cx-k claim">&ldquo;The tests passed&rdquo;</span>
+            <span class="cx-v proof"><em class="cx-ar">&rarr;</em>show the run, and what it returned</span></div>
+          <div class="cx-row"><span class="cx-k claim">&ldquo;The code is committed&rdquo;</span>
+            <span class="cx-v proof"><em class="cx-ar">&rarr;</em>show the commit</span></div>
+        </div>
+      </div>
+      <div class="cx-group fragment" data-fragment-index="2">
+        <p class="cx-glab">What a report carries</p>
+        <div class="cx-rows">
+          <div class="cx-row"><span class="cx-k">Evidence per claim</span><span class="cx-v">every assertion arrives with the thing that proves it</span></div>
+          <div class="cx-row"><span class="cx-k">Never a summary</span><span class="cx-v">a summary is only what the agent believes happened</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><img src="../img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 03</span></div>
+</section>
+<!-- ===================== RESTORE: COPY TO HERE ====================== -->
+
+</div>
+</div>
+
+<script src="../vendor/reveal.js"></script>
+<script src="../js/deck.js?v=2"></script>
+</body>
+</html>
