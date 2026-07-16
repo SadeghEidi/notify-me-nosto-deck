@@ -1,0 +1,6 @@
+.DS_Store
+node_modules/
+qa/
+qa-shot.sh
+package.json
+package-lock.json
