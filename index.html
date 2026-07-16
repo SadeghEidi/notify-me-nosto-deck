@@ -1455,8 +1455,10 @@
 /* ---- the component flow ---- */
 .om-comp{ position:absolute; left:960px; top:230px; width:810px; height:620px; z-index:5;
   display:flex; flex-direction:column; justify-content:center; }
+/* white, not blue: this label sits straight on the background with no card fill behind it,
+   where blue-elec reads as low contrast */
 .cw-h{ font-family:var(--font-mono); font-size:13px; font-weight:500; letter-spacing:.24em;
-  text-transform:uppercase; color:var(--blue-elec); margin-bottom:28px; opacity:0;
+  text-transform:uppercase; color:#fff; margin-bottom:28px; opacity:0;
   transition:opacity .5s ease; }
 /* Fixed height, and taller than the agent card ever gets (228px open). Without this the
    column centres header+flow as one block, so opening the skills pushed the header UP and
@@ -1473,8 +1475,10 @@
 .cw-agent{ width:280px; --ac:var(--purple); }
 .cw-hooks{ width:219px; --ac:var(--coral); }
 .cw-review{ width:219px; --ac:var(--mint); }
+/* Neutral, not var(--ac): accent-on-dark was too low-contrast to read at 11.5px. The left edge
+   already tells the components apart, so the label only has to be legible. */
 .cw-kind{ font-family:var(--font-mono); font-size:11.5px; font-weight:500; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--ac); display:block; }
+  text-transform:uppercase; color:var(--g1); display:block; }
 .cw-name{ display:flex; align-items:center; gap:10px; margin-top:12px;
   font-family:var(--font-body); font-size:20px; font-weight:400; color:#fff; }
 .cw-list{ list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:10px; }
@@ -1846,178 +1850,6 @@
       <div class="pill"><span class="dot"></span>If a review or QA check fails, who fixes it?</div>
     </div>
   </div>
-  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 03</span></div>
-</section>
-
-<!-- ================= 15B · THE ARCHITECTURE ================= -->
-<style>
-/* The factory architecture map: the Orchestrator hub, the four components around it, and the
-   evidence loop closing back to the hub. Type-only nodes on purpose: the hub is this slide's
-   one glowing object, and slide 16 is the glass-card version of the same four names. */
-.fa-map{ position:relative; width:1700px; height:520px; margin-top:30px; }
-
-/* connectors: a faint trace that draws in, plus a dashed pulse that keeps flowing */
-.fa-wire{ position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; }
-.fa-wire .fa-trace{ fill:none; stroke:var(--ac); stroke-width:1.5; opacity:.42;
-  stroke-dasharray:1 1; stroke-dashoffset:1; }
-.fa-wire .fa-flow{ fill:none; stroke:var(--ac); stroke-width:2.5; stroke-linecap:round; opacity:0;
-  stroke-dasharray:13 151; filter:drop-shadow(0 0 7px var(--ac)); }
-.fa-wire .fa-port{ fill:var(--ac); opacity:0; filter:drop-shadow(0 0 7px var(--ac)); }
-
-/* the four components */
-.fa-node{ position:absolute; width:280px; height:176px; z-index:2;
-  display:flex; flex-direction:column; justify-content:center; }
-.fa-node .acc-bar{ margin-bottom:20px; }
-.fa-node h3{ font-size:28px; font-weight:400; line-height:1; }
-.fa-node p{ font-family:var(--font-body); font-weight:300; font-size:17.5px; color:var(--g2);
-  line-height:1.45; margin-top:12px; }
-.fa-tl{ left:0; top:0 }  .fa-bl{ left:0; top:344px }
-.fa-tr{ right:0; top:0; align-items:flex-end; text-align:right }
-.fa-br{ right:0; top:344px; align-items:flex-end; text-align:right }
-
-/* the hub */
-.fa-hub{ position:absolute; left:700px; top:110px; width:300px; height:300px; z-index:2;
-  border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  background:radial-gradient(circle at 50% 36%, rgba(76,135,255,.20), rgba(8,14,28,.62) 72%);
-  border:1px solid rgba(120,165,255,.6);
-  box-shadow:0 0 0 9px rgba(76,135,255,.05), inset 0 0 70px -12px var(--blue-elec),
-             0 26px 70px rgba(0,0,0,.55);
-  backdrop-filter:blur(18px) saturate(120%); -webkit-backdrop-filter:blur(18px) saturate(120%); }
-/* a ring of glow around the rim, not a filled disc: the hub has to stay glass, not become a ball */
-.fa-bloom{ position:absolute; left:850px; top:260px; width:560px; height:560px; margin:-280px 0 0 -280px;
-  z-index:0; border-radius:50%; pointer-events:none; opacity:0; filter:blur(14px);
-  background:radial-gradient(circle, transparent 40%, rgba(45,107,255,.34) 56%, transparent 78%); }
-.fa-dia{ width:26px; height:26px; fill:none; stroke:var(--blue-elec); stroke-width:1.6;
-  filter:drop-shadow(0 0 8px var(--blue-bright)); }
-.fa-hub h3{ font-size:33px; font-weight:400; line-height:1; margin-top:13px; }
-.fa-jobs{ font-family:var(--font-mono); font-weight:500; font-size:12.5px; letter-spacing:.15em;
-  text-transform:uppercase; color:var(--blue-elec); margin-top:15px; }
-
-/* beat 4 · who actually sits in the orchestrator seat */
-.fa-who{ display:flex; align-items:center; gap:13px; margin-top:16px; padding-top:15px;
-  border-top:1px solid var(--hair); }
-.fa-chip{ width:36px; height:36px; border-radius:50%; flex:none; color:var(--blue-elec);
-  display:flex; align-items:center; justify-content:center;
-  background:rgba(255,255,255,.06); border:1px solid var(--glass-border); }
-.fa-chip svg{ width:19px; height:19px; }
-.fa-or{ font-family:var(--font-mono); font-weight:500; font-size:11.5px; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--g3); }
-
-/* Motion is keyed to each fragment's .visible, NOT to section.present: a section.present
-   entrance with `both` fill would pin opacity:1 and silently outrank reveal's
-   .fragment{opacity:0}, landing every beat at once (the trap logged on slide 11). */
-@keyframes faDraw{ to{ stroke-dashoffset:0 } }
-@keyframes faIn{ to{ opacity:1 } }
-@keyframes faFlow{ to{ stroke-dashoffset:-164 } }    /* every path is drawn in its flow direction */
-@keyframes faBreathe{ 0%,100%{ transform:scale(1); opacity:.8 } 50%{ transform:scale(1.09); opacity:1 } }
-
-/* beat 2 · the four parts */
-.reveal .fa-node.fragment{ transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
-.reveal .fa-bl.fragment{ transition-delay:.08s }
-.reveal .fa-tr.fragment{ transition-delay:.16s }
-.reveal .fa-br.fragment{ transition-delay:.24s }
-
-/* beat 3 · the engine and its lines */
-.reveal .fa-hub.fragment.visible{ animation:popIn .7s both cubic-bezier(.2,.7,.2,1); }
-.reveal .fa-bloom.fragment.visible{ animation:faIn .9s both, faBreathe 5.4s .9s ease-in-out infinite; }
-.reveal .fa-wire.fragment.visible .fa-trace{ animation:faDraw .85s .12s both ease-out; }
-.reveal .fa-wire.fragment.visible .fa-port{ animation:faIn .4s .8s both; }
-.reveal .fa-wire.fragment.visible .fa-flow{ animation:faIn .5s .85s both, faFlow 2.7s .85s linear infinite; }
-
-/* beat 4 · the two seats */
-.reveal .fa-who.fragment{ transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1); }
-
-/* the global h3 entrance would fight the fragments these titles live inside */
-.reveal section.present .fa-hub h3, .reveal section.present .fa-node h3{ animation:none; }
-
-/* QA renders must be byte-stable. `fragments:false` adds .visible to every fragment, so the
-   beats settle by themselves; only the two looping animations need pinning. */
-.qa .fa-bloom{ animation:none !important; opacity:1 !important; transform:none !important; }
-.qa .fa-trace{ animation:none !important; stroke-dashoffset:0 !important; }
-.qa .fa-flow, .qa .fa-port{ animation:none !important; opacity:1 !important; }
-.qa .fa-hub{ animation:none !important; transform:none !important; opacity:1 !important; }
-.qa .fa-node, .qa .fa-who{ transition:none !important; transform:none !important; opacity:1 !important; }
-</style>
-<section class="slide">
-  <p class="eyebrow">The architecture</p>
-  <h2 style="font-size:54px">One engine. Four parts. One loop.</h2>
-
-  <div class="fa-map">
-    <span class="fa-bloom fragment" data-fragment-index="2"></span>
-
-    <!-- Each path is drawn from source to destination, so the dashes flow the right way and the
-         arrowhead lands on the destination. Three run out of the hub; the mint one runs back in. -->
-    <svg class="fa-wire fragment" data-fragment-index="2" viewBox="0 0 1700 520" aria-hidden="true">
-      <defs>
-        <marker id="faHead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9"
-                markerUnits="userSpaceOnUse" orient="auto">
-          <path d="M0.5 1 L9 5 L0.5 9 Z" fill="context-stroke"/>
-        </marker>
-      </defs>
-      <g class="accent-blue">
-        <path class="fa-trace" pathLength="1" d="M712.5 200 C560 200 440 88 280 88"/>
-        <path class="fa-flow" marker-end="url(#faHead)" d="M712.5 200 C560 200 440 88 280 88"/>
-        <circle class="fa-port" cx="712.5" cy="200" r="4.5"/>
-      </g>
-      <g class="accent-purple">
-        <path class="fa-trace" pathLength="1" d="M712.5 320 C560 320 440 432 280 432"/>
-        <path class="fa-flow" marker-end="url(#faHead)" d="M712.5 320 C560 320 440 432 280 432"/>
-        <circle class="fa-port" cx="712.5" cy="320" r="4.5"/>
-      </g>
-      <g class="accent-coral">
-        <path class="fa-trace" pathLength="1" d="M987.5 200 C1140 200 1260 88 1420 88"/>
-        <path class="fa-flow" marker-end="url(#faHead)" d="M987.5 200 C1140 200 1260 88 1420 88"/>
-        <circle class="fa-port" cx="987.5" cy="200" r="4.5"/>
-      </g>
-      <!-- the evidence loop: the only line that runs back into the hub -->
-      <g class="accent-mint">
-        <path class="fa-trace" pathLength="1" d="M1420 432 C1260 432 1140 320 987.5 320"/>
-        <path class="fa-flow" marker-end="url(#faHead)" d="M1420 432 C1260 432 1140 320 987.5 320"/>
-        <circle class="fa-port" cx="1420" cy="432" r="4.5"/>
-      </g>
-    </svg>
-
-    <div class="fa-node fa-tl accent-blue fragment fade-in-up" data-fragment-index="1">
-      <div class="acc-bar"></div><h3>Skills</h3><p>The procedure it picks.</p>
-    </div>
-    <div class="fa-node fa-bl accent-purple fragment fade-in-up" data-fragment-index="1">
-      <div class="acc-bar"></div><h3>Agents</h3><p>The specialist it deploys.</p>
-    </div>
-    <div class="fa-node fa-tr accent-coral fragment fade-in-up" data-fragment-index="1">
-      <div class="acc-bar"></div><h3>Hooks</h3><p>The rule it cannot skip.</p>
-    </div>
-    <div class="fa-node fa-br accent-mint fragment fade-in-up" data-fragment-index="1">
-      <div class="acc-bar"></div><h3>Agent Reports</h3><p>The proof it demands back.</p>
-    </div>
-
-    <div class="fa-hub fragment" data-fragment-index="2">
-      <svg class="fa-dia" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L22 12 L12 22 L2 12 Z"/></svg>
-      <h3>Orchestrator</h3>
-      <span class="fa-jobs">Triage &middot; Deploy &middot; Verify</span>
-      <!-- the seat is a role, not a being: an agent can hold it, so can a person -->
-      <span class="fa-who fragment fade-in-up" data-fragment-index="3">
-        <span class="fa-chip" role="img" aria-label="An AI agent">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="3" r="1.2" fill="currentColor" stroke="none"/>
-            <path d="M12 4.2v2"/>
-            <rect x="4" y="6.2" width="16" height="12" rx="4"/>
-            <path d="M2 10.5v3.4M22 10.5v3.4"/>
-            <circle cx="9.2" cy="11.8" r="1.2" fill="currentColor" stroke="none"/>
-            <circle cx="14.8" cy="11.8" r="1.2" fill="currentColor" stroke="none"/>
-            <path d="M9.5 15.2h5"/>
-          </svg>
-        </span>
-        <span class="fa-or">or</span>
-        <span class="fa-chip" role="img" aria-label="A person">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="7.5" r="3.6"/>
-            <path d="M5 20a7 7 0 0 1 14 0"/>
-          </svg>
-        </span>
-      </span>
-    </div>
-  </div>
-
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 03</span></div>
 </section>
 
