@@ -30,8 +30,14 @@
 
 /* ---------- Reveal base ---------- */
 html,body{ background:var(--bg-0); }
-.reveal{ font-family:var(--font-body); color:var(--g1); font-weight:300; }  /* Inter Tight Light default */
-.reveal b, .reveal strong{ font-weight:500; }                             /* emphasis = Inter Tight Medium */
+.reveal{ font-family:var(--font-body); color:var(--g1); font-weight:300; --emph:500; }  /* Inter Tight Light default */
+/* Emphasis is one step up, and the step differs per family:
+     Inter Tight  Light 300   -> Medium 500   (--emph:500, the default here)
+     TT Drugs     Regular 400 -> Bold 700     (--emph:700, set on display-type elements)
+   TT Drugs ships no 500 face, so asking for 500 in display type silently matches Regular
+   and the emphasis disappears. Any new display-font element must set --emph:700 next to
+   its font-family, or its <b> will render identical to its surrounding text. */
+.reveal b, .reveal strong{ font-weight:var(--emph); }
 .reveal .slides{ text-align:left; }
 .reveal .slides section{ height:100%; }
 .reveal ::selection{ background:var(--blue-bright); color:#fff; }
@@ -80,11 +86,10 @@ html,body{ background:var(--bg-0); }
 .eyebrow, .metric-label, .idx, .foot-r, .foot .pg, .jchip, .tbd, .st-sub{ font-weight:500; }
 
 /* Headlines */
-.reveal h1,.reveal h2,.reveal h3{ font-family:var(--font-display); color:var(--white);
-  text-transform:none; margin:0; line-height:1.02; letter-spacing:-.015em; }
-.reveal h1{ font-size:92px; font-weight:300; }
-.reveal h1 b,.reveal h2 b{ font-weight:500; }   /* emphasis = Medium, not heavy Bold — keeps headlines minimal */
-.reveal h2{ font-size:66px; font-weight:300; }
+.reveal h1,.reveal h2,.reveal h3,.reveal h4{ font-family:var(--font-display); color:var(--white);
+  text-transform:none; margin:0; line-height:1.02; letter-spacing:-.015em; --emph:700; }
+.reveal h1{ font-size:92px; font-weight:400; }
+.reveal h2{ font-size:66px; font-weight:400; }
 .reveal h3{ font-size:38px; font-weight:400; }
 .grad-text{ background:linear-gradient(180deg,#fff 0%, #9fb0cf 130%);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
@@ -259,7 +264,7 @@ html,body{ background:var(--bg-0); }
   border:1px solid var(--glass-border);
   box-shadow:inset 0 0 46px -18px var(--ac), 0 22px 54px rgba(0,0,0,.5),
     0 0 0 1px var(--glass-border); }
-.merged .mn{ font-family:var(--font-display); font-weight:700; font-size:31px; color:#fff;
+.merged .mn{ font-family:var(--font-display); font-weight:400; font-size:31px; color:#fff;
   line-height:1.05; }
 .merged .mfrom{ font-family:var(--font-body); font-size:16px; color:var(--g2); margin-top:8px; }
 .merged .mfrom b{ color:var(--g1); font-weight:500; }
@@ -269,7 +274,7 @@ html,body{ background:var(--bg-0); }
   box-shadow:0 0 12px var(--ac); }
 
 /* outcome strip */
-.merge-out{ display:flex; justify-content:center; align-items:center; gap:0; margin-top:46px; }
+.merge-out{ display:flex; justify-content:center; align-items:center; gap:0; margin-top:86px; }
 .mstat{ display:flex; flex-direction:column; align-items:center; text-align:center; padding:0 46px; }
 .mstat .mv{ font-family:var(--font-display); font-weight:700; font-size:40px; color:#fff;
   line-height:1; letter-spacing:-.02em; }
