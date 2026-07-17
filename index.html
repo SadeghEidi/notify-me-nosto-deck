@@ -6,8 +6,8 @@
 <title>Notify Me! · Don't automate tasks. Rebuild the system.</title>
 <link rel="stylesheet" href="vendor/reset.css">
 <link rel="stylesheet" href="vendor/reveal.css">
-<link rel="stylesheet" href="css/theme.css?v=6">
-<link rel="stylesheet" href="css/walkthrough.css?v=9">
+<link rel="stylesheet" href="css/theme.css?v=7">
+<link rel="stylesheet" href="css/walkthrough.css?v=16">
 <link rel="stylesheet" href="css/bento.css?v=hue7">
 </head>
 <body>
@@ -41,7 +41,7 @@
                 fade in, and the Organization speed gauge fades into the reserved slot at
                 40% in yellow. Individual high vs organization 40% is the whole contrast.
      One fragment class .v2 (index 1) reveals every view-2 element together; the dim + the
-     org gauge are driven off `section:has(.v2.visible)`, the same has()-gate the OusMous
+     org gauge are driven off `section:has(.v2.visible)`, the same has()-gate the Tous
      slide uses. QA can't see fragment .visible, so QA rules below force the view-2 frame.
      Gauge model unchanged: needle box rotates about its centre (=hub 200,200); rotate =
      240*t - 120; value arc pathLength=240 so dashoffset = 240*(1-t). Individual t=.9
@@ -57,10 +57,6 @@
 .spd2-item .dot{ width:8px; height:8px; border-radius:50%; margin-top:10px; flex:none; }
 .spd2-item .dot.b{ background:var(--blue-elec); box-shadow:0 0 10px rgba(76,135,255,.9); }
 .spd2-item .dot.y{ background:#F5C24B; box-shadow:0 0 10px rgba(245,194,75,.9); }
-/* one sentence per line; non-breaking hyphen in the markup stops "AI-native" splitting mid-word */
-.spd2-quote{ margin:32px 0 0; font-family:var(--font-display); font-weight:400; font-size:34px;
-  color:#fff; line-height:1.16; letter-spacing:-.012em; --emph:700; }
-.spd2-quote b{ color:#F5C24B; text-shadow:0 0 24px rgba(245,194,75,.4); }
 .reveal section .spd2-v2 .fragment.fade-in-up{
   transition:opacity .55s ease, transform .55s cubic-bezier(.2,.7,.2,1); }
 
@@ -147,7 +143,6 @@
       <div class="spd2-v2">
         <p class="spd2-item fragment fade-in-up v2" data-fragment-index="1"><span class="dot y"></span>Because being AI-powered isn&rsquo;t enough anymore.</p>
         <p class="spd2-item fragment fade-in-up v2" data-fragment-index="1"><span class="dot y"></span>Your organization has to become AI-native.</p>
-        <p class="spd2-quote fragment fade-in-up v2" data-fragment-index="1">Your people might be AI&#8209;powered, but<br>Your organization has to be <b>AI&#8209;native.</b></p>
       </div>
     </div>
 
@@ -245,12 +240,26 @@
   <div class="foot"><img src="img/lockup-white.png" alt=""></div>
 </section>
 
-<!-- ================= 06 · DIVIDER PART 1 ================= -->
-<section class="slide">
-  <span class="ghost" style="font-size:420px; right:-30px; bottom:-60px">01</span>
-  <p class="idx" style="font-size:20px; letter-spacing:.3em">PART 01</p>
-  <h1 style="font-size:100px; margin-top:20px">How we got here</h1>
-  <div class="acc-bar" style="margin-top:36px"></div>
+<!-- ================= 06 · DIVIDER PART 1 (.pd template) ================= -->
+<section class="slide pd">
+  <span class="pd-rule"></span>
+  <span class="pd-num">01</span>
+  <div class="pd-wrap">
+    <div class="pd-hl">
+      <span class="pd-bloom"></span>
+      <div class="pd-rail">
+        <span class="lab">Part</span>
+        <span class="pd-step cur">01</span>
+        <span class="pd-link"></span>
+        <span class="pd-step">02</span>
+        <span class="pd-link"></span>
+        <span class="pd-step">03</span>
+        <span class="pd-link"></span>
+        <span class="pd-step">04</span>
+      </div>
+      <h1 class="grad-text">How we got here</h1>
+    </div>
+  </div>
   <div class="foot-r">Part 01&nbsp;·&nbsp;How we got here</div>
 </section>
 
@@ -552,7 +561,7 @@
 
 <!-- ================= 09 · THE REORG ================= -->
 <style>
-/* Rebuilt in the OusMous register: huge negative space, thin glowing connectors, one hero.
+/* Rebuilt in the Tous register: huge negative space, thin glowing connectors, one hero.
    The whole point is told in COLOUR. Back in Stock is blue and Pre-order is mint (their own
    logos already are), so: the shared team is neutral grey because nobody owns a product yet,
    and each person picks up their product's colour at the moment they are regrouped.
@@ -640,7 +649,7 @@
 .rg-role i{ width:6px; height:6px; border-radius:50%; flex:none; background:var(--ac);
   box-shadow:0 0 10px var(--ac); }
 
-/* ---- motion: the regroup plays itself out on entry, OusMous pacing ---- */
+/* ---- motion: the regroup plays itself out on entry, Tous pacing ---- */
 @keyframes rgDraw{ to{ stroke-dashoffset:0 } }
 .reveal section.present .rg-team{ animation:riseIn .7s .1s both ease-out; }
 .reveal section.present .rg-wire .w1{ animation:rgDraw .7s .55s both ease-out; }
@@ -884,11 +893,10 @@
 .dg-fork svg.rd{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; z-index:0; }
 .rd-ok{ filter:drop-shadow(0 0 5px rgba(76,135,255,.55)); animation:dgOkPulse 3.4s ease-in-out infinite; }
 .rd-bad{ filter:drop-shadow(0 0 5px rgba(238,68,46,.5)); }
-/* the flash = the bright correct destination: a blue spark that pulses, never a solid disc */
-.rd-flash{ transform-box:fill-box; transform-origin:center;
-  filter:drop-shadow(0 0 8px rgba(76,135,255,.9)); animation:dgFlash 2.4s ease-in-out infinite; }
+/* the flag = the correct destination the agent should have reached; a calm blue pennant, planted */
+.rd-flag{ filter:drop-shadow(0 0 6px rgba(76,135,255,.75)); animation:dgFlag 3.6s ease-in-out infinite; }
 @keyframes dgOkPulse{ 0%,100%{ opacity:.55 } 50%{ opacity:1 } }
-@keyframes dgFlash{ 0%,100%{ opacity:.5; transform:scale(.78) } 45%{ opacity:1; transform:scale(1.12) } }
+@keyframes dgFlag{ 0%,100%{ opacity:.82 } 50%{ opacity:1 } }
 /* the agent: drives in at a constant pace and sweeps straight onto the curved wrong branch,
    never pausing at the fork. Linear timing = no deceleration at the split. */
 .dg-drv{ position:absolute; left:0; top:0; width:42px; height:42px; margin:-21px; z-index:3;
@@ -917,6 +925,19 @@
 @keyframes dgX{ 0%,50%{ opacity:0; transform:scale(.5) } 58%{ opacity:1; transform:scale(1.08) }
   66%{ transform:scale(1) } 86%{ opacity:1 } 95%{ opacity:0 } }
 
+/* ---------- presentation build: only the LAST-revealed card keeps animating; a passed card freezes
+   at its initial resting state (comet / +1 / agent / ✕ gone, bars settled, roads steady). The deck.js
+   driver marks every card that is NOT the current frontier fragment `.dg-rest`. Because a card carries
+   .dg-rest until it is revealed, removing it on reveal applies the animation fresh from frame 0, so
+   each card also restarts cleanly as it becomes live (e.g. the bars are actually seen growing). QA is
+   untouched: the driver skips it and the .qa rules below still freeze every card on a good frame. ---------- */
+.dg-rest .dg-pkt{ animation:none; opacity:0; }
+.dg-rest .dg-plus{ animation:none; opacity:0; }
+.dg-rest .dg-run{ animation:none; width:var(--w); }
+.dg-rest .dg-drv{ animation:none; opacity:0; }
+.dg-rest .dg-x{ animation:none; opacity:0; }
+.dg-rest .rd-ok, .dg-rest .rd-flag{ animation:none; opacity:1; }
+
 /* ---------- QA/PDF: force the fragment cards visible and freeze every loop on a good frame ---------- */
 .qa .dg-card{ opacity:1 !important; transform:none !important; }
 .qa .dg-pkt{ animation-delay:-2.6s; animation-play-state:paused; }    /* comet on the coral return leg */
@@ -924,7 +945,7 @@
 .qa .dg-run{ animation-delay:0s; }                                    /* forwards keyframe holds --w */
 .qa .dg-drv{ animation-play-state:paused; animation-delay:-2.4s; }    /* agent out on the wrong branch */
 .qa .dg-x{ animation:none; opacity:1; transform:scale(1); }          /* coral ✕ shown at the wrong end */
-.qa .rd-ok, .qa .rd-flash{ animation:none; opacity:1; }
+.qa .rd-ok, .qa .rd-flag{ animation:none; opacity:1; }
 
 /* --- reframe slide (10B) · three titles, one per click, each dimming the one before --- */
 .rf-stack{ display:flex; flex-direction:column; gap:46px; width:100%; max-width:1620px;
@@ -1008,16 +1029,20 @@
       <div class="dg-stage">
         <div class="dg-fork">
           <svg class="rd" viewBox="0 0 264 184" fill="none" aria-hidden="true">
-            <!-- incoming road (neutral), correct straight path (blue) to a flash, and a wrong branch
+            <!-- incoming road (neutral), correct straight path (blue) to a flag, and a wrong branch
                  (coral) that curves away. SVG attrs can't read var(), colours literal. -->
+            <defs><linearGradient id="rdFlagGrad" x1="234" y1="71" x2="257" y2="76" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#5E96FF"/><stop offset="1" stop-color="#3768DC"/>
+            </linearGradient></defs>
             <path d="M20 96 H116" stroke="rgba(255,255,255,.42)" stroke-width="3.5" stroke-linecap="round"/>
-            <path class="rd-ok" d="M116 96 H231" stroke="#4C87FF" stroke-width="3.5" stroke-linecap="round"/>
+            <path class="rd-ok" d="M116 96 H233" stroke="#4C87FF" stroke-width="3.5" stroke-linecap="round"/>
             <path class="rd-bad" d="M116 96 C 152 96 190 74 226 48" stroke="#EE442E" stroke-width="3.5" stroke-linecap="round"/>
             <circle cx="116" cy="96" r="4.5" fill="#0e1424" stroke="rgba(255,255,255,.6)" stroke-width="2"/>
-            <!-- the flash: the bright correct destination the agent should have reached -->
-            <g class="rd-flash">
-              <path d="M238 82 L241.4 92.6 252 96 241.4 99.4 238 110 234.6 99.4 224 96 234.6 92.6 Z" fill="#dbe8ff"/>
-              <path d="M238 86 V106 M228 96 H248" stroke="#8fb6ff" stroke-width="1.4" stroke-linecap="round" opacity=".55"/>
+            <!-- the flag: the correct destination the agent should have reached -->
+            <g class="rd-flag">
+              <path d="M234 96 V70" stroke="#4C87FF" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="234" cy="69" r="2.2" fill="#4C87FF"/>
+              <path d="M234 71 C 242 70 249 73 256 76 C 249 78 243 79 234 81 Z" fill="url(#rdFlagGrad)"/>
             </g>
           </svg>
           <span class="dg-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg></span>
@@ -1178,12 +1203,74 @@
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 01</span></div>
 </section>
 
-<!-- ================= 11 · DIVIDER PART 2 ================= -->
-<section class="slide">
-  <span class="ghost" style="font-size:420px; right:-30px; bottom:-60px">02</span>
-  <p class="idx" style="font-size:20px; letter-spacing:.3em">PART 02</p>
-  <h1 style="font-size:100px; margin-top:20px">So we built a factory</h1>
-  <p class="lead" style="font-family:var(--font-mono); color:var(--blue-elec); margin-top:24px; letter-spacing:.1em">internal name&nbsp;·&nbsp;"OusMous"</p>
+<!-- ================= 11 · DIVIDER PART 2 (.pd template) ================= -->
+<style>
+  /* ===== Section-divider template (.pd): shared by every Part divider =====
+     A "chapter plate": a PART stepper rail (only the current part lit) sits directly above the
+     headline, whose center rests on the screen's vertical mid-line; a soft blue bloom is the one
+     glowing hero; a large outlined numeral + a vertical hairline give the plate its architecture.
+     CSS applies document-wide, so it also styles the .pd dividers that appear before this block. */
+  .pd{ position:relative; }
+  /* vertical hairline: separates the content column from the chapter numeral */
+  .pd-rule{ position:absolute; top:14%; bottom:14%; left:60%; width:1px; z-index:1;
+    background:linear-gradient(180deg, transparent, var(--hair) 16%, var(--hair) 84%, transparent); }
+  /* large chapter numeral: fully on-canvas, an outlined "lit glass" figure, not a fuzzy watermark */
+  .pd-num{ position:absolute; right:132px; top:50%; transform:translateY(-50%);
+    font-family:var(--font-display); font-weight:400; font-size:340px; line-height:.8;
+    letter-spacing:-.04em; color:rgba(76,135,255,.045);
+    -webkit-text-stroke:2px rgba(76,135,255,.26); z-index:1; pointer-events:none;
+    filter:drop-shadow(0 0 46px rgba(45,107,255,.10)); }
+  /* content column */
+  .pd-wrap{ position:relative; z-index:2; max-width:1000px; }
+  /* headline is the vertical anchor: its center sits on the screen mid-line, rail rides above it */
+  .pd-hl{ position:relative; }
+  .pd-bloom{ position:absolute; left:-40px; top:52%; width:640px; height:420px; z-index:0;
+    transform:translateY(-50%); pointer-events:none;
+    background:radial-gradient(closest-side, rgba(45,107,255,.32), transparent 72%); filter:blur(28px); }
+  .pd-hl h1{ position:relative; z-index:1; font-size:98px; line-height:1.0; letter-spacing:-.022em;
+    --emph:700; }
+  /* PART stepper rail: anchored just above the title; only the current part is lit, rest stay gray */
+  .pd-rail{ position:absolute; left:0; bottom:100%; margin-bottom:30px;
+    display:flex; align-items:center; white-space:nowrap; }
+  .pd-rail .lab{ font-family:var(--font-mono); font-size:13px; letter-spacing:.36em;
+    text-transform:uppercase; color:var(--g2); font-weight:500; margin-right:30px; }
+  .pd-step{ font-family:var(--font-mono); font-size:16px; letter-spacing:.14em; font-weight:500;
+    color:var(--g3); display:inline-flex; align-items:center; justify-content:center;
+    min-width:24px; height:34px; }
+  .pd-step.cur{ color:#fff; padding:0 17px; border-radius:10px;
+    background:linear-gradient(180deg, rgba(76,135,255,.17), rgba(76,135,255,.06));
+    box-shadow:inset 0 0 0 1px rgba(76,135,255,.42), 0 8px 26px -8px rgba(45,107,255,.7);
+    text-shadow:0 0 14px rgba(76,135,255,.55); }
+  .pd-link{ width:50px; height:2px; border-radius:2px; background:var(--hair); flex:none; margin:0 7px; }
+  /* motion — the deck's language (rail + bloom ride with the headline block) */
+  .reveal section.present .pd-hl{ animation:riseIn .85s .16s both cubic-bezier(.2,.7,.2,1); }
+  .reveal section.present .pd-hl h1{ animation:none; }   /* ride hl; don't compound the global h1 riseIn */
+  .reveal section.present .pd-num{ animation:pdNumIn 1.2s .1s both cubic-bezier(.2,.7,.2,1); }
+  .reveal section.present .pd-bloom{ animation:pdBloom 5.5s ease-in-out infinite alternate; }
+  @keyframes pdNumIn{ from{ opacity:0; transform:translateY(-50%) translateX(34px); }
+    to{ opacity:1; transform:translateY(-50%) translateX(0); } }
+  @keyframes pdBloom{ from{ opacity:.72; } to{ opacity:1; } }
+  .qa .pd-bloom{ opacity:1 !important; animation:none !important; }
+</style>
+<section class="slide pd">
+  <span class="pd-rule"></span>
+  <span class="pd-num">02</span>
+  <div class="pd-wrap">
+    <div class="pd-hl">
+      <span class="pd-bloom"></span>
+      <div class="pd-rail">
+        <span class="lab">Part</span>
+        <span class="pd-step">01</span>
+        <span class="pd-link"></span>
+        <span class="pd-step cur">02</span>
+        <span class="pd-link"></span>
+        <span class="pd-step">03</span>
+        <span class="pd-link"></span>
+        <span class="pd-step">04</span>
+      </div>
+      <h1 class="grad-text">So we built a <b>factory</b></h1>
+    </div>
+  </div>
   <div class="foot-r">Part 02&nbsp;·&nbsp;The factory</div>
 </section>
 
@@ -1198,7 +1285,7 @@
      Zones read top-to-bottom: beams above the rail = human guidance, arcs below the
      rail = agent-to-agent exchange. Keeping them on opposite sides is what stops the
      beams and arcs from colliding at the same x.
-     Style deliberately rhymes with the OusMous loop on the next slide (glass chips,
+     Style deliberately rhymes with the Tous loop on the next slide (glass chips,
      blue work / mint human+delivery, a travelling light) so the two read as one system.
 -->
 <style>
@@ -1444,7 +1531,7 @@
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 02</span></div>
 </section>
 
-<!-- ================= 11C · INTRODUCING OUSMOUS (the reveal) =================
+<!-- ================= 11C · INTRODUCING TOUS (the reveal) =================
      Left = the name. Right = the closed loop (ONE hero object).
      Build: entry = empty track · b1 = agents take the stations · b2 = the loop
      draws closed + a comet circulates · b3 = the knowledge core ignites and every
@@ -1452,7 +1539,7 @@
      production line's mint "Delivery & Learning" node). Scoped to .om-* .
 -->
 <style>
-/* --- Introducing OusMous (11C, scoped) --- */
+/* --- Introducing Tous (11C, scoped) --- */
 .om-grid{ display:grid; grid-template-columns:minmax(0,1fr) 720px; gap:56px; align-items:center;
   width:100%; max-width:1640px; }
 
@@ -1804,6 +1891,46 @@
   transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
 .om-slide:has(.om-c1.visible) .om-ct{ opacity:1; transform:none; transition-delay:.6s; }
 
+/* ---- top-right tally: how much reusable machinery the factory has built, revealed with the
+   Review agents (c4). Skills echo the blue skills box, Agents the purple agent card, so the two
+   numerals read as those same two components, counted, and the block sits right above the Review
+   agents card to balance the right column. Mirrors om-ct on the left. Deliberately NOT
+   .eyebrow/.metric class names: those carry a global `section.present` filled entrance that would
+   pin the block on from the slide's first beat (the trap logged all over this deck). --emph:700 =
+   the .metric weight step (TT Drugs bold on the numeral). */
+.om-tally{ position:absolute; top:150px; right:110px; z-index:5; text-align:right; }
+.om-tally .eye{ margin:0 0 22px; font-family:var(--font-mono); font-size:13px; font-weight:500;
+  letter-spacing:.26em; text-transform:uppercase; color:var(--g2);
+  opacity:0; transform:translateY(10px);
+  transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1); }
+.om-tally .row{ display:flex; align-items:flex-start; justify-content:flex-end; gap:44px; }
+.om-tally .cell{ display:flex; flex-direction:column; align-items:flex-end;
+  opacity:0; transform:translateY(14px);
+  transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
+.om-tally .num{ font-family:var(--font-display); font-weight:700; --emph:700; font-size:76px;
+  line-height:.9; letter-spacing:-.02em; color:var(--ac);
+  text-shadow:0 0 4px rgba(var(--acr),.3), 0 0 34px rgba(var(--acr),.46); }
+/* the "+" reads as "and counting": smaller and raised, same accent + glow as the numeral */
+.om-tally .num .plus{ font-size:.4em; font-weight:700; vertical-align:.66em; margin-left:.02em;
+  letter-spacing:0; }
+/* an accent rail draws itself under each numeral as it lands, an instrument-panel tick */
+.om-tally .rule{ width:100%; height:2px; margin:15px 0 14px; border-radius:2px;
+  background:linear-gradient(90deg, transparent, var(--ac));
+  transform:scaleX(0); transform-origin:right;
+  transition:transform .75s cubic-bezier(.2,.7,.2,1); }
+.om-tally .lab{ font-family:var(--font-body); font-size:15px; font-weight:400; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--g1); }
+.om-tally .skills{ --ac:var(--blue-elec); --acr:76,135,255; }
+.om-tally .agents{ --ac:var(--purple);    --acr:155,38,240; }
+/* land it with the Review agents (c4), staggered skills -> agents */
+.om-slide:has(.om-c4.visible) .om-tally .eye{ opacity:1; transform:none; transition-delay:.15s; }
+.om-slide:has(.om-c4.visible) .om-tally .cell{ opacity:1; transform:none; }
+.om-slide:has(.om-c4.visible) .om-tally .skills{ transition-delay:.3s; }
+.om-slide:has(.om-c4.visible) .om-tally .agents{ transition-delay:.46s; }
+.om-slide:has(.om-c4.visible) .om-tally .rule{ transform:scaleX(1); }
+.om-slide:has(.om-c4.visible) .om-tally .skills .rule{ transition-delay:.62s; }
+.om-slide:has(.om-c4.visible) .om-tally .agents .rule{ transition-delay:.78s; }
+
 /* ---- the component flow ---- */
 .om-comp{ position:absolute; left:960px; top:230px; width:810px; height:620px; z-index:5;
   display:flex; flex-direction:column; justify-content:center; }
@@ -1898,12 +2025,14 @@
 .qa .om-plan.p2 li:nth-child(n+2) .ck .pd{ opacity:1 !important; }
 .qa .om-plan.p2 li:nth-child(n+2) .ck .sp,
 .qa .om-plan.p2 li:nth-child(n+2) .ck .dn{ opacity:0 !important; }
+/* the tally freezes to its revealed (c4) end state so headless/PDF is deterministic */
+.qa .om-tally .eye, .qa .om-tally .cell, .qa .om-tally .rule{ transition:none !important; }
 </style>
 <section class="slide om-slide">
   <div class="om-grid">
     <div class="om-txt">
       <p class="eyebrow">Introducing</p>
-      <span class="om-namewrap"><span class="nb"></span><h1 class="om-name grad-text">OusMous</h1></span>
+      <span class="om-namewrap"><span class="nb"></span><h1 class="om-name grad-text">Tous</h1></span>
       <p class="lead om-mission">A software factory. Its job is simple: <b>build software products.</b></p>
 
       <div class="om-swap">
@@ -2034,6 +2163,16 @@
 
   <p class="om-ct">The <b>4</b> core components</p>
 
+  <!-- Top-right tally, revealed with the Review agents (c4): the reusable machinery the factory
+       has built so far. Skills = blue (the skills box), Agents = purple (the agent card). -->
+  <div class="om-tally" aria-hidden="true">
+    <p class="eye">In total</p>
+    <div class="row">
+      <div class="cell skills"><span class="num">120<span class="plus">+</span></span><span class="rule"></span><span class="lab">Skills</span></div>
+      <div class="cell agents"><span class="num">28<span class="plus">+</span></span><span class="rule"></span><span class="lab">Agents</span></div>
+    </div>
+  </div>
+
   <!-- Ties the right-hand flow to the Design node on the ring: once the stage has slid left,
        Design sits at (700,430) in slide coords and the panel's edge at x=960. viewBox is 1:1
        with the 1920x1080 slide. Starts past the node's own "Design" label, not at the dot.
@@ -2091,24 +2230,40 @@
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 02</span></div>
 </section>
 
-<!-- ================= 13.5 · LIVE WALKTHROUGH (VS Code builds Hueshi) ================= -->
+<!-- ================= 13.5 · LIVE WALKTHROUGH (Tous builds the Nosto integration) =================
+     Redesign (2026-07-17): the left stepper is gone. The Tous workflow lives in a top-right
+     corner tracker (stage titles; the active stage expands to its stations and checks them off).
+     The VS Code main area cross-fades through beats: hero -> Claude(full) -> workflow plan ->
+     browser -> rendered market-research.md -> rendered prd.md. Fully JS-driven (js/walkthrough.js),
+     manual-advance per beat. Only the Research stage is built; the rest are titles for now. -->
 <section class="slide wt-slide" id="walkthrough" data-autoslide="0">
-  <p class="eyebrow">Live walkthrough&nbsp;·&nbsp;the factory builds Hueshi, our in-app AI copilot</p>
+  <p class="eyebrow">Live walkthrough</p>
   <h3 class="wt-title">From customer signal to <b>shipped feature.</b></h3>
 
-  <div class="wt-stage">
-    <!-- LEFT: the 7 stations as a stepper -->
-    <ol class="wt-steps" id="wtSteps"></ol>
+  <div class="wt-stage" id="wtStage">
 
-    <!-- RIGHT: the OusMous workspace in VS Code -->
+    <!-- ===== HERO layer (beat 0): the full-sized build intro ===== -->
+    <div class="wt-hero" id="wtHero">
+      <span class="wt-hero-glow"></span>
+      <div class="wt-hero-inner">
+        <p class="wt-hero-kicker">New feature</p>
+        <h2 class="wt-hero-title">
+          <span class="l1">Let's build the</span>
+          <span class="l2"><img class="wt-hero-logo" src="img/Nosto - Primary Logo.svg" alt="Nosto"></span>
+          <span class="l3">integration with Tous</span>
+        </h2>
+      </div>
+    </div>
+
+    <!-- ===== VS CODE layer (beat 1+) ===== -->
     <div class="vscode" id="vscode">
       <div class="vs-titlebar">
         <div class="vs-lights"><i class="r"></i><i class="y"></i><i class="g"></i></div>
         <div class="vs-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3l5 2v14l-5 2-9-6 3-3-3-3 9-6z"/><path d="M7 9l9 7V5L7 9z" fill="currentColor" stroke="none" opacity=".35"/></svg>
-          Hooshang&nbsp;&nbsp;—&nbsp;&nbsp;NOTIFY-ME&nbsp;[SSH: ousmousa]
+          nosto-integration&nbsp;&nbsp;·&nbsp;&nbsp;Tous&nbsp;[SSH: tous]
         </div>
-        <span class="vs-update" id="vsClock">agent · OusMous</span>
+        <span class="vs-update" id="vsClock">agent · Tous</span>
       </div>
 
       <div class="vs-body">
@@ -2116,11 +2271,11 @@
         <div class="vs-activity">
           <span class="ic on" title="Explorer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h6l2 3h8v12H4z"/></svg></span>
           <span class="ic" title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>
-          <span class="ic" title="Source Control"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="9" r="2.4"/><path d="M6 8.4V15.6M18 11.4c0 3-3 3.6-6 3.6"/></svg><span class="badge" id="vsGitBadge">9</span></span>
+          <span class="ic" title="Source Control"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="9" r="2.4"/><path d="M6 8.4V15.6M18 11.4c0 3-3 3.6-6 3.6"/></svg><span class="badge" id="vsGitBadge">3</span></span>
           <span class="ic" title="Run"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 4l14 8-14 8z"/></svg></span>
           <span class="ic" title="Extensions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="14" y="14" width="6" height="6" rx="3"/></svg></span>
           <span class="sp"></span>
-          <span class="ic" title="Claude"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" style="color:#D97757"><line x1="20" y1="3.5" x2="20" y2="14"/><line x1="28.5" y1="5.8" x2="23" y2="14.8"/><line x1="34.2" y1="11.5" x2="25.2" y2="17"/><line x1="36.5" y1="20" x2="26" y2="20"/><line x1="34.2" y1="28.5" x2="25.2" y2="23"/><line x1="28.5" y1="34.2" x2="23" y2="25.2"/><line x1="20" y1="36.5" x2="20" y2="26"/><line x1="11.5" y1="34.2" x2="17" y2="25.2"/><line x1="5.8" y1="28.5" x2="14.8" y2="23"/><line x1="3.5" y1="20" x2="14" y2="20"/><line x1="5.8" y1="11.5" x2="14.8" y2="17"/><line x1="11.5" y1="5.8" x2="17" y2="14.8"/></svg></span>
+          <span class="ic act" title="Claude"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" style="color:#D97757"><line x1="20" y1="3.5" x2="20" y2="14"/><line x1="28.5" y1="5.8" x2="23" y2="14.8"/><line x1="34.2" y1="11.5" x2="25.2" y2="17"/><line x1="36.5" y1="20" x2="26" y2="20"/><line x1="34.2" y1="28.5" x2="25.2" y2="23"/><line x1="28.5" y1="34.2" x2="23" y2="25.2"/><line x1="20" y1="36.5" x2="20" y2="26"/><line x1="11.5" y1="34.2" x2="17" y2="25.2"/><line x1="5.8" y1="28.5" x2="14.8" y2="23"/><line x1="3.5" y1="20" x2="14" y2="20"/><line x1="5.8" y1="11.5" x2="14.8" y2="17"/><line x1="11.5" y1="5.8" x2="17" y2="14.8"/></svg></span>
         </div>
 
         <!-- explorer -->
@@ -2129,41 +2284,42 @@
           <div class="vs-tree" id="vsTree"></div>
         </div>
 
-        <!-- editor + agent -->
-        <div class="vs-work">
-          <div class="vs-main" id="vsMain">
-            <div class="vs-tabs" id="vsTabs"></div>
-            <div class="vs-crumbs" id="vsCrumbs"></div>
-            <div class="vs-view" id="vsView">
-              <div class="vs-editor">
-                <div class="vs-gutter" id="vsGutter"></div>
-                <div class="vs-code" id="vsCode"></div>
+        <!-- main: swapping content stage + Claude dock -->
+        <div class="vs-main" id="vsMain" data-claude="full">
+
+          <!-- the stage that swaps views (workflow plan / browser / rendered doc) -->
+          <div class="vs-stage" id="vsStage">
+            <!-- Tous workflow tracker, pinned top-right -->
+            <aside class="owf" id="wf" data-mode="hidden">
+              <div class="owf-head">
+                <span class="owf-mark"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 3 C53 27 73 47 97 50 C73 53 53 73 50 97 C47 73 27 53 3 50 C27 47 47 27 50 3 Z"/></svg></span>
+                <span class="owf-title">Tous workflow</span>
+                <span class="owf-count" id="wfCount"></span>
               </div>
-              <div class="vs-preview" id="vsPreview"></div>
-            </div>
-            <div class="vs-term">
-              <div class="vs-term-head"><span class="on">Terminal</span><span>Problems</span><span>Output</span><span>Ports</span></div>
-              <div class="vs-term-body" id="vsTermBody"></div>
-            </div>
+              <ol class="owf-list" id="wfList"></ol>
+            </aside>
+
+            <!-- content views render here -->
+            <div class="vs-view" id="vsView"></div>
           </div>
 
-          <!-- Claude Code panel -->
-          <div class="vs-agent" id="vsAgent" data-state="run">
+          <!-- Claude Code panel (full width at first, docks right when work starts) -->
+          <div class="vs-agent" id="vsAgent" data-state="idle">
             <div class="vs-agent-head">
-              <svg class="cl-logo" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="20" y1="3.5" x2="20" y2="14"/><line x1="28.5" y1="5.8" x2="23" y2="14.8"/><line x1="34.2" y1="11.5" x2="25.2" y2="17"/><line x1="36.5" y1="20" x2="26" y2="20"/><line x1="34.2" y1="28.5" x2="25.2" y2="23"/><line x1="28.5" y1="34.2" x2="23" y2="25.2"/><line x1="20" y1="36.5" x2="20" y2="26"/><line x1="11.5" y1="34.2" x2="17" y2="25.2"/><line x1="5.8" y1="28.5" x2="14.8" y2="23"/><line x1="3.5" y1="20" x2="14" y2="20"/><line x1="5.8" y1="11.5" x2="14.8" y2="17"/><line x1="11.5" y1="5.8" x2="17" y2="14.8"/></svg>
+              <svg class="cl-logo" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="20" y1="3.5" x2="20" y2="14"/><line x1="28.5" y1="5.8" x2="23" y2="14.8"/><line x1="34.2" y1="11.5" x2="25.2" y2="17"/><line x1="36.5" y1="20" x2="26" y2="20"/><line x1="34.2" y1="28.5" x2="25.2" y2="23"/><line x1="20" y1="36.5" x2="20" y2="26"/><line x1="11.5" y1="34.2" x2="17" y2="25.2"/><line x1="5.8" y1="28.5" x2="14.8" y2="23"/><line x1="3.5" y1="20" x2="14" y2="20"/><line x1="5.8" y1="11.5" x2="14.8" y2="17"/><line x1="11.5" y1="5.8" x2="17" y2="14.8"/></svg>
               <span class="cl-title">Claude Code</span>
-              <span class="st"><span class="d"></span><span id="vsAgentState">running</span></span>
+              <span class="st"><span class="d"></span><span id="vsAgentState">idle</span></span>
             </div>
             <div class="vs-agent-body" id="vsAgentBody"></div>
             <div class="cl-composer">
               <div class="cl-input">
                 <span class="cl-gt">&gt;</span>
-                <span class="cl-ph">Ask Claude to build the next feature…</span>
-                <span class="cl-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V6M6 12l6-6 6 6"/></svg></span>
+                <span class="cl-ph" id="clPh">Ask Tous to build a feature…</span>
+                <span class="cl-send" id="clSend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V6M6 12l6-6 6 6"/></svg></span>
               </div>
               <div class="cl-meta">
-                <span class="cl-model"><svg class="cl-logo-sm" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><line x1="20" y1="3.5" x2="20" y2="14"/><line x1="28.5" y1="5.8" x2="23" y2="14.8"/><line x1="34.2" y1="11.5" x2="25.2" y2="17"/><line x1="36.5" y1="20" x2="26" y2="20"/><line x1="34.2" y1="28.5" x2="25.2" y2="23"/><line x1="28.5" y1="34.2" x2="23" y2="25.2"/><line x1="20" y1="36.5" x2="20" y2="26"/><line x1="11.5" y1="34.2" x2="17" y2="25.2"/><line x1="5.8" y1="28.5" x2="14.8" y2="23"/><line x1="3.5" y1="20" x2="14" y2="20"/><line x1="5.8" y1="11.5" x2="14.8" y2="17"/><line x1="11.5" y1="5.8" x2="17" y2="14.8"/></svg>claude-opus-4.6</span>
-                <span class="cl-ctx">context 38%</span>
+                <span class="cl-model"><svg class="cl-logo-sm" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><line x1="20" y1="3.5" x2="20" y2="14"/><line x1="28.5" y1="5.8" x2="23" y2="14.8"/><line x1="34.2" y1="11.5" x2="25.2" y2="17"/><line x1="36.5" y1="20" x2="26" y2="20"/><line x1="34.2" y1="28.5" x2="23" y2="25.2"/><line x1="20" y1="36.5" x2="20" y2="26"/><line x1="11.5" y1="34.2" x2="17" y2="25.2"/><line x1="5.8" y1="28.5" x2="14.8" y2="23"/><line x1="3.5" y1="20" x2="14" y2="20"/><line x1="5.8" y1="11.5" x2="14.8" y2="17"/><line x1="11.5" y1="5.8" x2="17" y2="14.8"/></svg>claude-opus-4.6</span>
+                <span class="cl-ctx" id="clCtx">context 12%</span>
               </div>
             </div>
           </div>
@@ -2174,7 +2330,7 @@
         <span class="seg acc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="9" r="2.4"/><path d="M6 8.4V15.6M18 11.4c0 3-3 3.6-6 3.6"/></svg>main*</span>
         <span class="seg" id="vsStatusTask">orchestrator idle</span>
         <span class="sp"></span>
-        <span class="seg">SSH: ousmousa</span>
+        <span class="seg">SSH: tous</span>
         <span class="seg">UTF-8</span>
         <span class="seg" id="vsStatusLang">Markdown</span>
       </div>
@@ -2183,34 +2339,6 @@
   </div>
 
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 02 · Live build</span></div>
-</section>
-
-<!-- ================= 14 · DIVIDER PART 3 ================= -->
-<section class="slide">
-  <span class="ghost" style="font-size:420px; right:-30px; bottom:-60px">03</span>
-  <p class="idx" style="font-size:20px; letter-spacing:.3em">PART 03</p>
-  <h1 style="font-size:100px; margin-top:20px">Four core components</h1>
-  <p class="lead" style="margin-top:24px">All coordinated by one Orchestrator.</p>
-  <div class="foot-r">Part 03&nbsp;·&nbsp;The components</div>
-</section>
-
-<!-- ================= 15 · ORCHESTRATOR ================= -->
-<section class="slide">
-  <div class="row between center-x" style="width:100%">
-    <div class="col" style="max-width:640px">
-      <p class="eyebrow">The orchestrator</p>
-      <h2 style="font-size:58px">A decision engine.<br>Not a person, <b>not one agent.</b></h2>
-      <p class="lead">It answers the questions that hold the whole line together.</p>
-    </div>
-    <div class="col gap-s" style="max-width:600px; gap:12px">
-      <div class="pill"><span class="dot"></span>What kind of request entered the system?</div>
-      <div class="pill"><span class="dot"></span>Which workflow should run?</div>
-      <div class="pill"><span class="dot"></span>Which skills &amp; agents, in what order?</div>
-      <div class="pill"><span class="dot"></span>Is the output actually good enough to move on?</div>
-      <div class="pill"><span class="dot"></span>If a review or QA check fails, who fixes it?</div>
-    </div>
-  </div>
-  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 03</span></div>
 </section>
 
 <!-- ================= 16B · THE BOTTOM LINE ================= -->
@@ -2440,20 +2568,8 @@
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 04</span></div>
 </section>
 
-<!-- ================= 19 · THREE BELIEFS ================= -->
-<section class="slide">
-  <p class="eyebrow">What changed</p>
-  <h3 style="font-size:40px; margin-bottom:34px">The roles didn't disappear. They <b>shifted.</b></h3>
-  <div class="beliefs">
-    <div class="belief fragment fade-in-up"><span class="idx">01</span><span class="old">People did the work.</span><span class="jarr">→</span><span class="new">AI agents do the work.</span></div>
-    <div class="belief fragment fade-in-up"><span class="idx">02</span><span class="old">Managers coordinated it.</span><span class="jarr">→</span><span class="new">The system coordinates it.</span></div>
-    <div class="belief fragment fade-in-up"><span class="idx">03</span><span class="old">Systems recorded what happened.</span><span class="jarr">→</span><span class="new">People lead.</span></div>
-  </div>
-  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Conclusion</span></div>
-</section>
-
 <!-- ================= 19B · AI IN EVERY DEPARTMENT =================
-     The OusMous system (slide 14) stamped three times, one per department. The ring
+     The Tous system (slide 14) stamped three times, one per department. The ring
      geometry and the spark core are IDENTICAL in all three - that sameness is the
      argument ("the same model"); only the accent and the orbiting scopes change.
      Geometry: r=140 in a 300x300 stage; the ring dots sit evenly spaced from the top,
@@ -2608,7 +2724,7 @@
   <h3>We didn&rsquo;t stop at product. We ran the <b>same model</b> everywhere.</h3>
 
   <div class="dept-row">
-    <!-- OusMous · 2 scopes, so 2 agents evenly spaced = top and bottom -->
+    <!-- Tous · 2 scopes, so 2 agents evenly spaced = top and bottom -->
     <div class="dept a-blue d1">
       <div class="dept-stage">
         <span class="dept-bloom"></span>
@@ -2625,7 +2741,7 @@
             <span class="cg"></span>
             <svg class="cs" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 1.5 C52.4 26 74 47.6 98.5 50 C74 52.4 52.4 74 50 98.5 C47.6 74 26 52.4 1.5 50 C26 47.6 47.6 26 50 1.5 Z"/></svg>
           </span>
-          <span class="cn">OusMous</span>
+          <span class="cn">Tous</span>
         </div>
       </div>
       <div class="dept-scopes">
@@ -2634,7 +2750,7 @@
       </div>
     </div>
 
-    <!-- Jamshid -->
+    <!-- Jaam -->
     <div class="dept a-purple d2">
       <div class="dept-stage">
         <span class="dept-bloom"></span>
@@ -2652,7 +2768,7 @@
             <span class="cg"></span>
             <svg class="cs" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 1.5 C52.4 26 74 47.6 98.5 50 C74 52.4 52.4 74 50 98.5 C47.6 74 26 52.4 1.5 50 C26 47.6 47.6 26 50 1.5 Z"/></svg>
           </span>
-          <span class="cn">Jamshid</span>
+          <span class="cn">Jaam</span>
         </div>
       </div>
       <div class="dept-scopes">
@@ -2697,57 +2813,6 @@
   </p>
 
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Conclusion</span></div>
-</section>
-
-<!-- ================= 19C · AI-POWERED vs AI-NATIVE ================= -->
-<style>
-.nat-h{ font-size:40px; max-width:1080px; margin-bottom:0; }
-.nat-grid{ display:flex; align-items:stretch; margin-top:74px; }
-.nat-col{ position:relative; display:flex; flex-direction:column; gap:24px; min-width:540px; }
-.nat-people{ padding-right:80px; }
-.nat-org{ padding-left:80px; }
-.nat-rule{ width:1px; align-self:stretch; margin:6px 0;
-  background:linear-gradient(180deg, transparent, var(--hair) 18%, var(--hair) 82%, transparent); }
-.nat-label{ font-family:var(--font-mono); font-size:14px; font-weight:500; letter-spacing:.18em;
-  text-transform:uppercase; margin-bottom:10px; }
-.nat-people .nat-label{ color:var(--blue-elec); }
-.nat-org .nat-label{ color:var(--g3); }
-.nat-val{ font-family:var(--font-display); font-weight:400; font-size:64px; line-height:1; }
-.nat-people .nat-val{ background:linear-gradient(96deg, var(--blue-elec) 6%, var(--mint) 96%);
-  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
-.nat-org .nat-val{ color:var(--g3); }
-/* the left column is "alive" — a soft glow the right side never gets */
-.nat-people::before{ content:''; position:absolute; left:-40px; top:52%; transform:translateY(-50%);
-  width:460px; height:320px; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle, rgba(76,135,255,.26), transparent 68%); filter:blur(48px); }
-</style>
-<section class="slide nat">
-  <p class="eyebrow">AI-powered &ne; AI-native</p>
-  <h3 class="nat-h">Being AI-powered <b>isn&rsquo;t enough</b> anymore.</h3>
-
-  <div class="nat-grid">
-    <div class="nat-col nat-people">
-      <span class="nat-label">Your people</span>
-      <span class="nat-val fragment fade-in-up" data-fragment-index="1">are AI-native.</span>
-      <span class="nat-val fragment fade-in-up" data-fragment-index="3">are faster.</span>
-    </div>
-    <div class="nat-rule"></div>
-    <div class="nat-col nat-org">
-      <span class="nat-label">Your organization</span>
-      <span class="nat-val fragment fade-in-up" data-fragment-index="2">isn&rsquo;t.</span>
-      <span class="nat-val fragment fade-in-up" data-fragment-index="4">isn&rsquo;t.</span>
-    </div>
-  </div>
-
-  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Conclusion</span></div>
-</section>
-
-<!-- ================= 20 · THE LINE ================= -->
-<section class="slide center">
-  <span class="ghost" style="font-size:340px; top:150px">REBUILD</span>
-  <h1 style="text-align:center; font-size:100px; position:relative; z-index:2">Don't automate tasks.<br><b>Rebuild</b> the system.</h1>
-  <p class="lead" style="text-align:center; margin:36px auto 0; position:relative; z-index:2; font-size:26px">The winners of the agentic era won't build the best agents.<br>They'll build the best <b>learning workflows.</b></p>
-  <div class="foot-r">Notify Me!</div>
 </section>
 
 <!-- ================= 07 · WHAT NOTIFY ME! IS ================= -->
@@ -3104,9 +3169,9 @@
 </div>
 
 <script src="vendor/reveal.js"></script>
-<script src="js/deck.js?v=5"></script>
-<script src="js/walkthrough.js?v=11"></script>
-<!-- Introducing OusMous (11C): auto-advance the six-stage tour so the presenter never clicks
+<script src="js/deck.js?v=6"></script>
+<script src="js/walkthrough.js?v=20"></script>
+<!-- Introducing Tous (11C): auto-advance the six-stage tour so the presenter never clicks
      through each stage (Sam's call, 2026-07-17). It steps Research -> ... -> Delivery & Learning
      and then STOPS on the last stage; the four core components stay MANUAL (Sam's call, 2026-07-17).
      Boundaries are read from the cues at boot(), NOT hardcoded: reveal.js renumbers
@@ -3128,8 +3193,10 @@
                                   // ~3.2s station-tick reveal (Engineering & Delivery each have
                                   // 4 stations at var(--i)*.5s+.85s) or a stage gets cut off.
   // Runtime fragment indices, resolved from the cues at boot() (see the block comment above on
-  // why hardcoding fails). FIRST = first auto-advanced stage (Research); STOP_AT = the last stage
-  // (Delivery & Learning), which ends the tour. Auto-advance runs while FIRST <= top < STOP_AT.
+  // why hardcoding fails). FIRST = the stage list (auto-advance begins once it is shown); STOP_AT =
+  // the last stage (Delivery & Learning), which ends the tour. Auto-advance runs while
+  // FIRST <= top < STOP_AT, so it steps stage list -> Research -> ... -> Delivery & Learning, then
+  // stops there (the four core components stay manual).
   var FIRST = null, STOP_AT = null;
   function frag(sel) { var el = slide.querySelector(sel); return el ? parseInt(el.getAttribute('data-fragment-index'), 10) : NaN; }
   var timer = null;
@@ -3147,12 +3214,15 @@
     clearTimer();
     if (!onSlide()) return;
     var idx = topFragmentIndex();
-    if (idx >= FIRST && idx <= LAST_AUTO) {
+    if (idx >= FIRST && idx < STOP_AT) {
       timer = setTimeout(function () { if (onSlide()) Reveal.next(); }, STAGE_HOLD);
     }
   }
   function boot() {
     if (!window.Reveal) return;
+    // Resolve the boundaries now that reveal has renumbered data-fragment-index to its contiguous
+    // 0-based run. om-b4 is the stage list; om-s6 is the last stage (Delivery & Learning).
+    FIRST = frag('.om-b4'); STOP_AT = frag('.om-s6');
     Reveal.on('fragmentshown', schedule);   // each stage that appears queues the next
     Reveal.on('fragmenthidden', clearTimer); // stepping back pauses the tour
     Reveal.on('slidechanged', clearTimer);   // leaving the slide cancels it

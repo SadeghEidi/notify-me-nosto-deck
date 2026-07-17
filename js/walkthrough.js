@@ -1,16 +1,25 @@
 /* ============================================================
-   Live walkthrough — the OusMous factory builds Hueshi.
-   A VS Code window animates through the 7 production-line stations
-   (Research → Design → Engineering → Production → Testing →
-   Delivery → Learning), building "Ask Hushi", our in-app AI copilot.
+   Live walkthrough — Tous builds the Nosto integration.
+   A VS Code window steps through the Research stage of the Tous
+   workflow, building a native Nosto integration for Notify Me.
 
-   On slide enter, the first station plays its build animation ONCE and then
-   stops, holding the finished state. Stations never auto-advance and never
-   re-play — each one waits, finished, until the presenter passes it manually:
-     click / → / space / PageDown / s  → advance to the next station
-     r                                 → replay from the first station
-   After the last station, click / → leaves the slide normally (reveal.js).
-   ?qa or reduced-motion               → renders the finished state, no timers.
+   Redesign (2026-07-17): no left stepper. The workflow lives in a
+   top-right corner tracker (.owf) — stage titles, the active stage
+   expands to its stations and checks them off. The VS Code main area
+   cross-fades through beats:
+     0 hero      "Let's build the Nosto integration" + Nosto logo
+     1 vscode    Explorer + full-width Claude panel
+     2 prompt    the user types + sends -> the Tous workflow starts
+     3 plan      the view splits; the workflow tracker shows stages+stations
+     4 browser   Market Research: browse nosto.com + read our docs
+     5 research  market-research.md, rendered (Market Research checked)
+     6 prd       prd.md, rendered (PRD checked) -> Research stage done
+
+   Manual-advance per beat: each beat plays once on entry then waits.
+     click / -> / space / PageDown / s  advance to the next beat
+     r                                  replay from the top
+   After the last built beat, -> leaves the slide (reveal.js).
+   ?qa / reduced-motion renders the finished state; ?wbeat=N freezes a beat.
    ============================================================ */
 (function () {
   'use strict';
@@ -21,13 +30,18 @@
   var STATIC = document.documentElement.classList.contains('qa') ||
     (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
-  /* ---------- tiny helpers ---------- */
+  /* ---------- helpers ---------- */
   function $(id) { return document.getElementById(id); }
-  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function boldify(s) { return s.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>'); }
   function node(html) { var t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstChild; }
 
-  var STAR = '<svg class="star" viewBox="0 0 24 24"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>';
   var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  var CHECK_FILL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  var GLOBE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"/></svg>';
+  var CL_LOGO = '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="20" y1="3.5" x2="20" y2="14"/><line x1="28.5" y1="5.8" x2="23" y2="14.8"/><line x1="34.2" y1="11.5" x2="25.2" y2="17"/><line x1="36.5" y1="20" x2="26" y2="20"/><line x1="34.2" y1="28.5" x2="25.2" y2="23"/><line x1="28.5" y1="34.2" x2="23" y2="25.2"/><line x1="20" y1="36.5" x2="20" y2="26"/><line x1="11.5" y1="34.2" x2="17" y2="25.2"/><line x1="5.8" y1="28.5" x2="14.8" y2="23"/><line x1="3.5" y1="20" x2="14" y2="20"/><line x1="5.8" y1="11.5" x2="14.8" y2="17"/><line x1="11.5" y1="5.8" x2="17" y2="14.8"/></svg>';
+  var ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  var LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 
   function fileIcon(t) {
     var col = { md: '#6AA6FF', py: '#5FD0A6', ts: '#6AA6FF', tsx: '#6AA6FF', json: '#E6C07B' }[t] || '#8B94A8';
@@ -38,42 +52,346 @@
   }
 
   /* ============================================================
-     Syntax highlighter — line-based, sticky-regex scanner.
-     Snippets deliberately avoid multi-line strings/comments.
+     Explorer tree — the nosto-integration workspace
      ============================================================ */
-  var RULES = {
-    md: [
-      [/#{1,6}\s.*/y, 'head'], [/^\s*>\s.*/y, 'dim'], [/^\s*-\s\[[ x]\]/y, 'str'],
-      [/^\s*[-*]\s/y, 'punc'], [/`[^`]+`/y, 'str'], [/\*\*[^*]+\*\*/y, 'bold'],
-      [/\[[^\]]+\]\([^)]+\)/y, 'tag'], [/->|=>/y, 'punc'], [/[A-Za-z0-9_$#.'"/()]+/y, 'txt']
-    ],
-    py: [
-      [/#.*/y, 'com'], [/(?:f|r|rf|fr)?"(?:[^"\\]|\\.)*"|(?:f|r)?'(?:[^'\\]|\\.)*'/y, 'str'],
-      [/@\w+/y, 'fn'], [/(?<=\bdef\s)\w+/y, 'fn'], [/(?<=\bclass\s)\w+/y, 'fn'],
-      [/\b(?:def|class|return|import|from|as|if|elif|else|for|while|in|not|and|or|None|True|False|with|try|except|raise|await|async|lambda|yield|pass|is|global|await)\b/y, 'key'],
-      [/\b\d[\d_.]*\b/y, 'num'], [/\w+(?=\()/y, 'fn'], [/[{}()\[\].,:;=+\-*/%<>!&|]+/y, 'punc'], [/\w+/y, 'txt']
-    ],
-    ts: [
-      [/\/\/.*/y, 'com'], [/`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/y, 'str'],
-      [/<\/?[A-Za-z][\w.]*/y, 'tag'],
-      [/\b(?:const|let|var|function|return|import|export|from|type|interface|extends|new|await|async|if|else|for|of|in|while|class|public|private|readonly|as|default|switch|case|break|null|undefined|true|false|this|void|yield)\b/y, 'key'],
-      [/\b[\w-]+(?=\s*=\s*[{"'])/y, 'attr'], [/\b\d[\d_.]*\b/y, 'num'],
-      [/\b[A-Z]\w*/y, 'tag'], [/\w+(?=\()/y, 'fn'], [/=>|[{}()\[\].,:;=+\-*/%<>!&|?]+/y, 'punc'], [/[\w$]+/y, 'txt']
+  var TREE = [
+    // Notify Me's repos are all added to the workspace (multi-root). Product repos stay collapsed;
+    // the folders this build touches (nosto-integration, notify-me-docs) are expanded.
+    { id: 'fe', d: 0, t: 'dir', name: 'nm-frontend' },
+    { id: 'be', d: 0, t: 'dir', name: 'nm-backend' },
+    { id: 'ext', d: 0, t: 'dir', name: 'nm-extensions' },
+    { id: 'dplay', d: 0, t: 'dir', name: 'nm-design-playground' },
+    { id: 'dawn', d: 0, t: 'dir', name: 'nm-dawn-playground' },
+    { id: 'ni', d: 0, t: 'diro', name: 'nosto-integration' },
+    { id: 'research', d: 1, t: 'diro', name: 'research' },
+    { id: 'mr', d: 2, t: 'md', name: 'market-research.md', hidden: 1 },
+    { id: 'prd', d: 2, t: 'md', name: 'prd.md', hidden: 1 },
+    { id: 'readme', d: 1, t: 'md', name: 'README.md', tail: 1 },
+    { id: 'docs', d: 0, t: 'diro', name: 'notify-me-docs' },
+    { id: 'signals', d: 1, t: 'md', name: 'demand-signals.md', tail: 1 },
+    { id: 'nostoapi', d: 1, t: 'md', name: 'nosto-api.md', tail: 1 },
+    { id: 'dclaude', d: 0, t: 'dir', name: '.claude', tail: 'skills · agents · hooks' },
+    { id: 'claudemd', d: 0, t: 'md', name: 'CLAUDE.md', tail: 1 }
+  ];
+
+  /* ============================================================
+     Stages + stations — the tracker (from the Tous slide).
+     Only Research is built now; the rest are titles for the plan.
+     ============================================================ */
+  var STAGES = [
+    { key: 'research', name: 'Research', ac: 'blue',
+      stations: [{ key: 'market', name: 'Market Research' }, { key: 'prd', name: 'PRD' }] },
+    { key: 'design', name: 'Design', ac: 'coral',
+      stations: [{ name: 'UI/UX Design' }, { name: 'Design Review' }, { name: 'Design Handoff' }] },
+    { key: 'engineering', name: 'Engineering', ac: 'blue',
+      stations: [{ name: 'Definition of Done' }, { name: 'DoD Review' }, { name: 'Planning' }, { name: 'Plan Review' }] },
+    { key: 'production', name: 'Production', ac: 'blue',
+      stations: [{ name: 'Coding' }, { name: 'Code Review' }] },
+    { key: 'testing', name: 'Testing', ac: 'mint',
+      stations: [{ name: 'Technical QA' }, { name: 'Product QA' }, { name: 'Visual QA' }] },
+    { key: 'delivery', name: 'Delivery & Learning', ac: 'mint',
+      stations: [{ name: 'Release' }, { name: 'Release Announcement' }, { name: 'Documentation' }, { name: 'Learning' }] }
+  ];
+
+  /* ============================================================
+     Claude-Code transcript item builders
+     ============================================================ */
+  function L(b, x) { return { b: b, x: x }; }                         // reasoning line
+  function T(fn, arg, out) { return { tool: 1, fn: fn, arg: arg, out: out }; }  // tool call
+  function H(x) { return { hook: 1, x: x }; }                          // hook note
+  function R(f, note, tone) { return { report: 1, f: f, note: note, tone: tone || '' }; }
+
+  /* ============================================================
+     Rendered-doc content (compiled markdown views)
+     ============================================================ */
+  var DOC_MR = {
+    file: 'market-research.md', ac: 'blue',
+    title: 'Market Research',
+    lead: 'Where Notify Me demand signals meet <b>Nosto personalization.</b>',
+    blocks: [
+      { sec: 'The signal' },
+      { p: 'Merchants run Notify Me for demand capture and Nosto for personalization, but the two never talk. Unmet-demand signals never reach the personalization layer.' },
+      { sec: 'Market' },
+      { ul: [
+        'Nosto is a leading Shopify personalization platform, deployed across thousands of SI-built stores.',
+        '<b>Back-in-stock, wishlist and pre-order</b> intent are the strongest buy signals a store owns.',
+        'Today they sit inside Notify Me, invisible to Nosto segments and campaigns.'
+      ] },
+      { sec: 'Opportunity' },
+      { ul: [
+        'Stream Notify Me demand events into Nosto as <b>segments and events</b>.',
+        'Power restock campaigns, out-of-stock recovery, and demand-ranked recommendations.'
+      ] },
+      { note: { lbl: 'Recommendation', text: 'Build a native, two-way Nosto integration: OAuth connect, a demand-event stream, and synced audience segments.' } }
     ]
   };
-  RULES.tsx = RULES.ts;
+  var DOC_PRD = {
+    file: 'prd.md', ac: 'blue',
+    title: 'Product Requirements',
+    lead: 'Bridge Notify Me demand data into Nosto, <b>natively.</b>',
+    blocks: [
+      { sec: 'Problem' },
+      { p: 'Demand signals live in Notify Me; personalization lives in Nosto. Merchants rebuild the bridge by hand, or go without.' },
+      { sec: 'Users & jobs' },
+      { p: 'Shopify merchants running both platforms. SI partners configuring the connection at setup.' },
+      { sec: 'Capabilities · v1' },
+      { chk: [
+        [1, 'Connect a Nosto account (OAuth)'],
+        [1, 'Stream back-in-stock / wishlist / pre-order events'],
+        [1, 'Sync demand segments as Nosto audiences'],
+        [1, 'Campaign recipes: restock, out-of-stock recovery'],
+        [0, 'Two-way sync of Nosto segments back (phase 2)']
+      ] },
+      { note: { lbl: 'Rollout', text: 'Shopify App Store listing · opt-in connect · gradual rollout behind <code>nosto_sync</code>.' } }
+    ]
+  };
+  var DOC_HANDOFF = {
+    file: 'handoff.md', ac: 'coral',
+    title: 'Design Handoff',
+    lead: 'The Nosto integration UI, ready for <b>engineering.</b>',
+    blocks: [
+      { sec: 'Screen' },
+      { shot: 'v2', cap: 'Settings › Integrations › Connect to Nosto' },
+      { sec: 'Anatomy' },
+      { ul: [
+        'Integrations list gains a <b>Nosto</b> card (pink mark, Beta) with a Connect action.',
+        'Detail page: an API-token field with inline validation, then Connect.',
+        'Two banners: a blue prerequisite note and an amber sync-scope warning.'
+      ] },
+      { sec: 'Tokens & states' },
+      { ul: [
+        'Primary action uses the Notify Me button style, disabled until the token validates.',
+        'States: empty · validating · valid · connecting · connected · error.'
+      ] },
+      { note: { lbl: 'Delivered to', text: 'nm-frontend · Settings module. Polaris components matched to the app shell.' } }
+    ]
+  };
+  var DOC_DOD = {
+    file: 'dod.md', ac: 'blue',
+    title: 'Technical Definition of Done',
+    lead: 'What "done" means for the <b>Nosto sync.</b>',
+    blocks: [
+      { sec: 'Done when' },
+      { chk: [
+        [1, 'OAuth connect + token validation against the Nosto API'],
+        [1, 'Demand events (BIS / wishlist / pre-order) stream to Nosto profiles'],
+        [1, 'Attributes written idempotently, keyed by shopper email'],
+        [1, 'Consent respected; nothing sent for opted-out shoppers'],
+        [1, 'Zero cross-shop leakage; shop_id scoped server-side']
+      ] },
+      { note: { lbl: 'Guardrail', text: 'Grounded-or-skip: a profile write only fires on a real, consented demand event.' } }
+    ]
+  };
+  var DOC_PLAN = {
+    file: 'plan.md', ac: 'blue',
+    title: 'Technical Plan',
+    lead: 'Two planes, <b>one seam.</b>',
+    blocks: [
+      { sec: 'Shape' },
+      { ul: [
+        '<b>nm-backend</b>: a Nosto client + an event mapper (demand event to profile attributes).',
+        '<b>nm-frontend</b>: the Connect settings page + token validation.',
+        'A queue drains demand events to Nosto, retried with backoff.'
+      ] },
+      { sec: 'Contract' },
+      { p: 'profile-write { email, attributes{}, source: "notify-me" }, behind the <code>nosto_sync</code> flag.' },
+      { note: { lbl: 'Review', text: 'Plan reviewed: idempotent writes, per-shop rate limits, dead-letter on repeated failure.' } }
+    ]
+  };
+  var DOC_ANNOUNCE = {
+    file: 'CHANGELOG.md', ac: 'mint',
+    title: 'Nosto integration (Beta)',
+    lead: 'Turn Notify Me demand into <b>Nosto personalization.</b>',
+    blocks: [
+      { sec: 'New' },
+      { ul: [
+        'Connect Nosto from Settings › Integrations with an API token.',
+        'Back-in-stock, wishlist and pre-order intent sync to Nosto profiles.',
+        'Segment and personalize on real demand, keyed by shopper email.'
+      ] },
+      { note: { lbl: 'Rollout', text: 'Available on all plans · opt-in · gradual rollout behind nosto_sync.' } }
+    ]
+  };
+  var DOC_DOCS = {
+    file: 'nosto-integration.md', ac: 'mint',
+    title: 'Nosto Integration · Docs',
+    lead: 'Set up the Nosto integration in <b>three steps.</b>',
+    blocks: [
+      { sec: 'Setup' },
+      { ul: [
+        'In Nosto, request an API token with customer-data access.',
+        'In Notify Me, open Settings › Integrations › Nosto and paste the token.',
+        'Connect. New demand activity starts syncing to Nosto profiles.'
+      ] },
+      { sec: 'Attributes' },
+      { p: 'nm_email, nm_bis_active, nm_wishlist_active, nm_preorder_customer, nm_notified_not_purchased.' },
+      { note: { lbl: 'Note', text: 'Sync starts from connect; historical demand is not backfilled.' } }
+    ]
+  };
+  var DOC_LEARN = {
+    file: 'learnings.md', ac: 'mint',
+    title: 'Learnings',
+    lead: 'What the factory <b>keeps.</b>',
+    blocks: [
+      { sec: 'Kept' },
+      { ul: [
+        'A reusable Shopify-app OAuth-connect + token-validation pattern.',
+        'The demand-event to profile-attribute mapper, ready for the next CDP.',
+        'A settings-integration card + detail page template.'
+      ] },
+      { note: { lbl: 'Compounds', text: 'The next integration (any CDP) reuses this connect flow and mapper. The loop closes.' } }
+    ]
+  };
 
+  function docHTML(doc) {
+    var body = (doc.blocks || []).map(function (b) {
+      if (b.sec) return '<div class="doc-sec"><span class="bar"></span><span class="t">' + esc(b.sec) + '</span></div>';
+      if (b.p) return '<p class="doc-p">' + unesc(b.p) + '</p>';
+      if (b.ul) return '<ul class="doc-ul">' + b.ul.map(function (x) { return '<li>' + unesc(x) + '</li>'; }).join('') + '</ul>';
+      if (b.chk) return '<ul class="doc-chk">' + b.chk.map(function (x) { return '<li class="' + (x[0] ? 'on' : 'off') + '">' + esc(x[1]) + '</li>'; }).join('') + '</ul>';
+      if (b.note) return '<div class="doc-note"><span class="lbl">' + esc(b.note.lbl) + '</span>' + unesc(b.note.text) + '</div>';
+      if (b.shot) return '<div class="doc-shot"><div class="doc-shot-frame">' + designThumb(b.shot) + '</div>' + (b.cap ? '<span class="doc-cap">' + esc(b.cap) + '</span>' : '') + '</div>';
+      return '';
+    }).join('');
+    return '<div class="doc" style="--ac:var(--' + (doc.ac === 'coral' ? 'coral' : doc.ac === 'mint' ? 'mint' : 'blue-elec') + ')">' +
+      '<div class="doc-scroll"><div class="doc-page">' +
+      '<span class="doc-file">' + fileIcon('md') + esc(doc.file) + '&nbsp;·&nbsp;<span class="pill-preview">preview</span></span>' +
+      '<div class="doc-h1">' + unesc(doc.title) + '</div>' +
+      '<p class="doc-lead">' + unesc(doc.lead) + '</p>' +
+      body + '</div></div></div>';
+  }
+  // allow a small, trusted set of inline tags (<b>, <code>) inside doc copy
+  function unesc(s) {
+    return esc(s).replace(/&lt;b&gt;/g, '<b>').replace(/&lt;\/b&gt;/g, '</b>')
+      .replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>');
+  }
+
+  /* ============================================================
+     Browser view (nosto.com + our docs)
+     ============================================================ */
+  function browserHTML() {
+    return '<div class="bz">' +
+      '<div class="bz-tabs">' +
+        '<div class="bz-tab on"><span class="fav" style="color:#FF66BF">' + GLOBE + '</span><span class="nm">Nosto · Commerce Experience Platform</span></div>' +
+        '<div class="bz-tab"><span class="fav" style="color:#4C87FF">' + GLOBE + '</span><span class="nm">Notify Me · Integration docs</span></div>' +
+      '</div>' +
+      '<div class="bz-nav"><span class="btns">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>' +
+      '</span><span class="bz-url"><span class="lock">' + LOCK + '</span>nosto.com/platform/personalization</span></div>' +
+      '<div class="bz-page"><div class="nz">' +
+        '<div class="nz-top"><img class="logo" src="img/Nosto - Primary Logo.svg" alt="Nosto">' +
+          '<span class="nav"><span>Platform</span><span>Solutions</span><span>Pricing</span></span>' +
+          '<span class="cta">Book a demo</span></div>' +
+        '<div class="nz-hero">' +
+          '<div class="nz-kick">Commerce Experience Platform</div>' +
+          '<div class="nz-h">Personalization for every shopper.</div>' +
+          '<div class="nz-p">Segment, recommend and merchandise in real time across the storefront, from one platform.</div>' +
+          '<div class="nz-chips">' +
+            '<span class="nz-chip">Personalization</span>' +
+            '<span class="nz-chip read">Segmentation</span>' +
+            '<span class="nz-chip">Recommendations</span>' +
+            '<span class="nz-chip read">Audiences &amp; events</span>' +
+            '<span class="nz-chip">Merchandising</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="bz-read"><span class="sp"></span><span>Reading <b>nosto.com/platform</b> · mapping segments &amp; events to Notify Me demand signals</span><span class="tally">12 sources</span></div>' +
+      '</div></div>';
+  }
+
+  /* the workflow-plan placeholder (beat 3) shown left of the tracker */
+  function planHTML() {
+    return '<div class="vw vw-plan">' +
+      '<div class="pl-eyebrow">Tous · run started</div>' +
+      '<div class="pl-h">Stage 01&nbsp;·&nbsp;<b>Research.</b></div>' +
+      '<div class="pl-sub">The orchestrator mapped the request to six stages and eighteen stations. Dispatching the researcher agent to the first station.</div>' +
+      '<div class="pl-disp"><span class="sp"></span>researcher agent · working</div>' +
+    '</div>';
+  }
+
+  /* ============================================================
+     Design preview — a live view of the designed Notify Me UI
+     (the "Connect to Nosto" integration page), medium fidelity.
+     v1 = first pass · v2 = after the design review's fix.
+     ============================================================ */
+  var INFO_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01" stroke-linecap="round"/></svg>';
+  var WARN_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 22 20H2z"/><path d="M12 10v4M12 17v.01"/></svg>';
+  var NOSTO_MARK = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 6h20a8 8 0 0 1 8 8v20L20 20 6 6z" fill="#FF66BF"/></svg>';
+
+  function designPreviewHTML(v) {
+    var reviewed = v === 'v2';
+    var token = reviewed
+      ? '<div class="dp-input ok"><span class="dp-tok">nosto_sk_live_••••••••4f2a</span><span class="dp-valid">' + CHECK + 'Valid token</span></div>'
+      : '<div class="dp-input"><span class="dp-ph">Paste your Nosto API token</span></div>';
+    var connect = reviewed
+      ? '<button class="dp-btn primary">Connect to Nosto</button>'
+      : '<button class="dp-btn muted">Connect to Nosto</button>';
+    return '<div class="dp">' +
+      '<div class="dp-bar"><span class="dp-dots"><i></i><i></i><i></i></span>' +
+        '<span class="dp-url">localhost:3000  ·  Settings › Integrations › Nosto</span>' +
+        '<span class="dp-tag' + (reviewed ? ' rev' : '') + '">' + (reviewed ? 'review · v2' : 'design · v1') + '</span></div>' +
+      '<div class="dp-page">' +
+        '<div class="dp-back"><span class="dp-chev">‹</span><span class="dp-title">Connect to Nosto</span><span class="dp-beta">Beta</span></div>' +
+        '<div class="dp-card">' +
+          '<div class="dp-h">Connect with an API token</div>' +
+          '<div class="dp-desc">Enter a Nosto API token with customer-data access. Nosto issues this token; request it from your Nosto account manager.</div>' +
+          '<div class="dp-label">Nosto API token</div>' + token +
+          '<div class="dp-banner info"><span class="dp-ic">' + INFO_ICON + '</span><span>You need an active Nosto account with the Nosto Shopify app installed to connect.</span></div>' +
+          '<div class="dp-banner warn"><span class="dp-ic">' + WARN_ICON + '</span><span>Connecting starts the sync from now on. Notify Me does not backfill existing subscribers, wishlists, pre-orders, or past orders.</span></div>' +
+          '<div class="dp-foot">' + connect + '</div>' +
+        '</div>' +
+        '<div class="dp-card soft">' +
+          '<div class="dp-h row"><span>Data sent to Nosto</span><span class="dp-link">Learn more</span></div>' +
+          '<div class="dp-grp">Identity</div>' +
+          '<div class="dp-attr"><b>nm_email</b><span>Shopper email, the key Nosto matches on.</span></div>' +
+          '<div class="dp-grp">Intent flags</div>' +
+          '<div class="dp-attr"><b>nm_bis_active</b><span>Actively waitlisting a back-in-stock item.</span></div>' +
+          '<div class="dp-attr"><b>nm_wishlist_active</b><span>Has an active wishlist.</span></div>' +
+          '<div class="dp-attr"><b>nm_preorder_customer</b><span>Placed a pre-order.</span></div>' +
+        '</div>' +
+      '</div>' +
+      (reviewed ? '<div class="dp-fix">' + CHECK + '<span>Review fix: token now validates, and the primary action reads as enabled.</span></div>' : '') +
+    '</div>';
+  }
+  // a small thumbnail of the design, embedded in the handoff doc as a "screenshot"
+  function designThumb(v) { return '<div class="dp-thumb ' + (v || 'v2') + '">' + designPreviewHTML(v || 'v2') + '</div>'; }
+
+  /* ============================================================
+     Code editor view (Production) — a compact syntax highlighter
+     ============================================================ */
+  var CODE_RULES = {
+    ts: [
+      [/\/\/.*/y, 'com'],
+      [/`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/y, 'str'],
+      [/\b(?:const|let|var|function|return|import|export|from|type|interface|class|extends|new|await|async|if|else|for|of|in|while|public|private|readonly|as|default|null|undefined|true|false|this|void)\b/y, 'key'],
+      [/\b\d[\d_.]*\b/y, 'num'],
+      [/[A-Za-z_$][\w$]*(?=\s*\()/y, 'fn'],
+      [/[A-Z][\w$]*/y, 'typ'],
+      [/[{}()\[\].,:;=+\-*/%<>!&|?]+/y, 'punc'],
+      [/[\w$]+/y, 'id']
+    ],
+    py: [
+      [/#.*/y, 'com'],
+      [/(?:f|r)?"(?:[^"\\]|\\.)*"|(?:f|r)?'(?:[^'\\]|\\.)*'/y, 'str'],
+      [/\b(?:def|class|return|import|from|as|if|elif|else|for|while|in|not|and|or|None|True|False|with|try|except|raise|await|async|lambda|yield|pass|is|await)\b/y, 'key'],
+      [/\b\d[\d_.]*\b/y, 'num'],
+      [/[A-Za-z_][\w]*(?=\s*\()/y, 'fn'],
+      [/[{}()\[\].,:;=+\-*/%<>!&|]+/y, 'punc'],
+      [/\w+/y, 'id']
+    ]
+  };
   function hlLine(lang, line) {
-    var rules = RULES[lang]; if (!rules) return esc(line);
+    var rules = CODE_RULES[lang]; if (!rules) return esc(line);
     var out = '', i = 0, guard = 0;
-    while (i < line.length && guard++ < 4000) {
+    while (i < line.length && guard++ < 3000) {
       var matched = false;
       for (var r = 0; r < rules.length; r++) {
-        var re = rules[r][0]; re.lastIndex = i;
-        var m = re.exec(line);
+        var re = rules[r][0]; re.lastIndex = i; var m = re.exec(line);
         if (m && m.index === i && m[0].length) {
           var cls = rules[r][1];
-          out += cls === 'txt' ? esc(m[0]) : '<span class="tk-' + cls + '">' + esc(m[0]) + '</span>';
+          out += cls === 'id' ? esc(m[0]) : '<span class="ck-' + cls + '">' + esc(m[0]) + '</span>';
           i += m[0].length; matched = true; break;
         }
       }
@@ -81,743 +399,456 @@
     }
     return out;
   }
-  function hl(lang, code) { return code.split('\n').map(function (l) { return hlLine(lang, l); }); }
+  function codeHTML(spec) {
+    var lines = spec.code.split('\n');
+    var gutter = lines.map(function (_, k) { return '<span>' + (k + 1) + '</span>'; }).join('');
+    var body = lines.map(function (l) { return '<span class="ck-line">' + (hlLine(spec.lang, l) || ' ') + '</span>'; }).join('');
+    return '<div class="cv">' +
+      '<div class="cv-tabs">' + (spec.tabs || []).map(function (t) { return '<div class="cv-tab' + (t.on ? ' on' : '') + '">' + fileIcon(t.t) + '<span>' + t.n + '</span></div>'; }).join('') + '</div>' +
+      '<div class="cv-crumb">' + esc(spec.crumb || '') + '</div>' +
+      '<div class="cv-body"><div class="cv-gutter">' + gutter + '</div><div class="cv-code">' + body + '</div></div>' +
+      (spec.review ? '<div class="cv-review">' + spec.review.map(function (rv) { return '<div class="cv-rv"><span class="cv-rv-dot"></span>' + esc(rv) + '</div>'; }).join('') + '</div>' : '') +
+    '</div>';
+  }
 
   /* ============================================================
-     File tree
+     Terminal view (Testing / Delivery)
      ============================================================ */
-  var TREE = [
-    { id: 'dclaude', d: 0, t: 'diro', name: '.claude', tail: 'skills · agents · hooks' },
-    { id: 'hoo', d: 0, t: 'diro', name: 'Hooshang' },
-    { id: 'hoo_pipe', d: 1, t: 'diro', name: 'pipeline' },
-    { id: 'bf', d: 2, t: 'py', name: 'build_features.py', hidden: 1, app: 'production' },
-    { id: 'hoo_tools', d: 1, t: 'diro', name: 'tools' },
-    { id: 'doss', d: 2, t: 'py', name: 'dossier.py' },
-    { id: 'hoo_hand', d: 1, t: 'md', name: 'HANDOFF.md' },
-    { id: 'docs', d: 0, t: 'diro', name: 'notify-me-docs' },
-    { id: 'research', d: 1, t: 'md', name: 'research.md', hidden: 1, app: 'research' },
-    { id: 'prd', d: 1, t: 'md', name: 'prd.md', hidden: 1, app: 'engineering' },
-    { id: 'handoff', d: 1, t: 'md', name: 'handoff.md', hidden: 1, app: 'design' },
-    { id: 'play', d: 0, t: 'diro', name: 'nm-design-playground-b' },
-    { id: 'guide', d: 1, t: 'md', name: 'Hueshi-Guidelines.md', hidden: 1, app: 'design' },
-    { id: 'orb', d: 1, t: 'tsx', name: 'HueshiOrb.tsx', hidden: 1, app: 'design' },
-    { id: 'be', d: 0, t: 'diro', name: 'restockify-backend' },
-    { id: 'engine', d: 1, t: 'py', name: 'hushi/engine.py', hidden: 1, app: 'production' },
-    { id: 'fe', d: 0, t: 'diro', name: 'restockify-frontend' },
-    { id: 'chat', d: 1, t: 'tsx', name: 'hushi/ChatPanel.tsx', hidden: 1, app: 'production' },
-    { id: 'chlog', d: 1, t: 'md', name: 'CHANGELOG.md', hidden: 1, app: 'delivery' },
-    { id: 'claudemd', d: 0, t: 'md', name: 'CLAUDE.md' }
+  function terminalHTML(title, lines) {
+    var body = (lines || []).map(function (t) {
+      if (t.c != null) return '<div class="tm-l"><span class="tm-p">➜</span> <span class="tm-cwd">' + esc(t.cwd || '~/nosto-integration') + '</span> <span class="tm-cmd">' + esc(t.c) + '</span></div>';
+      return '<div class="tm-l"><span class="tm-o ' + (t.cls || '') + '">' + esc(t.o) + '</span></div>';
+    }).join('');
+    return '<div class="tm"><div class="tm-head"><span class="tm-on">' + esc(title || 'Terminal') + '</span><span>Problems</span><span>Output</span><span>Ports</span></div><div class="tm-body">' + body + '</div></div>';
+  }
+
+  /* code + terminal content, keyed for setContent */
+  var NOSTO_SYNC =
+    'import { NostoClient } from \'./client\'\n' +
+    'import { mapDemandEvent } from \'./mapper\'\n' +
+    '\n' +
+    '// Stream a Notify Me demand event to the shopper\'s Nosto profile.\n' +
+    'export async function syncDemandEvent(shopId: number, event: DemandEvent) {\n' +
+    '  if (!event.consented) return skip(\'no-consent\')\n' +
+    '  const client = NostoClient.forShop(shopId)   // token scoped per shop\n' +
+    '  const attrs = mapDemandEvent(event)          // BIS / wishlist / pre-order -> nm_*\n' +
+    '  await client.updateProfile(event.email, {\n' +
+    '    ...attrs,\n' +
+    '    source: \'notify-me\',\n' +
+    '  })\n' +
+    '  return ok(event.email)\n' +
+    '}';
+  var CODE_SPECS = {
+    coding: { lang: 'ts', crumb: 'nm-backend  ›  src  ›  nosto  ›  sync.ts',
+      tabs: [{ n: 'sync.ts', t: 'ts', on: 1 }, { n: 'mapper.ts', t: 'ts' }, { n: 'client.ts', t: 'ts' }], code: NOSTO_SYNC },
+    review: { lang: 'ts', crumb: 'nm-backend  ›  src  ›  nosto  ›  sync.ts',
+      tabs: [{ n: 'sync.ts', t: 'ts', on: 1 }], code: NOSTO_SYNC,
+      review: ['reviewer: writes are idempotent, keyed by email', 'reviewer: shop_id scoped server-side, zero cross-shop leakage', 'approved, ready to merge'] }
+  };
+  var TERM_SPECS = {
+    techqa: { title: 'pnpm test', lines: [
+      { c: 'pnpm test nosto', cwd: '~/nm-backend' },
+      { o: 'PASS  nosto/sync.test.ts   (18 tests)', cls: 'ok' },
+      { o: 'PASS  nosto/mapper.test.ts (11 tests)', cls: 'ok' },
+      { o: '29 passed · 0 failed · 2.4s', cls: 'ok' }
+    ] },
+    productqa: { title: 'zsh', lines: [
+      { c: 'tous qa:product --flows connect,sync', cwd: '~/nosto-integration' },
+      { o: '✓ connect: valid token accepted, invalid rejected', cls: 'ok' },
+      { o: '✓ sync: BIS / wishlist / pre-order reach the Nosto profile', cls: 'ok' },
+      { o: '✓ consent: opted-out shoppers are skipped', cls: 'ok' },
+      { o: 'product QA green', cls: 'ok' }
+    ] },
+    release: { title: 'zsh', lines: [
+      { c: 'git commit -m "feat(nosto): demand sync (beta)"', cwd: '~/nosto-integration' },
+      { c: 'gh pr merge 918 --squash', cwd: '~/nosto-integration' },
+      { o: '✓ PR #918 merged to main', cls: 'ok' },
+      { c: 'flags set nosto_sync --rollout 10% --plans all', cwd: '~/nosto-integration' },
+      { o: '✓ live · 10% of shops · ramping', cls: 'ok' }
+    ] }
+  };
+
+  /* ============================================================
+     The beats
+     ============================================================ */
+  var PROMPT = 'Build the Nosto integration for Notify Me. Sync our demand signals into Nosto and run the Tous workflow.';
+  var PLACEHOLDER = 'Ask Tous to build a feature…';
+
+  var BEATS = [
+    /* 0 — hero */
+    { view: 'hero', claude: 'full', agentState: 'idle', wfMode: 'hidden' },
+
+    /* 1 — VS Code: explorer + full-width Claude panel (ready) */
+    { view: 'ide', claude: 'full', agentState: 'idle', wfMode: 'hidden',
+      show: ['dclaude', 'docs', 'signals', 'nostoapi', 'ni', 'research', 'readme', 'claudemd'],
+      ready: 1, status: 'orchestrator idle' },
+
+    /* 2 — user types + sends -> the Tous workflow starts */
+    { view: 'ide', claude: 'full', agentState: 'run', wfMode: 'hidden',
+      type: PROMPT, ask: PROMPT,
+      agent: [ T('Skill', 'tous-orchestrator', 'SOP loaded'), L('plan', 'mapped the request to **6 stages · 18 stations**') ],
+      status: 'orchestrator · planning', ctx: 'context 18%' },
+
+    /* 3 — split + jump straight into Market Research: the tracker appears (progress lives there,
+           no big "Stage 01" screen), and a browser reads nosto.com + our docs */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 0, wfExpand: 1,
+      content: 'browser', check: [['research', 'market', 'run']],
+      agent: [
+        T('Task', 'researcher', 'stage 01 · dispatched'),
+        T('Skill', 'market-research', 'SOP loaded'),
+        T('WebFetch', 'nosto.com/platform', 'segments · events · audiences'),
+        T('WebRead', 'notify-me-docs/demand-signals.md', 'BIS · wishlist · pre-order'),
+        L('map', 'demand signals -> **Nosto audiences**')
+      ],
+      status: 'researcher · market-research', ctx: 'context 34%' },
+
+    /* 4 — market-research.md rendered (Market Research checked) */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 0, wfExpand: 1,
+      content: 'doc:mr', show: ['mr'], activeFile: 'mr',
+      check: [['research', 'market', 'done']],
+      agent: [
+        T('Write', 'research/market-research.md', 'signal · market · opportunity'),
+        R('market-research.md', 'compiled · 12 sources', 'blue')
+      ],
+      status: 'researcher · market-research ✓' },
+
+    /* 5 — prd.md rendered (PRD checked) -> Research stage done */
+    { view: 'ide', claude: 'dock', agentState: 'done', wfMode: 'full', wfActive: 0, wfExpand: 1,
+      content: 'doc:prd', show: ['prd'], activeFile: 'prd',
+      check: [['research', 'prd', 'done']],
+      agent: [
+        T('Skill', 'prd', 'SOP loaded'),
+        T('Read', 'market-research.md', 'grounding the PRD'),
+        T('Write', 'research/prd.md', 'problem · users · capabilities · rollout'),
+        R('prd.md', 'approved · ready for design', 'blue')
+      ],
+      status: 'PRD · ready for design', ctx: 'context 41%' }
   ];
 
-  /* ============================================================
-     The 7 scenes
-     ============================================================ */
-  function L(b, x) { return { b: b, x: x }; }             // agent log line
-  function T(fn, arg, out) { return { tool: 1, fn: fn, arg: arg, out: out }; } // tool call
-  function H(x) { return { hook: 1, x: x }; }             // hook note
-  function R(f, note, tone) { return { report: 1, f: f, note: note, tone: tone || '' }; }
-
-  var STEPS = [
-    /* ===== RESEARCH — new feature -> crawl -> research.md -> PRD -> tweak ===== */
-    {
-      key: 'research', name: 'Research', sub: 'Market · PRD', ac: 'blue',
-      notes: ['Market Research Station', 'PRD Station · Product Requirements'],
-      beats: [
-        { // 1 · kickoff + web crawl
-          status: 'skill: market-research', lang: 'Markdown',
-          tabs: [{ n: 'research.md', t: 'md', on: 1 }], crumb: ['notify-me-docs', 'hushi', 'research.md'],
-          active: 'research', show: ['research'], editorLang: 'md',
-          code:
-            '# Hueshi — Market Research\n' +
-            '\n' +
-            '> New feature: an in-app AI copilot for Notify Me demand data.\n' +
-            '\n' +
-            '## Signal\n' +
-            'Merchants sit on rich demand data (back-in-stock, wishlist,\n' +
-            'pre-order, low-stock) but have no way to **ask** it.\n' +
-            '\n' +
-            '_compiling market context…_',
-          preview: { type: 'crawl', tally: '14 sources · 6 insights · 3 competitors', sources: [
-            { u: 'shopify.dev/docs/sidekick', state: 'done' },
-            { u: 'nosto.com/ai-commerce', state: 'done' },
-            { u: 'baymard.com/ecommerce-search', state: 'done' },
-            { u: 'a16z.com/ask-your-data', state: 'live' },
-            { u: 'gartner.com/saas-copilots', state: 'live' }
-          ] },
-          ask: 'Let us start a new feature: Hueshi, our in-app AI copilot. Research the opportunity.',
-          agent: [
-            T('Skill', 'market-research', 'SOP loaded'),
-            L('crawl', 'gathering market + competitor context from the web'),
-            T('WebSearch', 'ask-your-data commerce chat', 'trend + 3 competitors'),
-            T('WebFetch', 'shopify.dev/sidekick', 'limit: no BIS / wishlist access'),
-            L('moat', '30k shops of history -> **peer benchmarks**')
-          ]
-        },
-        { // 2 · research.md compiled
-          status: 'skill: market-research', lang: 'Markdown',
-          tabs: [{ n: 'research.md', t: 'md', on: 1 }], crumb: ['notify-me-docs', 'hushi', 'research.md'],
-          active: 'research', show: ['research'], editorLang: 'md',
-          code:
-            '# Hueshi — Market Research\n' +
-            '\n' +
-            '## Signal\n' +
-            'Merchants can\'t **ask** their demand data — they read 4 reports.\n' +
-            '\n' +
-            '## Market\n' +
-            '- "Ask-your-data" chat is now a baseline SaaS expectation\n' +
-            '- Shopify Sidekick trained the habit, but can\'t see our data\n' +
-            '- 30k shops of cross-shop history -> **peer benchmarks** (moat)\n' +
-            '\n' +
-            '## Recommendation\n' +
-            'An in-app copilot: grounded, cited answers + a next action.',
-          preview: { type: 'doc', title: 'research.md', blocks: [
-            { h: 'Signal' }, { p: 'Demand data is trapped in dashboards.' },
-            { h: 'Market' }, { ul: ['Ask-your-data is now expected', 'Sidekick can\'t see our data', '30k shops -> peer benchmarks'] },
-            { h: 'Recommendation' }, { p: 'In-app copilot: **grounded + cited**.' }
-          ] },
-          agent: [
-            T('Write', 'research.md', 'market + opportunity, 14 sources'),
-            R('research.md', 'compiled · PRD-ready', 'blue')
-          ]
-        },
-        { // 3 · PRD creation from research.md
-          status: 'skill: prd', lang: 'Markdown',
-          tabs: [{ n: 'research.md', t: 'md' }, { n: 'prd.md', t: 'md', on: 1 }], crumb: ['notify-me-docs', 'hushi', 'prd.md'],
-          active: 'prd', show: ['prd'], editorLang: 'md',
-          code:
-            '# Hueshi — PRD (in-app copilot)\n' +
-            '\n' +
-            '## Problem\n' +
-            'Demand signal is trapped in dashboards. Merchants can\'t ask it.\n' +
-            '\n' +
-            '## Users & Jobs\n' +
-            'Merchant admin (all plans). Ask a plain-language question ->\n' +
-            'grounded, cited answer with a recommended action.\n' +
-            '\n' +
-            '## Capabilities\n' +
-            '- [x] Streamed, cited answers over own data\n' +
-            '- [x] Opt-in peer benchmarks (k-anon cohorts)\n' +
-            '- [x] Grounded-or-abstain — never fabricate a metric\n' +
-            '- [x] Action-taking with approval + Undo',
-          preview: { type: 'doc', title: 'prd.md', blocks: [
-            { h: 'Problem' }, { p: 'Signal trapped in dashboards.' },
-            { h: 'Capabilities' }, { chk: [[1, 'Streamed, cited answers'], [1, 'Opt-in peer benchmarks'], [1, 'Grounded-or-abstain'], [1, 'Action-taking + Undo']] },
-            { h: 'Rollout' }, { p: 'All plans · hushi_chat %' }
-          ] },
-          ask: 'Now turn research.md into a PRD.',
-          agent: [
-            T('Skill', 'prd', 'SOP loaded'),
-            T('Read', 'research.md', 'grounding the PRD'),
-            T('Write', 'prd.md', 'problem · users · capabilities · rollout')
-          ]
-        },
-        { // 4 · PRD ready + tweak
-          status: 'skill: prd', lang: 'Markdown',
-          tabs: [{ n: 'prd.md', t: 'md', on: 1 }], crumb: ['notify-me-docs', 'hushi', 'prd.md'],
-          active: 'prd', show: ['prd'], editorLang: 'md',
-          code:
-            '# Hueshi — PRD (in-app copilot)\n' +
-            '\n' +
-            '## Capabilities  (v1 = read-and-advise)\n' +
-            '- [x] Streamed, cited answers over own data\n' +
-            '- [x] Opt-in peer benchmarks (k-anon cohorts)\n' +
-            '- [x] Grounded-or-abstain — never fabricate a metric\n' +
-            '- [ ] Action-taking with approval + Undo   (phase 2)\n' +
-            '\n' +
-            '## Rollout\n' +
-            'All plans · gradual % rollout behind `hushi_chat`.\n' +
-            '> Reviewed with PM — scoped v1, ready for design.',
-          preview: { type: 'doc', title: 'prd.md', blocks: [
-            { h: 'Capabilities · v1' }, { chk: [[1, 'Cited answers'], [1, 'Peer benchmarks'], [1, 'Grounded-or-abstain'], [0, 'Action-taking (phase 2)']] },
-            { h: 'Rollout' }, { p: 'All plans · hushi_chat %' },
-            { h: 'Status' }, { p: '**Ready for design**' }
-          ] },
-          ask: 'Scope v1 to read-and-advise; move action-taking to phase 2.',
-          agent: [
-            T('Edit', 'prd.md', 'action-taking -> phase 2'),
-            R('prd.md', 'approved · ready for design', 'blue')
-          ]
-        }
-      ]
-    },
-
-    /* ===== DESIGN — design from PRD -> live playground -> tweak -> handoff ===== */
-    {
-      key: 'design', name: 'Design', sub: 'UI/UX · Review · Handoff', ac: 'coral',
-      notes: ['UI/UX Design Station', 'Design Review Station', 'Design Handoff Station'],
-      beats: [
-        { // 1 · design from PRD + live playground
-          status: 'skill: design', lang: 'TypeScript JSX',
-          tabs: [{ n: 'HueshiOrb.tsx', t: 'tsx', on: 1 }], crumb: ['nm-design-playground-b', 'components', 'HueshiOrb.tsx'],
-          active: 'orb', show: ['guide', 'orb'], editorLang: 'tsx',
-          code:
-            '// Hueshi launcher — coral star in a glass orb\n' +
-            'export function HueshiOrb() {\n' +
-            '  return (\n' +
-            '    <button className="hushi-fab">\n' +
-            '      <span className="orb"><Star points={4} /></span>\n' +
-            '      <Badge tone="coral">Beta</Badge>\n' +
-            '    </button>\n' +
-            '  )\n' +
-            '}',
-          preview: { type: 'hushi', variant: 'v1' },
-          ask: 'Design the Hueshi launcher and chat from the PRD. Give me a live playground.',
-          agent: [
-            T('Skill', 'design', 'SOP loaded'),
-            T('Task', 'product-designer', 'subagent dispatched'),
-            T('Read', 'prd.md', 'capabilities + rollout'),
-            L('build', 'Figma Make + Polaris · glassmorphism'),
-            T('Write', 'HueshiOrb.tsx', 'coral orb + 4-pt star')
-          ]
-        },
-        { // 2 · tweak -> merged FAB
-          status: 'skill: design', lang: 'TypeScript JSX',
-          tabs: [{ n: 'HueshiFab.tsx', t: 'tsx', on: 1 }], crumb: ['nm-design-playground-b', 'components', 'HueshiFab.tsx'],
-          active: 'orb', show: ['orb'], editorLang: 'tsx',
-          code:
-            '// Merged launcher: Hueshi + Intercom\n' +
-            'export function HueshiFab() {\n' +
-            '  return (\n' +
-            '    <div className="fab-merged" onHover={split}>\n' +
-            '      <span className="orb hushi"><Star/></span>\n' +
-            '      <span className="orb intercom" />\n' +
-            '      <Badge tone="coral">Beta</Badge>\n' +
-            '    </div>\n' +
-            '  )\n' +
-            '}',
-          preview: { type: 'hushi', variant: 'v2' },
-          ask: 'Merge the launcher with Intercom; split on hover, keep the Beta pill.',
-          agent: [
-            T('Edit', 'HueshiFab.tsx', 'merged FAB + hover split'),
-            L('review', 'coral Hueshi rises over the blue Intercom base')
-          ]
-        },
-        { // 3 · design handoff
-          status: 'skill: design-handoff', lang: 'Markdown',
-          tabs: [{ n: 'handoff.md', t: 'md', on: 1 }], crumb: ['notify-me-docs', 'hushi', 'handoff.md'],
-          active: 'handoff', show: ['handoff'], editorLang: 'md',
-          code:
-            '# Hueshi — Design Handoff\n' +
-            '\n' +
-            '## Launcher\n' +
-            'Merged FAB, bottom-right. Idle: one coral→blue orb.\n' +
-            'Hover: coral Hueshi rises, base -> blue Intercom.\n' +
-            '\n' +
-            '## Tokens\n' +
-            '--hushi: #EE442E -> #F26E5D · radius 100px\n' +
-            'Panel: glass, blur 8px, Polaris card frame\n' +
-            '\n' +
-            '## States\n' +
-            'default · hover · open · streaming · error',
-          preview: { type: 'handoff' },
-          ask: 'Looks good. Create the design handoff for the developers.',
-          agent: [
-            T('Write', 'handoff.md', 'specs · tokens · states'),
-            R('handoff.md', 'delivered -> engineering', 'coral')
-          ]
-        }
-      ]
-    },
-
-    /* ===== ENGINEERING (single beat — full scenario TBD) ===== */
-    {
-      key: 'engineering', name: 'Engineering', sub: 'DoD · Planning · Reviews', ac: 'blue',
-      notes: ['Technical Definition of Done Station', 'Technical DoD Review Station', 'Technical Planning Station', 'Technical Plan Review Station'],
-      beats: [{
-        status: 'skill: engineering-plan', lang: 'Markdown',
-        tabs: [{ n: 'prd.md', t: 'md' }, { n: 'plan.md', t: 'md', on: 1 }], crumb: ['notify-me-docs', 'hushi', 'plan.md'],
-        active: 'prd', show: ['prd'], editorLang: 'md',
-        code:
-          '# Hueshi — Engineering plan\n' +
-          '\n' +
-          'Two planes, one seam:\n' +
-          '  jaam warehouse   ->  pipeline/ (Foundry)  ->  tools/ (Analyst)\n' +
-          '  BigQuery, read-only  build PII-free marts     answer, $0, offline\n' +
-          '\n' +
-          'Contract: **answer-bundle** { text, citations[], benchmark?, action? }\n' +
-          'Invariant: shop_id injected server-side · zero cross-tenant leakage\n' +
-          '\n' +
-          '## Definition of Done\n' +
-          '- [x] grounded-or-abstain — never fabricate a metric\n' +
-          '- [x] every number cites its source report\n' +
-          '- [x] benchmarks gated on opt-in consent',
-        ask: 'Draft the engineering plan and Definition of Done.',
-        agent: [
-          T('Skill', 'engineering-plan', 'SOP loaded'),
-          T('Read', 'prd.md', 'capabilities + rollout'),
-          L('shape', 'two planes — Foundry marts -> Analyst answers'),
-          H('guard: shop_id server-side — zero leakage'),
-          R('plan.md', 'DoD approved', 'blue')
-        ]
-      }]
-    },
-
-    /* ===== PRODUCTION (single beat — full scenario TBD) ===== */
-    {
-      key: 'production', name: 'Production', sub: 'Coding · Review', ac: 'blue',
-      notes: ['Coding Station', 'Code Review Station'],
-      beats: [{
-        status: 'agents: backend · frontend · sdk', lang: 'Python', term: 1,
-        tabs: [{ n: 'engine.py', t: 'py', on: 1 }, { n: 'ChatPanel.tsx', t: 'tsx' }], crumb: ['restockify-backend', 'hushi', 'engine.py'],
-        active: 'engine', show: ['bf', 'engine', 'chat'], editorLang: 'py',
-        code:
-          '# restockify-backend/hushi/engine.py\n' +
-          'from hushi.marts import load_dossier\n' +
-          'from hushi.contract import AnswerBundle\n' +
-          '\n' +
-          'async def answer(shop_id: int, question: str) -> AnswerBundle:\n' +
-          '    dossier = load_dossier(shop_id)          # pre-baked, PII-free\n' +
-          '    facts = ground(question, dossier)        # own-data first\n' +
-          '    if not facts.grounded:\n' +
-          '        return AnswerBundle.abstain(facts.reason)\n' +
-          '    peers = benchmark(shop_id) if consented(shop_id) else None\n' +
-          '    return AnswerBundle(narrate(facts, peers),\n' +
-          '                        citations=facts.sources,\n' +
-          '                        action=recommend(facts))',
-        term: [
-          { p: '~/Hooshang', c: 'python pipeline/build_features.py --explain' },
-          { o: 'scan est. 0.4 GB · under budget ✓ → marts: 30,412 shops', cls: 'ok' },
-          { p: 'restockify-frontend', c: 'pnpm build' },
-          { o: 'chat surface built in 4.2s · recharts + Polaris', cls: 'o' }
-        ],
-        ask: 'Build the answer engine and the chat panel.',
-        agent: [
-          T('Task', 'backend · frontend · sdk', 'subagents dispatched'),
-          T('Edit', 'hushi/engine.py', 'answer-bundle from marts'),
-          T('Edit', 'ChatPanel.tsx', 'streamed · cited answers'),
-          L('code-review', 'reviewer agent -> approved'),
-          R('3 files', 'BE + FE + SDK', 'blue')
-        ]
-      }]
-    },
-
-    /* ===== TESTING (single beat — full scenario TBD) ===== */
-    {
-      key: 'testing', name: 'Testing', sub: 'Technical · Product · Visual', ac: 'mint',
-      notes: ['Technical QA Station', 'Product QA Station', 'Visual QA Station'],
-      beats: [{
-        status: 'skill: qa', lang: 'Python', term: 1,
-        tabs: [{ n: 'engine.py', t: 'py' }, { n: 'test_engine.py', t: 'py', on: 1 }], crumb: ['restockify-backend', 'hushi', 'test_engine.py'],
-        active: 'engine', show: ['engine'], editorLang: 'py',
-        code:
-          'def test_abstains_when_ungrounded():\n' +
-          '    r = answer(shop_id=7724, question="what\'s the weather?")\n' +
-          '    assert r.abstained and r.citations == []\n' +
-          '\n' +
-          'def test_never_leaks_across_tenants():\n' +
-          '    r = answer(shop_id=7724, question="top variant?")\n' +
-          '    assert all(c.shop_id == 7724 for c in r.citations)\n' +
-          '\n' +
-          'def test_benchmark_needs_consent():\n' +
-          '    assert answer(no_consent, "vs peers?").benchmark is None',
-        term: [
-          { p: '~/hushi', c: 'pytest -q' },
-          { o: '............................  48 passed in 3.1s', cls: 'ok' },
-          { p: '~/hushi', c: 'python audit.py --shops 21' },
-          { o: 'grounded 21/21 · citations 21/21 · leaks 0 ✓', cls: 'ok' },
-          { o: 'visual QA: 3 snapshots matched · Polaris frame ✓', cls: 'o' }
-        ],
-        ask: 'Add tests and run the accuracy audit.',
-        agent: [
-          T('Skill', 'qa', 'SOP loaded'),
-          T('Bash', 'pytest -q', '48 passed'),
-          T('Bash', 'audit.py --shops 21', '21/21 grounded · 0 leaks'),
-          H('verify-on-stop: evidence required -> ✓'),
-          R('QA green', 'tech · product · visual', 'mint')
-        ]
-      }]
-    },
-
-    /* ===== DELIVERY & LEARNING (single beat — full scenario TBD) ===== */
-    {
-      key: 'delivery', name: 'Delivery & Learning', sub: 'Release · Docs · Learning', ac: 'mint',
-      notes: ['Release Station', 'Release Announcement Station', 'Documentation Station', 'Learning Station'],
-      beats: [{
-        status: 'skill: release', lang: 'Markdown', term: 1,
-        tabs: [{ n: 'CHANGELOG.md', t: 'md', on: 1 }], crumb: ['restockify-frontend', 'CHANGELOG.md'],
-        active: 'chlog', show: ['chlog'], editorLang: 'md',
-        code:
-          '# Changelog\n' +
-          '\n' +
-          '## Hueshi — your in-app copilot (Beta)\n' +
-          'Ask plain-language questions about your demand data and get\n' +
-          'grounded, cited answers — plus a recommended next step.\n' +
-          '\n' +
-          '- Available on **all plans** · gradual % rollout\n' +
-          '- Opt-in **benchmark program** unlocks peer comparisons\n' +
-          '- Reach it from the launcher or the homepage widget',
-        term: [
-          { p: '~/hushi', c: 'git commit -m "feat(hushi): in-app copilot v1"' },
-          { p: '~/hushi', c: 'gh pr merge 482 --squash' },
-          { o: '✓ PR #482 merged to main', cls: 'ok' },
-          { p: '~/hushi', c: 'flags set hushi_chat --rollout 5% --plans all' },
-          { o: '✓ live · 5% of shops · ramping', cls: 'ok' }
-        ],
-        ask: 'Ship Hueshi and ramp the rollout flag.',
-        agent: [
-          T('Bash', 'gh pr merge 482', 'squashed to main'),
-          T('Bash', 'flags set hushi_chat 5%', 'live · all plans'),
-          L('advice_ledger', 'predicted $ vs actual outcome'),
-          { chart: 1 },
-          R('shipped + learning', 'the factory loops back', 'mint')
-        ]
-      }]
-    }
-  ];
+  /* ------------------------------------------------------------
+     Auto-play. Each beat belongs to a segment; the run auto-advances
+     BETWEEN beats of the same segment, then STOPS at a segment's last
+     beat and waits for a manual advance (-> / space / click) before the
+     next stage begins. BEAT_HOLD is the dwell (ms) before auto-advancing;
+     0 marks a stop. Manual advance always works and resumes the next segment.
+     The whole Research run is ONE segment (Sam's call): hero -> VS Code ->
+     prompt -> browser -> market-research.md -> prd.md auto-advance with no click
+     pause, then it stops at prd.md before the next stage begins. Dwells are kept
+     brisk but readable; the doc beats hold longest so the room can read them.
+     ------------------------------------------------------------ */
+  var BEAT_SEG  = ['research', 'research', 'research', 'research', 'research', 'research'];
+  var BEAT_HOLD = [2800, 2200, 3400, 3800, 4400, 0];
 
   /* ============================================================
-     Renderers for one step
+     Transcript renderers
      ============================================================ */
-  /* one Claude-Code action: ⏺ Tool(arg)  ⎿ result */
   function toolCallHTML(fn, arg, out) {
-    return '<div class="cl-act">' +
-      '<div class="cl-line"><span class="cl-dot"></span><span class="cl-call"><b>' + esc(fn) + '</b>' +
+    return '<div class="cl-act"><div class="cl-line"><span class="cl-dot"></span><span class="cl-call"><b>' + esc(fn) + '</b>' +
       '<span class="cl-paren">(</span><span class="cl-arg">' + esc(arg) + '</span><span class="cl-paren">)</span></span></div>' +
       (out ? '<div class="cl-res"><span class="cl-el"></span><span>' + esc(out) + '</span></div>' : '') + '</div>';
-  }
-  // the orchestrator delegating: rendered as real Claude Code Skill()/Task() calls
-  function routeEntries(rt) {
-    var e = [];
-    if (rt.skill) e.push(toolCallHTML('Skill', rt.skill.replace('skill: ', ''), 'SOP loaded'));
-    if (rt.agent) e.push(toolCallHTML('Task', rt.agent, 'subagent dispatched'));
-    return e;
   }
   function agentItemHTML(it) {
     if (it.tool) return toolCallHTML(it.fn, it.arg, it.out);
     if (it.hook) return '<div class="cl-hook"><span class="cl-el"></span><span class="cl-hk">hook</span><span class="cl-hx">' + esc(it.x) + '</span></div>';
     if (it.report) return '<div class="cl-done ' + (it.tone || '') + '"><span class="cl-ck">' + CHECK + '</span><span><b>' + esc(it.f) + '</b> · ' + esc(it.note) + '</span></div>';
-    if (it.chart) return '<div class="ag-chart">' + [18, 30, 26, 44, 52, 70].map(function (h, i) { return '<span class="bar' + (i > 3 ? ' up' : '') + '" data-h="' + h + '"></span>'; }).join('') + '</div>';
-    // assistant reasoning line — ⏺ text
     return '<div class="cl-act text"><div class="cl-line"><span class="cl-dot"></span><span>' + boldify('<b>' + esc(it.b) + '</b> ' + esc(it.x)) + '</span></div></div>';
   }
-  function boldify(s) { return s.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>'); }
   function askHTML(ask) { return '<div class="cl-user"><span class="cl-gt">&gt;</span><span>' + esc(ask) + '</span></div>'; }
-
-  /* ---- live preview pane, one renderer per beat type ---- */
-  var GLOBE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"/></svg>';
-  function renderPreview(p) {
-    if (!p) return '';
-    if (p.type === 'hushi') return previewHushi(p.variant);
-    if (p.type === 'crawl') return previewCrawl(p.sources, p.tally);
-    if (p.type === 'doc') return previewDoc(p.title, p.blocks);
-    if (p.type === 'handoff') return previewHandoff();
-    return '';
-  }
-  function previewCrawl(sources, tally) {
-    var rows = (sources || []).map(function (s) {
-      var ic = s.state === 'done' ? '<span class="cr-ck">' + CHECK + '</span>' : '<span class="cr-sp"></span>';
-      return '<div class="cr-row ' + s.state + '"><span class="cr-fav">' + GLOBE + '</span><span class="cr-u">' + esc(s.u) + '</span>' + ic + '</div>';
-    }).join('');
-    return '<span class="vp-label">web research</span><div class="vp-crawl"><div class="cr-head">' + GLOBE +
-      '<span>crawling sources…</span></div>' + rows + '<div class="cr-tally">' + esc(tally || '') + '</div></div>';
-  }
-  function previewDoc(title, blocks) {
-    var body = (blocks || []).map(function (b) {
-      if (b.h) return '<div class="doc-h">' + esc(b.h) + '</div>';
-      if (b.ul) return '<ul class="doc-ul">' + b.ul.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
-      if (b.chk) return '<ul class="doc-chk">' + b.chk.map(function (x) { return '<li class="' + (x[0] ? 'on' : 'off') + '">' + esc(x[1]) + '</li>'; }).join('') + '</ul>';
-      return '<p class="doc-p">' + boldify(esc(b.p)) + '</p>';
-    }).join('');
-    return '<span class="vp-label">' + esc(title) + ' · preview</span><div class="vp-doc"><div class="doc-title">' +
-      esc(title.replace('.md', '')) + '</div>' + body + '</div>';
-  }
-  function previewHushi(v) {
-    var merged = v === 'v2';
-    return '<span class="vp-label">localhost · playground</span><div class="vp-stage">' +
-      '<div class="hushi-fab' + (merged ? ' merged' : '') + '">' +
-      '<div class="hushi-orb">' + STAR + '</div></div>' +
-      '<div class="hushi-card"><div class="hc-top"><span class="hc-mini">' + STAR.replace('class="star"', 'viewBox="0 0 24 24"') + '</span><span class="hc-name">Ask Hueshi</span><span class="hc-beta">BETA</span><span class="hc-role">copilot</span></div>' +
-      '<div class="hc-msg">Your restock pattern is <b style="color:#fff">2.3 days</b> faster than peers. <span class="cite">Based on · Back-in-Stock report</span></div>' +
-      '<div class="hc-bar">Ask about your demand…<span class="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></div>' +
-      (merged ? '<span class="fab-hint">hover → splits into Hueshi + Intercom</span>' : '') +
-      '</div>';
-  }
-  function previewHandoff() {
-    return '<span class="vp-label">design handoff</span><div class="vp-handoff">' +
-      '<div class="hd-title">Hueshi — Design Handoff</div>' +
-      '<div class="hd-row"><span class="hd-sw" style="background:linear-gradient(135deg,#EE442E,#F26E5D)"></span>--hushi · #EE442E → #F26E5D</div>' +
-      '<div class="hd-row"><span class="hd-sw" style="background:rgba(255,255,255,.1)"></span>radius 100px · glass blur 8px · Polaris</div>' +
-      '<div class="hd-sec">states</div><div class="hd-states"><span>default</span><span>hover</span><span>open</span><span>streaming</span><span>error</span></div>' +
-      '<div class="hd-deliver">' + CHECK + '<span>delivered → restockify-frontend</span></div></div>';
+  function readyHTML() {
+    return '<div class="cl-ready"><span class="lg">' + CL_LOGO + '</span>' +
+      '<h4>Ready to build.</h4>' +
+      '<p>Describe a feature. Tous plans the run and takes it through all six stages, start to finish.</p>' +
+      '<div class="hintkey">▸ press <b>&rarr;</b> to send the request</div></div>';
   }
 
   /* ============================================================
      Engine
      ============================================================ */
   var WT = {
-    gen: 0, timers: [], si: -1, bi: -1, stationDone: false, finished: false,
+    gen: 0, timers: [], cur: -1, progress: {}, activeStage: 0, expandStage: false, wfMode: 'hidden',
 
     els: {
-      steps: $('wtSteps'), tree: $('vsTree'), tabs: $('vsTabs'), crumbs: $('vsCrumbs'),
-      gutter: $('vsGutter'), code: $('vsCode'), preview: $('vsPreview'), view: $('vsView'),
-      main: $('vsMain'), term: $('vsTermBody'), agent: $('vsAgent'), agentBody: $('vsAgentBody'),
-      agentState: $('vsAgentState'), prog: $('wtCur'), statusTask: $('vsStatusTask'), statusLang: $('vsStatusLang')
-    },
-
-    /* ---- one-time DOM: stepper + tree ---- */
-    build: function () {
-      var s = '';
-      STEPS.forEach(function (st, i) {
-        var notes = (st.notes || []).map(function (n) { return '<li>' + n + '</li>'; }).join('');
-        s += '<li class="wt-step accent-' + st.ac + '" data-i="' + i + '"><span class="wt-dot"><span class="wt-num">' + (i + 1) + '</span>' + CHECK + '</span>' +
-          '<span class="wt-txt"><span class="wt-st-name">' + st.name + '</span>' +
-          '<span class="wt-st-sub">' + st.sub + '</span>' +
-          '<ul class="wt-notes">' + notes + '</ul></span></li>';
-      });
-      this.els.steps.innerHTML = s;
-
-      var tr = '';
-      TREE.forEach(function (n) {
-        var tw = (n.t === 'diro') ? '▾' : (n.t === 'dir') ? '▸' : '';
-        tr += '<div class="vs-row ' + (n.t === 'diro' || n.t === 'dir' ? 'dir' : '') + (n.hidden ? ' hidden' : '') + '" data-id="' + n.id + '" data-depth="' + n.d + '">' +
-          '<span class="tw">' + tw + '</span>' + fileIcon(n.t) + '<span class="nm">' + n.name + '</span>' +
-          (n.tail ? '' : '<span class="badge-new">NEW</span>') + '</div>';
-      });
-      this.els.tree.innerHTML = tr;
+      stage: $('wtStage'), tree: $('vsTree'), main: $('vsMain'), view: $('vsView'),
+      wf: $('wf'), wfList: $('wfList'), wfCount: $('wfCount'),
+      agent: $('vsAgent'), agentBody: $('vsAgentBody'), agentState: $('vsAgentState'),
+      status: $('vsStatusTask'), ph: $('clPh'), input: null, send: $('clSend'), ctx: $('clCtx')
     },
 
     clearTimers: function () { this.timers.forEach(clearTimeout); this.timers = []; },
     at: function (fn, ms) { var g = this.gen, self = this; this.timers.push(setTimeout(function () { if (g === self.gen) fn(); }, ms)); },
 
+    /* ---- one-time DOM: explorer + tracker ---- */
+    build: function () {
+      var tr = '';
+      TREE.forEach(function (n) {
+        var tw = (n.t === 'diro') ? '▾' : (n.t === 'dir') ? '▸' : '';
+        tr += '<div class="vs-row ' + (n.t === 'diro' || n.t === 'dir' ? 'dir' : '') + (n.hidden ? ' hidden' : '') + '" data-id="' + n.id + '" data-depth="' + n.d + '">' +
+          '<span class="tw">' + tw + '</span>' + fileIcon(n.t) + '<span class="nm">' + n.name + '</span>' +
+          (n.tail || n.t === 'diro' || n.t === 'dir' ? '' : '<span class="badge-new">NEW</span>') + '</div>';
+      });
+      this.els.tree.innerHTML = tr;
+
+      var wl = '';
+      STAGES.forEach(function (st, i) {
+        var stations = st.stations.map(function (s) {
+          return '<li class="owf-st"><span class="owf-cb">' + CHECK_FILL + '</span><span class="owf-stname">' + s.name + '</span></li>';
+        }).join('');
+        wl += '<li class="owf-stage ac-' + st.ac + '" data-i="' + i + '">' +
+          '<div class="owf-srow"><span class="owf-dot"><span class="owf-num">' + (i + 1) + '</span>' + CHECK + '</span>' +
+          '<span class="owf-name">' + st.name + '</span><span class="owf-sc"></span></div>' +
+          '<ul class="owf-stations">' + stations + '</ul></li>';
+      });
+      this.els.wfList.innerHTML = wl;
+      this.els.input = this.els.send ? this.els.send.parentNode : null;
+    },
+
+    /* ---- apply the tracker state from this.progress / activeStage ---- */
+    applyWf: function () {
+      var self = this;
+      [].forEach.call(this.els.wfList.children, function (li, si) {
+        var st = STAGES[si], prog = self.progress[st.key] || {};
+        var doneCount = 0;
+        st.stations.forEach(function (s) { if (prog[s.key || s.name] === 'done') doneCount++; });
+        var allDone = st.stations.length > 0 && doneCount === st.stations.length;
+        var isActive = si === self.activeStage;   // active stage stays expanded, even once complete
+        li.classList.toggle('active', isActive);
+        li.classList.toggle('expand', isActive && self.expandStage);
+        li.classList.toggle('complete', allDone);          // dot shows the mint check whenever all stations are done
+        li.classList.toggle('done', allDone && !isActive); // collapsed + dimmed only once we've moved past it
+        var sc = li.querySelector('.owf-sc');
+        if (sc) sc.textContent = st.stations.length ? (doneCount + '/' + st.stations.length) : '';
+        [].forEach.call(li.querySelectorAll('.owf-st'), function (stEl, k) {
+          var s = st.stations[k], v = prog[s.key || s.name];
+          stEl.classList.toggle('run', v === 'run');
+          stEl.classList.toggle('done', v === 'done');
+        });
+      });
+      this.els.wf.dataset.mode = this.wfMode;
+      this.els.wfCount.textContent = 'stage ' + (this.activeStage + 1) + ' / ' + STAGES.length;
+    },
+
+    /* ---- explorer: reveal files, set the active one ---- */
+    revealFiles: function (ids, animate) {
+      var E = this.els;
+      (ids || []).forEach(function (id) {
+        var row = E.tree.querySelector('.vs-row[data-id="' + id + '"]');
+        if (row && row.classList.contains('hidden')) {
+          row.classList.remove('hidden');
+          if (animate) { void row.offsetWidth; row.classList.add('appear', 'flash'); }
+        }
+      });
+    },
+    setActiveFile: function (id) {
+      var E = this.els;
+      [].forEach.call(E.tree.querySelectorAll('.vs-row'), function (e) { e.classList.remove('active'); });
+      if (!id) return;
+      var row = E.tree.querySelector('.vs-row[data-id="' + id + '"]');
+      if (row) { row.classList.remove('hidden'); row.classList.add('active'); }
+    },
+
+    /* ---- content viewport ---- */
+    setContent: function (spec) {
+      var E = this.els;
+      if (!spec) { E.view.innerHTML = ''; return; }
+      if (spec === 'plan') { E.view.innerHTML = planHTML(); return; }
+      if (spec === 'browser') { E.view.innerHTML = browserHTML(); return; }
+      if (spec === 'doc:mr' || spec === 'doc:prd') {
+        E.view.innerHTML = docHTML(spec === 'doc:mr' ? DOC_MR : DOC_PRD);
+        var page = E.view.querySelector('.doc-page');
+        if (page) {
+          if (STATIC) page.classList.add('in');
+          else this.at(function () { page.classList.add('in'); }, 60);
+          // stagger the blocks
+          if (!STATIC) {
+            [].forEach.call(page.children, function (c, k) { c.style.animationDelay = (k * 70) + 'ms'; });
+          }
+        }
+        return;
+      }
+      E.view.innerHTML = '';
+    },
+
+    /* ---- append this beat's transcript lines ---- */
+    appendAgent: function (beat, animate) {
+      var E = this.els, self = this, els = [];
+      if (beat.ask) { var a = node(askHTML(beat.ask)); E.agentBody.appendChild(a); els.push(a); }
+      (beat.agent || []).forEach(function (it) { var d = node(agentItemHTML(it)); E.agentBody.appendChild(d); els.push(d); });
+      if (animate) {
+        var t = 40;
+        els.forEach(function (el) { self.at(function () { el.classList.add('in'); E.agentBody.scrollTop = E.agentBody.scrollHeight; }, t); t += 300; });
+      } else {
+        els.forEach(function (el) { el.classList.add('in'); });
+        E.agentBody.scrollTop = E.agentBody.scrollHeight;
+      }
+    },
+
+    /* ---- type the prompt into the composer, then "send" ---- */
+    typePrompt: function (text, done) {
+      var E = this.els, self = this, i = 0;
+      if (E.input) E.input.classList.add('focus');
+      function step() {
+        if (i > text.length) {
+          if (E.input) { E.input.classList.remove('focus'); E.input.classList.add('send'); }
+          self.at(function () { if (E.input) E.input.classList.remove('send'); if (E.ph) { E.ph.textContent = PLACEHOLDER; E.ph.classList.remove('typed'); } done(); }, 300);
+          return;
+        }
+        if (E.ph) { E.ph.classList.add('typed'); E.ph.innerHTML = esc(text.slice(0, i)) + '<span class="cur"></span>'; }
+        i++;
+        self.at(step, 13);
+      }
+      step();
+    },
+
     /* ---- reset to the very start ---- */
     reset: function () {
-      this.gen++; this.clearTimers(); this.si = -1; this.bi = -1; this.stationDone = false; this.finished = false;
-      SLIDE.removeAttribute('data-done'); SLIDE.setAttribute('data-fill', '0');
-      this.setFillPx(0);
-      if (this.els.prog) this.els.prog.textContent = '1';
-      [].forEach.call(this.els.steps.querySelectorAll('.wt-step'), function (e) { e.classList.remove('active', 'done'); });
-      [].forEach.call(this.els.tree.querySelectorAll('.vs-row'), function (e) {
+      this.gen++; this.clearTimers();
+      this.cur = -1; this.progress = {}; this.activeStage = 0; this.expandStage = false; this.wfMode = 'hidden';
+      SLIDE.removeAttribute('data-done');
+      var E = this.els;
+      E.stage.dataset.view = 'hero';
+      E.main.dataset.claude = 'full';
+      E.agent.dataset.state = 'idle'; E.agentState.textContent = 'idle';
+      E.agentBody.innerHTML = ''; E.agentBody.classList.remove('convo');
+      E.view.innerHTML = '';
+      if (E.ph) { E.ph.textContent = PLACEHOLDER; E.ph.classList.remove('typed'); }
+      if (E.ctx) E.ctx.textContent = 'context 12%';
+      E.status.textContent = 'orchestrator idle';
+      [].forEach.call(E.tree.querySelectorAll('.vs-row'), function (e) {
         e.classList.remove('active', 'appear', 'flash');
         if (TREE.some(function (n) { return n.id === e.dataset.id && n.hidden; })) e.classList.add('hidden');
       });
-      this.els.main.classList.remove('term');
-      this.els.view.classList.remove('split');
-      this.els.preview.innerHTML = '';
-      this.els.code.innerHTML = ''; this.els.gutter.innerHTML = ''; this.els.term.innerHTML = '';
-      this.els.agentBody.innerHTML = ''; this.els.tabs.innerHTML = ''; this.els.crumbs.innerHTML = '';
+      this.applyWf();
     },
 
-    accentVar: function (ac) { return 'var(--' + (ac === 'coral' ? 'coral' : ac === 'mint' ? 'mint' : 'blue-elec') + ')'; },
+    /* ---- enter a beat: set the frame, then animate the delta ---- */
+    enterBeat: function (i, animate) {
+      var E = this.els, beat = BEATS[i], self = this;
+      this.cur = i;
 
-    /* ---- chrome for one beat (tabs, crumb, status, preview, term toggle) ---- */
-    setChrome: function (beat) {
-      var E = this.els;
-      E.statusTask.textContent = beat.status || '';
-      E.statusLang.textContent = beat.lang || '';
-      E.tabs.innerHTML = (beat.tabs || []).map(function (t) {
-        return '<div class="vs-tab ' + (t.on ? 'active' : '') + '">' + fileIcon(t.t) + '<span>' + t.n + '</span><span class="dot"></span></div>';
-      }).join('');
-      E.crumbs.innerHTML = (beat.crumb || []).map(function (c, k) {
-        return (k ? '<span class="sepc">›</span>' : '') + '<span>' + c + '</span>';
-      }).join(' ');
-      E.main.classList.toggle('term', !!beat.term);
-      var hasPrev = !!beat.preview;
-      E.view.classList.toggle('split', hasPrev);
-      if (hasPrev) { E.preview.className = 'vs-preview pv-' + beat.preview.type; E.preview.innerHTML = renderPreview(beat.preview); void E.preview.offsetWidth; E.preview.classList.add('pv-in'); }
-      else { E.preview.className = 'vs-preview'; E.preview.innerHTML = ''; }
-    },
+      // frame
+      E.stage.dataset.view = beat.view;
+      if (beat.claude) E.main.dataset.claude = beat.claude;
+      if (beat.agentState) { E.agent.dataset.state = beat.agentState; E.agentState.textContent = beat.agentState === 'run' ? 'running' : beat.agentState; }
+      if (beat.status != null) E.status.textContent = beat.status;
+      if (beat.ctx && E.ctx) E.ctx.textContent = beat.ctx;
 
-    buildEditor: function (lang, code) {
-      var E = this.els, lines = hl(lang, code);
-      E.gutter.innerHTML = lines.map(function (_, k) { return '<span>' + (k + 1) + '</span>'; }).join('');
-      E.code.innerHTML = '';
-      var lineEls = lines.map(function (h) { var d = node('<span class="vs-line">' + (h || ' ') + '</span>'); E.code.appendChild(d); return d; });
-      return { lines: lineEls, caret: node('<span class="caret"></span>') };
-    },
+      // explorer
+      if (beat.show) this.revealFiles(beat.show, animate);
+      if (beat.activeFile) this.setActiveFile(beat.activeFile); else if (beat.view === 'ide' && !beat.ready) this.setActiveFile(null);
 
-    buildTerm: function (term) {
-      var E = this.els; E.term.innerHTML = '';
-      return (term || []).map(function (t) {
-        var html = t.p != null ? '<span class="p">➜ ' + esc(t.p) + '</span> <span class="c">' + esc(t.c) + '</span>'
-          : '<span class="' + (t.cls || 'o') + '">' + esc(t.o) + '</span>';
-        var d = node('<span class="tl">' + html + '</span>'); E.term.appendChild(d); return d;
+      // tracker state
+      if (beat.wfMode) this.wfMode = beat.wfMode;
+      if (beat.wfActive != null) this.activeStage = beat.wfActive;
+      if (beat.wfExpand != null) this.expandStage = !!beat.wfExpand;
+      (beat.check || []).forEach(function (c) {
+        var sk = c[0]; self.progress[sk] = self.progress[sk] || {}; self.progress[sk][c[1]] = c[2];
       });
-    },
+      this.applyWf();
 
-    // append this beat's transcript lines (they accumulate across beats)
-    appendAgent: function (beat) {
-      var E = this.els, els = [];
-      if (beat.ask) { var a = node(askHTML(beat.ask)); a.classList.add('ag-line'); E.agentBody.appendChild(a); els.push(a); }
-      (beat.agent || []).forEach(function (it) { var d = node(agentItemHTML(it)); d.classList.add('ag-line'); E.agentBody.appendChild(d); els.push(d); });
-      return els;
-    },
-    scrollAgent: function () { this.els.agentBody.scrollTop = this.els.agentBody.scrollHeight; },
+      // ready hint (full-width claude)
+      if (beat.ready) { E.agentBody.classList.remove('convo'); E.agentBody.innerHTML = readyHTML(); }
 
-    applyTree: function (beat) {
-      var E = this.els;
-      [].forEach.call(E.tree.querySelectorAll('.vs-row'), function (e) { e.classList.remove('active'); });
-      (beat.show || []).forEach(function (id) {
-        var row = E.tree.querySelector('.vs-row[data-id="' + id + '"]');
-        if (row && row.classList.contains('hidden')) { row.classList.remove('hidden'); void row.offsetWidth; row.classList.add('appear', 'flash'); }
-      });
-      var act = E.tree.querySelector('.vs-row[data-id="' + beat.active + '"]');
-      if (act) { act.classList.remove('hidden'); act.classList.add('active'); }
-    },
+      // content
+      if (beat.content !== undefined) this.setContent(beat.content);
 
-    /* ---- start a station: fresh Claude session, then play its beats ---- */
-    playStation: function (i) {
-      var E = this.els, st = STEPS[i];
-      this.si = i; this.bi = -1; this.stationDone = false;
-      SLIDE.setAttribute('data-fill', '1');
-      [].forEach.call(E.steps.querySelectorAll('.wt-step'), function (e) {
-        var k = +e.dataset.i; e.classList.toggle('done', k < i); e.classList.toggle('active', k === i);
-      });
-      this.setFill();
-      E.agent.style.setProperty('--ac', this.accentVar(st.ac));
-      E.agentBody.innerHTML = '';
-      E.agent.setAttribute('data-state', 'run'); E.agentState.textContent = 'running';
-      E.code.innerHTML = ''; E.gutter.innerHTML = ''; E.term.innerHTML = '';
-      E.tabs.innerHTML = ''; E.crumbs.innerHTML = '';
-      E.preview.innerHTML = ''; E.view.classList.remove('split'); E.main.classList.remove('term');
-      this.playBeat(0);
-    },
-
-    /* ---- play one beat, slowly, then chain to the next (or finish station) ---- */
-    playBeat: function (k) {
-      var self = this, st = STEPS[this.si], beat = st.beats[k]; this.bi = k;
-      var CODE_MS = 90, AG_MS = 540, TERM_MS = 380, PAUSE = 1000;
-      this.setChrome(beat);
-      var ed = this.buildEditor(beat.editorLang, beat.code), lineEls = ed.lines, caret = ed.caret;
-      var termEls = this.buildTerm(beat.term);
-      var agEls = this.appendAgent(beat);
-      this.at(function () { self.applyTree(beat); }, 240);
-      var t = 300;
-      agEls.forEach(function (el) { self.at(function () { el.classList.add('in'); var bars = el.querySelectorAll('.bar'); [].forEach.call(bars, function (b) { b.style.height = b.dataset.h + '%'; }); self.scrollAgent(); }, t); t += AG_MS; });
-      var agEnd = t;
-      var ct = 380;
-      lineEls.forEach(function (el) { self.at(function () { el.classList.add('in'); el.appendChild(caret); }, ct); ct += CODE_MS; });
-      var codeEnd = ct;
-      var tt = Math.max(codeEnd, agEnd) - 260;
-      termEls.forEach(function (el) { self.at(function () { el.classList.add('in'); }, tt); tt += TERM_MS; });
-      var end = Math.max(agEnd, codeEnd, tt);
-      if (k + 1 < st.beats.length) {
-        this.at(function () { self.playBeat(k + 1); }, end + PAUSE);
+      // transcript + typing. doAgent(anim) reveals this beat's lines; _pending lets a fast
+      // advance force-complete it (so the prompt + boot lines are never skipped).
+      this._pending = null;
+      var doAgent = function (anim) {
+        if (beat.ask || beat.agent) { E.agentBody.classList.add('convo'); if (E.agentBody.querySelector('.cl-ready')) E.agentBody.innerHTML = ''; }
+        self.appendAgent(beat, anim);
+      };
+      if (beat.type && animate) {
+        this._pending = function () { if (E.ph) { E.ph.textContent = PLACEHOLDER; E.ph.classList.remove('typed'); } doAgent(false); };
+        this.typePrompt(beat.type, function () { self._pending = null; doAgent(true); });
       } else {
-        // Station finished: it stops here and holds the completed state indefinitely.
-        // No re-play. The presenter passes to the next station manually (click / right /
-        // space / PageDown / s); 'r' replays from the first station.
-        this.at(function () { self.els.agent.setAttribute('data-state', 'done'); self.els.agentState.textContent = 'done'; self.stationDone = true; }, end - 40);
+        if (beat.type && !animate && E.ph) { E.ph.textContent = PLACEHOLDER; }
+        doAgent(animate);
+      }
+
+      // auto-play: queue the next beat only while it stays inside this segment;
+      // at a segment boundary the run stops and waits for a manual advance.
+      if (animate && !STATIC) {
+        var nx = i + 1;
+        if (nx < BEATS.length && BEAT_SEG[nx] === BEAT_SEG[i]) {
+          this.at(function () { self.autoAdvance(); }, BEAT_HOLD[i] || 3200);
+        }
       }
     },
 
-    /* ---- snap a station to its final composite state (skip / QA) ---- */
-    renderStationFinal: function (i, upto) {
-      var E = this.els, st = STEPS[i];
-      var top = (upto == null) ? st.beats.length - 1 : Math.max(0, Math.min(st.beats.length - 1, upto));
-      var shown = st.beats.slice(0, top + 1);
-      this.si = i; this.bi = top; this.stationDone = true;
-      [].forEach.call(E.steps.querySelectorAll('.wt-step'), function (e) {
-        var k = +e.dataset.i; e.classList.toggle('done', k < i); e.classList.toggle('active', k === i);
-      });
-      this.setFill();
-      E.agent.style.setProperty('--ac', this.accentVar(st.ac));
-      // transcript up to this beat, revealed
-      E.agentBody.innerHTML = '';
-      shown.forEach(function (beat) {
-        if (beat.ask) { var a = node(askHTML(beat.ask)); a.classList.add('ag-line', 'in'); E.agentBody.appendChild(a); }
-        (beat.agent || []).forEach(function (it) {
-          var d = node(agentItemHTML(it)); d.classList.add('ag-line', 'in');
-          var bars = d.querySelectorAll('.bar'); [].forEach.call(bars, function (b) { b.style.height = b.dataset.h + '%'; });
-          E.agentBody.appendChild(d);
-        });
-      });
-      E.agent.setAttribute('data-state', 'done'); E.agentState.textContent = 'done';
-      var last = st.beats[top];
-      this.setChrome(last);
-      var ed = this.buildEditor(last.editorLang, last.code);
-      ed.lines.forEach(function (el) { el.classList.add('in'); });
-      if (ed.lines.length) ed.lines[ed.lines.length - 1].appendChild(ed.caret);
-      var tm = null; shown.forEach(function (b) { if (b.term) tm = b.term; });
-      E.main.classList.toggle('term', !!tm);
-      this.buildTerm(tm).forEach(function (el) { el.classList.add('in'); });
-      // cumulative files across stations 0..i
-      for (var s = 0; s <= i; s++) {
-        STEPS[s].beats.forEach(function (b) {
-          (b.show || []).forEach(function (id) { var row = E.tree.querySelector('.vs-row[data-id="' + id + '"]'); if (row) row.classList.remove('hidden'); });
-        });
-      }
-      [].forEach.call(E.tree.querySelectorAll('.vs-row'), function (e) { e.classList.remove('active'); });
-      var act = E.tree.querySelector('.vs-row[data-id="' + last.active + '"]');
-      if (act) { act.classList.remove('hidden'); act.classList.add('active'); }
-      this.scrollAgent();
+    /* ---- auto-advance to the next beat within a segment (timer-driven) ---- */
+    autoAdvance: function () {
+      var next = this.cur + 1;
+      if (next >= BEATS.length) return;
+      this.settleCurrent();
+      this.enterBeat(next, true);
     },
 
-    fillStyle: function () {
-      var el = document.getElementById('wt-fill-style');
-      if (!el) { el = document.createElement('style'); el.id = 'wt-fill-style'; document.head.appendChild(el); }
-      return el;
-    },
-    setFillPx: function (h) { this.fillStyle().textContent = '#wtSteps::after{height:' + h + 'px}'; },
-    setFill: function () {
-      var steps = this.els.steps, active = steps.querySelector('.wt-step.active'), first = steps.querySelector('.wt-step');
-      if (!active || !first) return;
-      this.setFillPx((active.offsetTop + 16) - (first.offsetTop + 16));
+    /* ---- force-complete the current beat's in-flight animation (on advance) so
+           nothing gets skipped if the presenter clicks through fast ---- */
+    settleCurrent: function () {
+      this.gen++; this.clearTimers();
+      if (this._pending) { var p = this._pending; this._pending = null; p(); }
+      [].forEach.call(this.els.agentBody.querySelectorAll('.ag-line'), function (el) { el.classList.add('in'); });
+      var page = this.els.view.querySelector('.doc-page'); if (page) page.classList.add('in');
+      this.els.agentBody.scrollTop = this.els.agentBody.scrollHeight;
     },
 
-    /* ---- manual pass: interrupt whatever is still playing and move to the next
-           station; on the last station, leave the slide via reveal.js ---- */
-    advanceStation: function () {
+    /* ---- advance / replay ---- */
+    advance: function () {
       if (STATIC) { if (window.Reveal) Reveal.next(); return; }
-      this.gen++; this.clearTimers();
-      var next = this.si + 1;
-      if (next >= STEPS.length) { if (window.Reveal) Reveal.next(); return; }  // last → leave slide
-      this.playStation(next);
+      var next = this.cur + 1;
+      this.settleCurrent();   // finish the current beat first, so nothing is skipped
+      if (next >= BEATS.length) { SLIDE.setAttribute('data-done', 'all'); if (window.Reveal) Reveal.next(); return; }
+      this.enterBeat(next, true);
     },
-    skip: function () { this.advanceStation(); },
+    replay: function () { this.start(); },
 
-    finish: function () {
-      this.finished = true;
-      this.gen++; this.clearTimers();
-      [].forEach.call(this.els.steps.querySelectorAll('.wt-step'), function (e) { e.classList.remove('active'); e.classList.add('done'); });
-      SLIDE.setAttribute('data-done', 'all');
-      var steps = this.els.steps, first = steps.querySelector('.wt-step'), all = steps.querySelectorAll('.wt-step');
-      var last = all[all.length - 1];
-      this.setFillPx((last.offsetTop + 16) - (first.offsetTop + 16));
+    /* ---- static render: cumulative state up to beat `upto` ---- */
+    renderStatic: function (upto) {
+      this.reset();
+      var top = (upto == null) ? BEATS.length - 1 : Math.max(0, Math.min(BEATS.length - 1, upto));
+      for (var i = 0; i <= top; i++) this.enterBeat(i, false);
+      if (top >= BEATS.length - 1) SLIDE.setAttribute('data-done', 'all');
     },
 
-    /* ---- entry points ---- */
+    /* ---- entry ---- */
     start: function () {
       this.reset();
-      if (STATIC) { // qa / reduced motion → show finished state
-        this.renderStationFinal(STEPS.length - 1);
-        this.finish();
+      if (STATIC) {
+        var wp = new URLSearchParams(location.search);
+        var b = wp.has('wbeat') ? (parseInt(wp.get('wbeat'), 10) || 0) : null;
+        this.renderStatic(b);   // null -> the finished state
         return;
       }
       var self = this;
-      this.at(function () { self.playStation(0); }, 300);
+      this.at(function () { self.enterBeat(0, true); }, 200);
     }
   };
 
   WT.build();
 
   /* ============================================================
-     Wiring: buttons, keys, reveal.js hooks
+     Wiring: keys, click, reveal.js
      ============================================================ */
-  $('wtSkip') && $('wtSkip').addEventListener('click', function () { WT.skip(); });
-  $('wtNext') && $('wtNext').addEventListener('click', function () { if (window.Reveal) Reveal.next(); });
-  $('wtReplay') && $('wtReplay').addEventListener('click', function () { WT.start(); });
-
   function onSlide() { return window.Reveal && Reveal.getCurrentSlide && Reveal.getCurrentSlide() === SLIDE; }
 
-  // Each station plays once and stops; the presenter passes it manually.
-  // While on the slide we intercept forward navigation so → / space / PageDown / s
-  // (and a click) advance to the NEXT station instead of leaving the slide. Only on
-  // the last station does forward navigation leave the slide. 'r' replays from the top.
   document.addEventListener('keydown', function (e) {
     if (!onSlide() || STATIC) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     var k = e.key;
     if (k === 'ArrowRight' || k === ' ' || k === 'Spacebar' || k === 'PageDown' || k === 's' || k === 'S') {
-      e.preventDefault(); e.stopImmediatePropagation();
-      WT.advanceStation();
+      e.preventDefault(); e.stopImmediatePropagation(); WT.advance();
     } else if (k === 'r' || k === 'R') {
-      e.preventDefault(); e.stopImmediatePropagation();
-      WT.start();
+      e.preventDefault(); e.stopImmediatePropagation(); WT.replay();
     }
   }, true);
 
-  // Click anywhere on the slide advances to the next station too.
-  SLIDE.addEventListener('click', function () { if (!STATIC) WT.advanceStation(); });
+  SLIDE.addEventListener('click', function (ev) {
+    if (STATIC) return;
+    if (ev.target.closest('a')) return;
+    WT.advance();
+  });
 
   function boot() {
     if (!window.Reveal) return;
@@ -825,16 +856,7 @@
       if (ev.currentSlide === SLIDE) WT.start();
       else if (ev.previousSlide === SLIDE) { WT.gen++; WT.clearTimers(); }
     });
-    // deep-link / reload directly onto the slide
-    if (onSlide()) WT.start();
-
-    // ?wstep=N (&wbeat=K) — freeze on a station's final (or a given beat's) state
-    var wp = new URLSearchParams(location.search);
-    if (wp.has('wstep')) {
-      var n = Math.max(0, Math.min(STEPS.length - 1, parseInt(wp.get('wstep'), 10) || 0));
-      var b = wp.has('wbeat') ? (parseInt(wp.get('wbeat'), 10) || 0) : null;
-      WT.reset(); WT.renderStationFinal(n, b);
-    }
+    if (onSlide()) WT.start();   // start() reads ?wbeat for a frozen QA beat
   }
 
   if (window.Reveal && Reveal.isReady && Reveal.isReady()) boot();

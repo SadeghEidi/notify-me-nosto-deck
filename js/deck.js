@@ -210,3 +210,38 @@ Reveal.initialize({
   if (Reveal.isReady()) wire();
   else Reveal.on('ready', wire);
 })();
+
+/* Diagnosis slide (the three friction cards, "Still wasn't the outcome we were hoping for"): only the
+   LAST-revealed card keeps animating; once a card is passed it freezes at its initial resting state.
+   We mark every card that is NOT the current frontier fragment with .dg-rest; the slide's inline CSS
+   then stops that card's loops (comet / +1 / agent / X hidden, bars left settled, roads steady). A
+   card also carries .dg-rest until it is first revealed, so REMOVING it on reveal applies the card's
+   animation fresh from frame 0 - each card restarts cleanly as it becomes live (the race bars are
+   actually seen growing, the agent drives from the start). QA renders every card frozen via the .qa
+   rules, so skip it. Same fragment-driven shape as the czb list above. */
+(function () {
+  function wire() {
+    var wrap = document.querySelector('.reveal .slides .dg-wrap');
+    if (!wrap) return;
+    if (document.documentElement.classList.contains('qa')) return;   // QA: .qa rules freeze a static frame
+    var cards = [].slice.call(wrap.querySelectorAll('.dg-card'));
+    if (!cards.length) return;
+    function update() {
+      // frontier = the visible card with the highest fragment index (reveal renumbers to a 0-based run)
+      var live = null, max = -1;
+      cards.forEach(function (c) {
+        if (!c.classList.contains('visible')) return;
+        var n = parseInt(c.getAttribute('data-fragment-index'), 10);
+        if (isNaN(n)) n = cards.indexOf(c);
+        if (n > max) { max = n; live = c; }
+      });
+      cards.forEach(function (c) { c.classList.toggle('dg-rest', c !== live); });
+    }
+    Reveal.on('fragmentshown', update);
+    Reveal.on('fragmenthidden', update);
+    Reveal.on('slidechanged', update);
+    update();
+  }
+  if (Reveal.isReady()) wire();
+  else Reveal.on('ready', wire);
+})();
