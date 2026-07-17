@@ -66,6 +66,15 @@
     { id: 'research', d: 1, t: 'diro', name: 'research' },
     { id: 'mr', d: 2, t: 'md', name: 'market-research.md', hidden: 1 },
     { id: 'prd', d: 2, t: 'md', name: 'prd.md', hidden: 1 },
+    { id: 'dsg', d: 1, t: 'diro', name: 'design' },
+    { id: 'handoff', d: 2, t: 'md', name: 'handoff.md', hidden: 1 },
+    { id: 'eng', d: 1, t: 'diro', name: 'engineering' },
+    { id: 'dod', d: 2, t: 'md', name: 'dod.md', hidden: 1 },
+    { id: 'plan', d: 2, t: 'md', name: 'plan.md', hidden: 1 },
+    { id: 'dlv', d: 1, t: 'diro', name: 'delivery' },
+    { id: 'changelog', d: 2, t: 'md', name: 'CHANGELOG.md', hidden: 1 },
+    { id: 'nidoc', d: 2, t: 'md', name: 'docs.md', hidden: 1 },
+    { id: 'learn', d: 2, t: 'md', name: 'learnings.md', hidden: 1 },
     { id: 'readme', d: 1, t: 'md', name: 'README.md', tail: 1 },
     { id: 'docs', d: 0, t: 'diro', name: 'notify-me-docs' },
     { id: 'signals', d: 1, t: 'md', name: 'demand-signals.md', tail: 1 },
@@ -82,15 +91,15 @@
     { key: 'research', name: 'Research', ac: 'blue',
       stations: [{ key: 'market', name: 'Market Research' }, { key: 'prd', name: 'PRD' }] },
     { key: 'design', name: 'Design', ac: 'coral',
-      stations: [{ name: 'UI/UX Design' }, { name: 'Design Review' }, { name: 'Design Handoff' }] },
+      stations: [{ key: 'uiux', name: 'UI/UX Design' }, { key: 'review', name: 'Design Review' }, { key: 'handoff', name: 'Design Handoff' }] },
     { key: 'engineering', name: 'Engineering', ac: 'blue',
-      stations: [{ name: 'Definition of Done' }, { name: 'DoD Review' }, { name: 'Planning' }, { name: 'Plan Review' }] },
+      stations: [{ key: 'dod', name: 'Definition of Done' }, { key: 'dodrev', name: 'DoD Review' }, { key: 'planning', name: 'Planning' }, { key: 'planrev', name: 'Plan Review' }] },
     { key: 'production', name: 'Production', ac: 'blue',
-      stations: [{ name: 'Coding' }, { name: 'Code Review' }] },
+      stations: [{ key: 'coding', name: 'Coding' }, { key: 'codereview', name: 'Code Review' }] },
     { key: 'testing', name: 'Testing', ac: 'mint',
-      stations: [{ name: 'Technical QA' }, { name: 'Product QA' }, { name: 'Visual QA' }] },
+      stations: [{ key: 'techqa', name: 'Technical QA' }, { key: 'productqa', name: 'Product QA' }, { key: 'visualqa', name: 'Visual QA' }] },
     { key: 'delivery', name: 'Delivery & Learning', ac: 'mint',
-      stations: [{ name: 'Release' }, { name: 'Release Announcement' }, { name: 'Documentation' }, { name: 'Learning' }] }
+      stations: [{ key: 'release', name: 'Release' }, { key: 'announce', name: 'Release Announcement' }, { key: 'documentation', name: 'Documentation' }, { key: 'learning', name: 'Learning' }] }
   ];
 
   /* ============================================================
@@ -242,6 +251,7 @@
       { note: { lbl: 'Compounds', text: 'The next integration (any CDP) reuses this connect flow and mapper. The loop closes.' } }
     ]
   };
+  var DOCS = { mr: DOC_MR, prd: DOC_PRD, handoff: DOC_HANDOFF, dod: DOC_DOD, plan: DOC_PLAN, announce: DOC_ANNOUNCE, docs: DOC_DOCS, learn: DOC_LEARN };
 
   function docHTML(doc) {
     var body = (doc.blocks || []).map(function (b) {
@@ -355,8 +365,20 @@
       (reviewed ? '<div class="dp-fix">' + CHECK + '<span>Review fix: token now validates, and the primary action reads as enabled.</span></div>' : '') +
     '</div>';
   }
-  // a small thumbnail of the design, embedded in the handoff doc as a "screenshot"
-  function designThumb(v) { return '<div class="dp-thumb ' + (v || 'v2') + '">' + designPreviewHTML(v || 'v2') + '</div>'; }
+  // a small static thumbnail of the design, embedded in the handoff doc as a "screenshot"
+  function designThumb() {
+    return '<div class="dpt">' +
+      '<div class="dpt-bar"><span class="dpt-dots"><i></i><i></i><i></i></span><span class="dpt-t">Connect to Nosto</span></div>' +
+      '<div class="dpt-body">' +
+        '<div class="dpt-back">‹ <b>Connect to Nosto</b> <span class="dpt-beta">Beta</span></div>' +
+        '<div class="dpt-card">' +
+          '<div class="dpt-line w60"></div><div class="dpt-line w90 sm"></div>' +
+          '<div class="dpt-field"><span class="dpt-tok">nosto_sk_live_••••4f2a</span><span class="dpt-ck">' + CHECK + '</span></div>' +
+          '<div class="dpt-ban info"></div><div class="dpt-ban warn"></div>' +
+          '<div class="dpt-foot"><span class="dpt-btn"></span></div>' +
+        '</div>' +
+      '</div></div>';
+  }
 
   /* ============================================================
      Code editor view (Production) — a compact syntax highlighter
@@ -522,7 +544,151 @@
         T('Write', 'research/prd.md', 'problem · users · capabilities · rollout'),
         R('prd.md', 'approved · ready for design', 'blue')
       ],
-      status: 'PRD · ready for design', ctx: 'context 41%' }
+      status: 'PRD · ready for design', ctx: 'context 41%' },
+
+    /* ===== DESIGN (stage 02, coral) ===== */
+    /* 6 — UI/UX Design: design the Nosto integration UI, live preview */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 1, wfExpand: 1, resetAgent: 1,
+      content: 'design:v1', check: [['design', 'uiux', 'done']],
+      agent: [
+        T('Task', 'product-designer', 'stage 02 · dispatched'),
+        T('Skill', 'design', 'SOP loaded'),
+        T('Read', 'prd.md', 'capabilities + states'),
+        L('build', 'Figma Make + Polaris · the Connect to Nosto page')
+      ],
+      status: 'product-designer · UI/UX', ctx: 'context 48%' },
+
+    /* 7 — Design Review: a noticeable fix (token validation + real primary action) */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 1, wfExpand: 1,
+      content: 'design:v2', check: [['design', 'review', 'done']],
+      agent: [
+        T('Task', 'design-reviewer', 'review'),
+        L('review', 'primary action reads disabled; token has **no validation**'),
+        T('Edit', 'NostoConnect.tsx', 'validate token · enable primary'),
+        R('design', 'fixed · v2', 'coral')
+      ],
+      status: 'reviewer · design' },
+
+    /* 8 — Design Handoff: handoff.md with the screens + details */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 1, wfExpand: 1,
+      content: 'doc:handoff', show: ['handoff'], activeFile: 'handoff',
+      check: [['design', 'handoff', 'done']],
+      agent: [
+        T('Skill', 'design-handoff', 'SOP loaded'),
+        T('Write', 'design/handoff.md', 'screens · anatomy · states'),
+        R('handoff.md', 'delivered → engineering', 'coral')
+      ],
+      status: 'design · handoff ✓' },
+
+    /* ===== ENGINEERING (stage 03, blue) — fast, just the process ===== */
+    /* 9 — Technical Definition of Done */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 2, wfExpand: 1, resetAgent: 1,
+      content: 'doc:dod', show: ['dod'], activeFile: 'dod',
+      check: [['engineering', 'dod', 'done'], ['engineering', 'dodrev', 'done']],
+      agent: [
+        T('Skill', 'engineering', 'SOP loaded'),
+        T('Read', 'prd.md', 'capabilities'),
+        T('Write', 'engineering/dod.md', 'done criteria'),
+        H('guard: shop_id scoped server-side')
+      ],
+      status: 'engineering · DoD', ctx: 'context 55%' },
+
+    /* 10 — Technical Planning */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 2, wfExpand: 1,
+      content: 'doc:plan', show: ['plan'], activeFile: 'plan',
+      check: [['engineering', 'planning', 'done'], ['engineering', 'planrev', 'done']],
+      agent: [
+        T('Write', 'engineering/plan.md', 'two planes · contract'),
+        R('plan.md', 'reviewed · ready to build', 'blue')
+      ],
+      status: 'engineering · plan ✓' },
+
+    /* ===== PRODUCTION (stage 04, blue) ===== */
+    /* 11 — Coding */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 3, wfExpand: 1, resetAgent: 1,
+      content: 'code:coding', check: [['production', 'coding', 'done']],
+      agent: [
+        T('Task', 'backend · frontend · sdk', 'dispatched'),
+        T('Edit', 'nosto/sync.ts', 'demand event → Nosto profile'),
+        T('Edit', 'NostoConnect.tsx', 'token validate + connect'),
+        L('build', 'queue drains demand events to Nosto')
+      ],
+      status: 'engineers · coding', ctx: 'context 63%' },
+
+    /* 12 — Code Review */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 3, wfExpand: 1,
+      content: 'code:review', check: [['production', 'codereview', 'done']],
+      agent: [
+        T('Task', 'code-reviewer', 'review'),
+        L('review', 'idempotent · shop-scoped · no leakage'),
+        R('3 files', 'approved · merged', 'blue')
+      ],
+      status: 'reviewer · code ✓' },
+
+    /* ===== TESTING (stage 05, mint) ===== */
+    /* 13 — Technical QA */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 4, wfExpand: 1, resetAgent: 1,
+      content: 'term:techqa', check: [['testing', 'techqa', 'done']],
+      agent: [
+        T('Skill', 'qa', 'SOP loaded'),
+        T('Bash', 'pnpm test nosto', '29 passed'),
+        H('verify-on-stop: evidence required → ✓')
+      ],
+      status: 'qa · technical', ctx: 'context 70%' },
+
+    /* 14 — Product QA */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 4, wfExpand: 1,
+      content: 'term:productqa', check: [['testing', 'productqa', 'done']],
+      agent: [ T('Bash', 'tous qa:product', 'connect · sync · consent ✓') ],
+      status: 'qa · product' },
+
+    /* 15 — Visual QA (the shipped UI, verified against baselines) */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 4, wfExpand: 1,
+      content: 'design:v2', check: [['testing', 'visualqa', 'done']],
+      agent: [
+        T('Bash', 'tous qa:visual', '4 states matched · 0 diffs'),
+        R('QA green', 'technical · product · visual', 'mint')
+      ],
+      status: 'qa · visual ✓' },
+
+    /* ===== DELIVERY & LEARNING (stage 06, mint) ===== */
+    /* 16 — Release */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 5, wfExpand: 1, resetAgent: 1,
+      content: 'term:release', check: [['delivery', 'release', 'done']],
+      agent: [
+        T('Skill', 'release', 'SOP loaded'),
+        T('Bash', 'gh pr merge 918', 'squashed to main'),
+        T('Bash', 'flags set nosto_sync 10%', 'live · all plans')
+      ],
+      status: 'delivery · release', ctx: 'context 78%' },
+
+    /* 17 — Release Announcement */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 5, wfExpand: 1,
+      content: 'doc:announce', show: ['changelog'], activeFile: 'changelog',
+      check: [['delivery', 'announce', 'done']],
+      agent: [
+        T('Write', 'delivery/CHANGELOG.md', 'new · rollout'),
+        L('announce', 'changelog + in-app release note')
+      ],
+      status: 'delivery · announcement' },
+
+    /* 18 — Documentation */
+    { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 5, wfExpand: 1,
+      content: 'doc:docs', show: ['nidoc'], activeFile: 'nidoc',
+      check: [['delivery', 'documentation', 'done']],
+      agent: [ T('Write', 'delivery/docs.md', 'setup · attributes') ],
+      status: 'delivery · docs' },
+
+    /* 19 — Learning: the ledger updates, the factory loops back */
+    { view: 'ide', claude: 'dock', agentState: 'done', wfMode: 'full', wfActive: 5, wfExpand: 1,
+      content: 'doc:learn', show: ['learn'], activeFile: 'learn',
+      check: [['delivery', 'learning', 'done']],
+      agent: [
+        L('advice_ledger', 'predicted vs actual outcome logged'),
+        T('Write', 'delivery/learnings.md', 'patterns kept'),
+        R('shipped + learning', 'the factory loops back', 'mint')
+      ],
+      status: 'shipped · the loop closes', ctx: 'context 84%' }
   ];
 
   /* ------------------------------------------------------------
@@ -531,13 +697,27 @@
      beat and waits for a manual advance (-> / space / click) before the
      next stage begins. BEAT_HOLD is the dwell (ms) before auto-advancing;
      0 marks a stop. Manual advance always works and resumes the next segment.
-     The whole Research run is ONE segment (Sam's call): hero -> VS Code ->
-     prompt -> browser -> market-research.md -> prd.md auto-advance with no click
-     pause, then it stops at prd.md before the next stage begins. Dwells are kept
-     brisk but readable; the doc beats hold longest so the room can read them.
+     Each STAGE is one segment: its steps auto-advance, then it stops at the
+     stage's last step and waits for a manual advance before the next stage.
+     Research bundles the intro (hero/VS Code/prompt). Dwells are brisk but
+     readable; Engineering is fastest ("just the process"). 0 marks a stop.
      ------------------------------------------------------------ */
-  var BEAT_SEG  = ['research', 'research', 'research', 'research', 'research', 'research'];
-  var BEAT_HOLD = [2800, 2200, 3400, 3800, 4400, 0];
+  var BEAT_SEG = [
+    'research', 'research', 'research', 'research', 'research', 'research', // 0-5
+    'design', 'design', 'design',                                          // 6-8
+    'engineering', 'engineering',                                          // 9-10
+    'production', 'production',                                            // 11-12
+    'testing', 'testing', 'testing',                                       // 13-15
+    'delivery', 'delivery', 'delivery', 'delivery'                         // 16-19
+  ];
+  var BEAT_HOLD = [
+    2800, 2200, 3400, 3800, 4400, 0,   // research
+    3800, 3600, 0,                     // design (UI/UX, review, handoff-stop)
+    2600, 0,                           // engineering (DoD, plan-stop) — fast
+    3400, 0,                           // production (coding, review-stop)
+    2800, 2800, 0,                     // testing (tech, product, visual-stop)
+    3000, 3200, 3200, 0                // delivery (release, announce, docs, learning-stop)
+  ];
 
   /* ============================================================
      Transcript renderers
@@ -648,20 +828,20 @@
 
     /* ---- content viewport ---- */
     setContent: function (spec) {
-      var E = this.els;
+      var E = this.els, self = this;
       if (!spec) { E.view.innerHTML = ''; return; }
-      if (spec === 'plan') { E.view.innerHTML = planHTML(); return; }
       if (spec === 'browser') { E.view.innerHTML = browserHTML(); return; }
-      if (spec === 'doc:mr' || spec === 'doc:prd') {
-        E.view.innerHTML = docHTML(spec === 'doc:mr' ? DOC_MR : DOC_PRD);
+      if (spec === 'plan') { E.view.innerHTML = planHTML(); return; }
+      if (spec.indexOf('design:') === 0) { E.view.innerHTML = designPreviewHTML(spec.slice(7)); return; }
+      if (spec.indexOf('code:') === 0) { E.view.innerHTML = codeHTML(CODE_SPECS[spec.slice(5)]); return; }
+      if (spec.indexOf('term:') === 0) { var ts = TERM_SPECS[spec.slice(5)]; E.view.innerHTML = terminalHTML(ts.title, ts.lines); return; }
+      if (spec.indexOf('doc:') === 0) {
+        E.view.innerHTML = docHTML(DOCS[spec.slice(4)]);
         var page = E.view.querySelector('.doc-page');
         if (page) {
           if (STATIC) page.classList.add('in');
           else this.at(function () { page.classList.add('in'); }, 60);
-          // stagger the blocks
-          if (!STATIC) {
-            [].forEach.call(page.children, function (c, k) { c.style.animationDelay = (k * 70) + 'ms'; });
-          }
+          if (!STATIC) [].forEach.call(page.children, function (c, k) { c.style.animationDelay = (k * 70) + 'ms'; });
         }
         return;
       }
@@ -754,6 +934,7 @@
       // transcript + typing. doAgent(anim) reveals this beat's lines; _pending lets a fast
       // advance force-complete it (so the prompt + boot lines are never skipped).
       this._pending = null;
+      if (beat.resetAgent) E.agentBody.innerHTML = '';   // each stage gets a fresh transcript
       var doAgent = function (anim) {
         if (beat.ask || beat.agent) { E.agentBody.classList.add('convo'); if (E.agentBody.querySelector('.cl-ready')) E.agentBody.innerHTML = ''; }
         self.appendAgent(beat, anim);
@@ -804,6 +985,15 @@
     },
     replay: function () { this.start(); },
 
+    /* ---- step backward: rebuild the previous beat's settled state, instantly and
+           with no auto-advance armed (the run pauses there; -> resumes it). Before
+           the first beat, hand back to reveal.js to leave the slide. ---- */
+    prev: function () {
+      if (STATIC) { if (window.Reveal) Reveal.prev(); return; }
+      if (this.cur <= 0) { if (window.Reveal) Reveal.prev(); return; }
+      this.renderStatic(this.cur - 1);   // rebuild cumulative state at cur-1 (no animation, no auto)
+    },
+
     /* ---- static render: cumulative state up to beat `upto` ---- */
     renderStatic: function (upto) {
       this.reset();
@@ -839,6 +1029,8 @@
     var k = e.key;
     if (k === 'ArrowRight' || k === ' ' || k === 'Spacebar' || k === 'PageDown' || k === 's' || k === 'S') {
       e.preventDefault(); e.stopImmediatePropagation(); WT.advance();
+    } else if (k === 'ArrowLeft' || k === 'PageUp') {
+      e.preventDefault(); e.stopImmediatePropagation(); WT.prev();   // step back a beat, don't leave the slide
     } else if (k === 'r' || k === 'R') {
       e.preventDefault(); e.stopImmediatePropagation(); WT.replay();
     }
