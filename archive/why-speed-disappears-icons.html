@@ -1,0 +1,53 @@
+<!-- ARCHIVED 2026-07-17 - removed from deck/index.html on Sam's call. Superseded by the
+     vertical numbered-list variant that now occupies this spot ("Why the speed disappears /
+     We found several causes. These were the three biggest.", same three causes as a focused
+     numbered list instead of this three-column icon panel).
+     To restore: paste the block below back into index.html where the numbered-list slide is,
+     and delete that variant. It carries its own scoped cz- <style>, so it renders as-is.
+     Slide indexes shift when reinserted; recount. -->
+<!-- ================= 03 · WHY THE SPEED DISAPPEARS ================= -->
+<style>
+  /* Three causes = one problem, three facets. Unified blue (purple/coral/mint stay reserved
+     for the four components + five business lines). Scoped cz- block; theme.css untouched. */
+  .cz-wrap{
+    display:grid; grid-template-columns:1fr 1px 1fr 1px 1fr; align-items:stretch;
+    background:var(--glass); border:1px solid var(--glass-border); border-radius:26px;
+    backdrop-filter:blur(18px) saturate(120%); -webkit-backdrop-filter:blur(18px) saturate(120%);
+    box-shadow:0 30px 70px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.10);
+    overflow:hidden;
+  }
+  .cz-div{ background:linear-gradient(180deg, transparent, var(--glass-border) 18%, var(--glass-border) 82%, transparent); }
+  .cz-col{ padding:50px 48px 48px; display:flex; flex-direction:column; align-items:flex-start; }
+  .cz-viz{ width:92px; height:92px; color:var(--blue-elec); margin-bottom:30px; }
+  .cz-viz svg{ width:100%; height:100%; filter:drop-shadow(0 0 15px rgba(76,135,255,.5)); }
+  .cz-no{ font-family:var(--font-body); font-weight:500; font-size:15px; letter-spacing:.2em;
+    color:var(--blue-elec); margin-bottom:16px; }
+  .reveal .cz-wrap h3.cz-title{ font-size:29px; line-height:1.05; letter-spacing:-.01em; margin:0; }
+  /* Whole panel rises as one unit on entry, so all three read at once (no per-card stagger). */
+  .reveal section.present .cz-wrap{ animation:riseIn .8s .18s both cubic-bezier(.2,.7,.2,1); }
+  .reveal section.present .cz-wrap h3{ animation:none; }   /* titles ride with the panel */
+</style>
+<section class="slide">
+  <p class="eyebrow">Why the speed disappears</p>
+  <h3 style="font-size:44px; margin-bottom:52px">We found several causes. These were the <b>three biggest.</b></h3>
+  <div class="cz-wrap">
+    <div class="cz-col">
+      <div class="cz-viz"><svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="14" r="3.4" fill="currentColor" stroke="none"/><circle cx="48" cy="14" r="3.4" fill="currentColor" stroke="none"/><circle cx="64" cy="14" r="3.4" fill="currentColor" stroke="none"/><path d="M18 30 H78 L54 56 V72 H42 V56 Z"/><circle cx="48" cy="85" r="3.4" fill="currentColor" stroke="none"/></svg></div>
+      <span class="cz-no">01</span>
+      <h3 class="cz-title">Humans are the bottleneck</h3>
+    </div>
+    <div class="cz-div"></div>
+    <div class="cz-col">
+      <div class="cz-viz"><svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M24 81 V41" stroke-width="9"/><path d="M42 81 V23" stroke-width="9"/><path d="M60 81 V61" stroke-width="9"/><path d="M78 81 V49" stroke-width="9"/></svg></div>
+      <span class="cz-no">02</span>
+      <h3 class="cz-title">Uneven AI maturity</h3>
+    </div>
+    <div class="cz-div"></div>
+    <div class="cz-col">
+      <div class="cz-viz"><svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="42" cy="50" r="28"/><circle cx="42" cy="50" r="13.5"/><circle cx="42" cy="50" r="2.6" fill="currentColor" stroke="none"/><path d="M65 23 L75 33 M75 23 L65 33" stroke-width="6"/></svg></div>
+      <span class="cz-no">03</span>
+      <h3 class="cz-title">Agents still make mistakes</h3>
+    </div>
+  </div>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">The problem</span></div>
+</section>

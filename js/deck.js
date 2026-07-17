@@ -96,15 +96,16 @@ Reveal.initialize({
    static frame instead (see FREEZE_AT).
    --------------------------------------------------------------------- */
 (function () {
-  // DWELL is the human at the stage. It is deliberately IDENTICAL on both rails: that wait is
-  // what never changed, and it is the bottleneck the slide is about. Only TRAVEL differs.
-  // TRAVEL is halved again here (the progress between stages), while DWELL holds at 1.9s.
-  // Side effect, and a good one: with the movement this slow, the fast rail now spends ~70%
-  // of its run standing still, which is precisely the claim.
-  var DWELL  = 1900;
-  var TRAVEL = { slow: 5600, fast: 960 };  // per gap
-  var CYCLE  = 48000;                      // slow needs 46900, then a beat before the loop
-  var FREEZE_AT = 15500;                   // both dwelling: slow at Design, fast at Documentation
+  // Two different motions now:
+  //   BEFORE AI (slow rail) flows CONTINUOUSLY end to end, one long eased sweep, no stops.
+  //   WITH AI  (fast rail)  jumps fast between stages but STOPS at each (DWELL) - that pause
+  //   is the human-in-the-loop bottleneck, the point of the slide. Slow finishes well after
+  //   fast, so it still reads as the slower process.
+  var DWELL      = 3400;                   // fast rail only: the wait at each stage (the bottleneck)
+  var TRAVEL     = { fast: 1920 };         // fast rail per-gap travel (halved speed = 2x duration)
+  var SWEEP_SLOW = 40000;                  // slow rail: one continuous sweep, tip to tip
+  var CYCLE      = 44000;                  // slow finishes at 40s (fast ~32s), ~4s hold, then loop
+  var FREEZE_AT  = 17000;                  // slow mid-flow past Design, fast stopped at Coding
 
   function wire() {
     var slide = document.querySelector('.pl-slide');
@@ -119,22 +120,30 @@ Reveal.initialize({
         orb: el.querySelector('.pl-orb'),
         steps: steps,
         n: steps.length,
-        travel: TRAVEL[el.dataset.speed] || TRAVEL.slow
+        continuous: el.dataset.speed === 'slow',
+        travel: TRAVEL[el.dataset.speed] || TRAVEL.fast
       };
     });
     if (!rails.length) return;
 
-    // where the work is at time t: dwell at a station, then ease across the gap
+    function easeInOut(k) { return k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; }
+
+    // where the work is at time t. Continuous rail: one eased sweep, never stops, stations
+    // just light as the head passes them. Stepped rail: dwell at a station, then ease to next.
     function stateAt(r, t) {
-      var seg = DWELL + r.travel;
       var last = r.n - 1;
+      if (r.continuous) {
+        var k = Math.min(t / SWEEP_SLOW, 1);
+        var p = easeInOut(k);
+        var at = Math.min(Math.floor(p * last + 1e-6), last);
+        return { p: p, at: at, moving: k < 1 };   // moving until it lands, so no is-at mid-flow
+      }
+      var seg = DWELL + r.travel;
       if (t >= last * seg + DWELL) return { p: 1, at: last, moving: false };
       var i = Math.floor(t / seg);
       var into = t - i * seg;
       if (into <= DWELL) return { p: i / last, at: i, moving: false };
-      var k = (into - DWELL) / r.travel;
-      var e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;   // easeInOutQuad
-      return { p: (i + e) / last, at: i, moving: true };
+      return { p: (i + easeInOut((into - DWELL) / r.travel)) / last, at: i, moving: true };
     }
 
     function paint(t) {
@@ -174,6 +183,30 @@ Reveal.initialize({
     if (reduce) paint(FREEZE_AT);   // QA renders the slide without a slidechange
   }
 
+  if (Reveal.isReady()) wire();
+  else Reveal.on('ready', wire);
+})();
+
+/* czb numbered focus-list ("Why the speed disappears"): the focused row advances by CLICK, not a
+   timer. Each lower row carries an empty .fx fragment marker, so a click just steps reveal's
+   fragment pointer; here we count how many markers are shown and move .is-active to that row
+   (row 0 on entry, +1 per click). CSS transitions animate the hand-off. In QA, fragments render
+   all-shown and CSS pins row 01, so we skip. Pure-CSS :has() was tried first and dropped: this
+   engine doesn't re-style the ancestor row when reveal moves .current-fragment. */
+(function () {
+  function wire() {
+    var items = [].slice.call(document.querySelectorAll('.czb-item'));
+    if (!items.length) return;
+    if (document.documentElement.classList.contains('qa')) return;   // QA: CSS pins row 01
+    function update() {
+      var shown = document.querySelectorAll('.czb-item .fx.visible').length;   // 0, 1 or 2
+      items.forEach(function (it, i) { it.classList.toggle('is-active', i === shown); });
+    }
+    Reveal.on('fragmentshown', update);
+    Reveal.on('fragmenthidden', update);
+    Reveal.on('slidechanged', update);
+    update();
+  }
   if (Reveal.isReady()) wire();
   else Reveal.on('ready', wire);
 })();

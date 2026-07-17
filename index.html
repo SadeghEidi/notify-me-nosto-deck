@@ -33,44 +33,203 @@
   <div class="pill" style="margin-top:52px"><span class="dot"></span>Hamidreza&nbsp;&nbsp;·&nbsp;&nbsp;CEO, Notify&nbsp;Me!</div>
 </section>
 
-<!-- ================= 02 · HOOK ================= -->
+<!-- ================= 01B · AI-POWERED ISN'T ENOUGH (two-view gauge build) =============
+     TWO VIEWS on one advance (reveal fragment index 1):
+       View 1 - the comfortable illusion: two "good news" items (left) + the Individual
+                speed gauge revved high (right, blue). Right slot sits empty, reserved.
+       View 2 - the reframe: the view-1 items DIM to .32, the reframe items + the quote
+                fade in, and the Organization speed gauge fades into the reserved slot at
+                40% in yellow. Individual high vs organization 40% is the whole contrast.
+     One fragment class .v2 (index 1) reveals every view-2 element together; the dim + the
+     org gauge are driven off `section:has(.v2.visible)`, the same has()-gate the OusMous
+     slide uses. QA can't see fragment .visible, so QA rules below force the view-2 frame.
+     Gauge model unchanged: needle box rotates about its centre (=hub 200,200); rotate =
+     240*t - 120; value arc pathLength=240 so dashoffset = 240*(1-t). Individual t=.9
+     (rotate 96, offset 24); Organization t=.4 (rotate -24, offset 144). -->
+<style>
+.spd2-title{ font-size:54px; }
+.spd2-body{ display:flex; align-items:center; gap:30px; width:100%; margin-top:36px; }
+.spd2-text{ width:680px; flex:none; }
+.spd2-v1{ display:flex; flex-direction:column; gap:15px; transition:opacity .55s ease; }
+.spd2-v2{ display:flex; flex-direction:column; gap:15px; margin-top:26px; }
+.spd2-item{ display:flex; align-items:flex-start; gap:14px; margin:0;
+  font-family:var(--font-body); font-weight:300; font-size:23px; color:var(--g1); line-height:1.3; }
+.spd2-item .dot{ width:8px; height:8px; border-radius:50%; margin-top:10px; flex:none; }
+.spd2-item .dot.b{ background:var(--blue-elec); box-shadow:0 0 10px rgba(76,135,255,.9); }
+.spd2-item .dot.y{ background:#F5C24B; box-shadow:0 0 10px rgba(245,194,75,.9); }
+/* one sentence per line; non-breaking hyphen in the markup stops "AI-native" splitting mid-word */
+.spd2-quote{ margin:32px 0 0; font-family:var(--font-display); font-weight:400; font-size:34px;
+  color:#fff; line-height:1.16; letter-spacing:-.012em; --emph:700; }
+.spd2-quote b{ color:#F5C24B; text-shadow:0 0 24px rgba(245,194,75,.4); }
+.reveal section .spd2-v2 .fragment.fade-in-up{
+  transition:opacity .55s ease, transform .55s cubic-bezier(.2,.7,.2,1); }
+
+.spd2-gauges{ flex:1; display:flex; justify-content:center; gap:24px; }
+.spd-gauge{ position:relative; width:400px; height:400px; }
+.spd-hi { --nc:#E7F0FF; --arc:var(--blue-elec); --acr:76,135,255;  --lab:var(--blue-elec); }
+.spd-org{ --nc:#FFE7B0; --arc:#F5C24B;          --acr:245,194,75; --lab:#F5C24B; opacity:0;
+  transition:opacity .6s ease; }
+
+.spd-bloom{ position:absolute; left:50%; top:52%; width:440px; height:440px; margin:-220px 0 0 -220px;
+  border-radius:50%; z-index:0; filter:blur(30px); pointer-events:none;
+  background:radial-gradient(circle, rgba(var(--acr),.30), transparent 62%); }
+
+.spd-svg{ position:absolute; inset:0; width:100%; height:100%; z-index:1; overflow:visible; }
+.spd-track{ fill:none; stroke:rgba(255,255,255,.09); stroke-width:10; stroke-linecap:round; }
+.spd-ticks{ fill:none; stroke:rgba(255,255,255,.22); stroke-width:2; stroke-dasharray:1 11; }
+.spd-val{ fill:none; stroke:var(--arc); stroke-width:10; stroke-linecap:round;
+  stroke-dasharray:240; stroke-dashoffset:240;
+  filter:drop-shadow(0 0 7px rgba(var(--acr),.9)) drop-shadow(0 0 20px rgba(var(--acr),.5)); }
+
+/* needle: an HTML box rotated about its centre (=hub). Default points up. */
+.spd-sweep, .spd-jit{ position:absolute; inset:0; transform-origin:50% 50%; z-index:2; }
+.spd-sweep{ transform:rotate(-120deg); }
+.spd-needle{ position:absolute; inset:0; filter:drop-shadow(0 0 6px rgba(var(--acr),.85)); }
+.spd-needle::before{ content:''; position:absolute; left:50%; top:72px; margin-left:-5px;
+  width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent;
+  border-bottom:128px solid var(--nc); }
+.spd-needle::after{ content:''; position:absolute; left:50%; top:200px; margin-left:-4px;
+  width:0; height:0; border-left:4px solid transparent; border-right:4px solid transparent;
+  border-top:30px solid var(--nc); opacity:.6; }
+.spd-hub{ position:absolute; left:50%; top:50%; width:22px; height:22px; margin:-11px 0 0 -11px;
+  z-index:3; border-radius:50%; background:radial-gradient(circle at 38% 34%, #fff, var(--arc) 78%);
+  box-shadow:0 0 0 4px rgba(var(--acr),.16), 0 0 16px rgba(var(--acr),.8); }
+
+.spd-cap{ position:absolute; top:300px; left:0; right:0; z-index:3; text-align:center;
+  font-family:var(--font-display); font-weight:400; font-size:25px; color:#fff; letter-spacing:-.01em; }
+.spd-tag{ position:absolute; top:340px; left:0; right:0; z-index:3; text-align:center;
+  font-family:var(--font-mono); font-weight:500; font-size:13px; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--lab); }
+
+/* ---- the run ---- */
+@keyframes spdSweepHi { 0%{transform:rotate(-120deg)} 55%{transform:rotate(104deg)}
+  74%{transform:rotate(90deg)} 88%{transform:rotate(99deg)} 100%{transform:rotate(96deg)} }
+@keyframes spdSweepOrg{ 0%{transform:rotate(-120deg)} 55%{transform:rotate(-14deg)}
+  76%{transform:rotate(-28deg)} 100%{transform:rotate(-24deg)} }
+@keyframes spdFillHi { from{stroke-dashoffset:240} to{stroke-dashoffset:24} }
+@keyframes spdFillOrg{ from{stroke-dashoffset:240} to{stroke-dashoffset:144} }
+@keyframes spdJitAlive{ 0%,100%{transform:rotate(0)} 20%{transform:rotate(1.3deg)}
+  45%{transform:rotate(-1deg)} 70%{transform:rotate(1deg)} }
+@keyframes spdBloom{ 0%,100%{transform:scale(1);opacity:.7} 50%{transform:scale(1.1);opacity:.95} }
+
+/* View 1: the individual gauge revs up on slide entry */
+.reveal section.present .spd-hi{ animation:riseIn .8s .2s both ease-out; }
+.reveal section.present .spd-hi .spd-sweep{ animation:spdSweepHi 1.6s .45s both cubic-bezier(.2,.8,.25,1); }
+.reveal section.present .spd-hi .spd-val{ animation:spdFillHi 1.6s .45s both cubic-bezier(.2,.8,.25,1); }
+.reveal section.present .spd-hi .spd-jit{ animation:spdJitAlive 2.6s 2.2s ease-in-out infinite; }
+.reveal section.present .spd-hi .spd-bloom{ animation:spdBloom 4.6s 2s ease-in-out infinite; }
+/* View 2 (advance): dim the good news, ignite the organization gauge at 40% */
+.reveal section.present:has(.v2.visible) .spd2-v1{ opacity:.32; }
+.reveal section.present:has(.v2.visible) .spd-org{ opacity:1; }
+.reveal section.present:has(.v2.visible) .spd-org .spd-sweep{ animation:spdSweepOrg 1.3s .12s both cubic-bezier(.2,.8,.25,1); }
+.reveal section.present:has(.v2.visible) .spd-org .spd-val{ animation:spdFillOrg 1.3s .12s both cubic-bezier(.2,.8,.25,1); }
+
+/* QA (?qa) can't read fragment .visible, so force the settled view-2 frame */
+.qa .spd-hi, .qa .spd-org{ animation:none !important; opacity:1 !important; }
+.qa .spd2-v1{ opacity:.32 !important; }
+.qa .spd2-v2 .fragment{ opacity:1 !important; transform:none !important; }
+.qa .spd-hi .spd-sweep{ animation:none !important; transform:rotate(96deg) !important; }
+.qa .spd-org .spd-sweep{ animation:none !important; transform:rotate(-24deg) !important; }
+.qa .spd-hi .spd-val{ animation:none !important; stroke-dashoffset:24 !important; }
+.qa .spd-org .spd-val{ animation:none !important; stroke-dashoffset:144 !important; }
+.qa .spd-jit, .qa .spd-bloom{ animation:none !important; transform:none !important; }
+</style>
 <section class="slide">
-  <span class="ghost" style="font-size:300px; right:-40px; top:120px">NATIVE</span>
-  <p class="eyebrow">The problem</p>
-  <h2 style="font-size:78px; position:relative; z-index:2">Your people are AI-native.<br>Your organization <b>isn't.</b></h2>
-  <p class="lead" style="position:relative; z-index:2">Everyone's using AI. Everyone feels faster. But step back and look at the business as a whole, and the speed isn't showing up where it matters. From the outside, it's often hard to tell AI is being used at all.</p>
+  <p class="eyebrow">The reality check</p>
+  <h2 class="spd2-title">Why &ldquo;AI-Powered&rdquo; Isn&rsquo;t Enough</h2>
+
+  <div class="spd2-body">
+    <div class="spd2-text">
+      <div class="spd2-v1">
+        <p class="spd2-item"><span class="dot b"></span>Your productivity improves dramatically</p>
+        <p class="spd2-item"><span class="dot b"></span>Everyone seems to be working faster</p>
+      </div>
+      <div class="spd2-v2">
+        <p class="spd2-item fragment fade-in-up v2" data-fragment-index="1"><span class="dot y"></span>Because being AI-powered isn&rsquo;t enough anymore.</p>
+        <p class="spd2-item fragment fade-in-up v2" data-fragment-index="1"><span class="dot y"></span>Your organization has to become AI-native.</p>
+        <p class="spd2-quote fragment fade-in-up v2" data-fragment-index="1">Your people might be AI&#8209;powered, but<br>Your organization has to be <b>AI&#8209;native.</b></p>
+      </div>
+    </div>
+
+    <div class="spd2-gauges">
+      <!-- individual: blue, revved high -->
+      <div class="spd-gauge spd-hi">
+        <span class="spd-bloom"></span>
+        <svg class="spd-svg" viewBox="0 0 400 400" aria-hidden="true">
+          <path class="spd-track" d="M70.096 275 A150 150 0 1 1 329.904 275"/>
+          <path class="spd-ticks" pathLength="240" d="M85.685 266 A132 132 0 1 1 314.315 266"/>
+          <path class="spd-val" pathLength="240" d="M70.096 275 A150 150 0 1 1 329.904 275"/>
+        </svg>
+        <div class="spd-sweep"><div class="spd-jit"><div class="spd-needle"></div></div></div>
+        <span class="spd-hub"></span>
+        <span class="spd-cap">Individual speed</span>
+        <span class="spd-tag">High</span>
+      </div>
+
+      <!-- organization: yellow, fades in at 40% on view 2 -->
+      <div class="spd-gauge spd-org">
+        <span class="spd-bloom"></span>
+        <svg class="spd-svg" viewBox="0 0 400 400" aria-hidden="true">
+          <path class="spd-track" d="M70.096 275 A150 150 0 1 1 329.904 275"/>
+          <path class="spd-ticks" pathLength="240" d="M85.685 266 A132 132 0 1 1 314.315 266"/>
+          <path class="spd-val" pathLength="240" d="M70.096 275 A150 150 0 1 1 329.904 275"/>
+        </svg>
+        <div class="spd-sweep"><div class="spd-jit"><div class="spd-needle"></div></div></div>
+        <span class="spd-hub"></span>
+        <span class="spd-cap">Organization speed</span>
+        <span class="spd-tag">Slower</span>
+      </div>
+    </div>
+  </div>
+
   <div class="foot"><img src="img/lockup-white.png" alt="Notify Me!"><span class="sep"></span><span class="pg">The problem</span></div>
 </section>
 
-<!-- ================= 03 · THREE REASONS ================= -->
+<!-- ========= 03B · WHY THE SPEED DISAPPEARS (numbered click-focus list, variant of 03) ========= -->
+<style>
+  /* Same eyebrow + headline as the archived icon panel, three causes as a NUMBERED list. All three
+     are visible from the first frame; the focus is advanced BY CLICK (01 on entry, then 02, then
+     03). Each lower row holds an empty .fx fragment marker so clicks are consumed on this slide; a
+     handler in deck.js counts the shown markers and toggles .is-active onto the matching row, and
+     the CSS transitions below (not a timer) animate the hand-off. Scoped czb- block. */
+  .czb-list{ list-style:none; margin:6px 0 0; padding:0; display:flex; flex-direction:column; gap:30px; }
+  .czb-item{ position:relative; display:flex; align-items:baseline; gap:24px; padding-left:28px;
+    opacity:.45; transform:translateX(0);           /* inactive rows recede but stay readable */
+    transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1); }
+  /* the accent bar that lands on the active row */
+  .czb-item::before{ content:''; position:absolute; left:0; top:4px; bottom:4px; width:3px;
+    border-radius:2px; background:var(--coral); box-shadow:0 0 14px var(--coral);
+    transform:scaleY(.2); transform-origin:center; opacity:0;
+    transition:transform .5s cubic-bezier(.2,.7,.2,1), opacity .5s ease; }
+  /* the numeric bullet */
+  .czb-num{ font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--coral);
+    letter-spacing:.02em; flex:none; min-width:42px; }
+  /* medium size: bigger than body, clearly under the 44px headline */
+  .reveal .czb-item .txt{ font-family:var(--font-display); font-weight:400; font-size:34px;
+    line-height:1.1; letter-spacing:-.01em; color:#fff; }
+  /* the focus markers carry no visual and take no space; they only step reveal's fragment pointer
+     on each click. deck.js reads how many are shown and toggles .is-active onto the matching row. */
+  .czb-item .fx{ position:absolute; width:0; height:0; overflow:hidden; }
+  /* the focused row (deck.js sets .is-active; row 01 on entry, +1 per click) */
+  .czb-item.is-active{ opacity:1; transform:translateX(10px); }
+  .czb-item.is-active::before{ transform:scaleY(1); opacity:1; }
+  /* the list rises in as one unit on entry (container only, so it never fights the row opacities) */
+  .reveal section.present .czb-list{ animation:riseIn .7s .12s both cubic-bezier(.2,.7,.2,1); }
+  /* QA/PDF shows every fragment at once and the JS is skipped, so pin row 01 focused here. */
+  .qa .czb-item:first-child{ opacity:1 !important; transform:translateX(10px) !important; }
+  .qa .czb-item:first-child::before{ transform:scaleY(1) !important; opacity:1 !important; }
+  .qa .czb-item:not(:first-child){ opacity:.45 !important; transform:none !important; }
+  .qa .czb-item:not(:first-child)::before{ opacity:0 !important; transform:scaleY(.2) !important; }
+</style>
 <section class="slide">
   <p class="eyebrow">Why the speed disappears</p>
-  <h3 style="font-size:44px; margin-bottom:44px">We found several causes. These were the <b>three biggest.</b></h3>
-  <div class="grid-3">
-    <div class="glass card-pad accent-blue card-glow fragment fade-in-up">
-      <div class="card-top"><span class="idx">01</span><span class="chip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16"/><path d="M12 20V10"/><path d="M7 14l5-5 5 5"/></svg></span></div>
-      <h3 style="font-size:28px; margin:24px 0 12px">Humans are the bottleneck</h3>
-      <p class="muted" style="font-size:19px; line-height:1.5">Every agent output still routes back to a person to plan, decide, connect the dots, and move it forward.</p>
-    </div>
-    <div class="glass card-pad accent-purple card-glow fragment fade-in-up">
-      <div class="card-top"><span class="idx">02</span><span class="chip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="12" r="2.2"/><path d="M8.2 6.9 15.8 11.2M8.2 17.1 15.8 12.8"/></svg></span></div>
-      <h3 style="font-size:28px; margin:24px 0 12px">Uneven AI maturity</h3>
-      <p class="muted" style="font-size:19px; line-height:1.5">Departments adopt AI at very different speeds. Engineering races ahead; Product and Marketing can't keep pace.</p>
-    </div>
-    <div class="glass card-pad accent-coral card-glow fragment fade-in-up">
-      <div class="card-top"><span class="idx">03</span><span class="chip-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.6"/><path d="M20 4v6h-6"/></svg></span></div>
-      <h3 style="font-size:28px; margin:24px 0 12px">Agents still make mistakes</h3>
-      <p class="muted" style="font-size:19px; line-height:1.5">Fast, but wrong often enough that people spend real time reviewing outputs and going back and forth to fix them.</p>
-    </div>
-  </div>
+  <h3 style="font-size:44px; margin-bottom:52px">We found several causes. These were the <b>three biggest.</b></h3>
+  <ul class="czb-list">
+    <li class="czb-item"><span class="czb-num">01</span><span class="txt">Humans are the bottleneck</span></li>
+    <li class="czb-item"><span class="fx fragment"></span><span class="czb-num">02</span><span class="txt">Uneven AI maturity</span></li>
+    <li class="czb-item"><span class="fx fragment"></span><span class="czb-num">03</span><span class="txt">Agents still make mistakes</span></li>
+  </ul>
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">The problem</span></div>
-</section>
-
-<!-- ================= 04 · STATEMENT ================= -->
-<section class="slide center">
-  <span class="ghost" style="font-size:300px; top:180px">AGENTIC</span>
-  <h1 style="text-align:center; font-size:80px; position:relative; z-index:2; max-width:1400px">Until this is solved, you can't honestly say your company is ready for the <b>agentic era.</b></h1>
-  <div class="foot-r">Notify Me!</div>
 </section>
 
 <!-- ================= 05 · SPEAKER ================= -->
@@ -80,7 +239,6 @@
       <p class="eyebrow">Who's talking</p>
       <h1 style="font-size:104px">Hamidreza Zahedi</h1>
       <p class="lead" style="margin-top:18px; font-size:28px; color:var(--g1)">CEO at Notify&nbsp;Me!, building it for almost four years.</p>
-      <p class="lead" style="margin-top:22px">The next 13 minutes: how we orchestrate AI agents across a department, and ultimately an entire organization.</p>
     </div>
     <div class="portrait float"><span class="bloom"></span><img src="img/hamidreza.jpeg" alt="Hamidreza Zahedi, CEO of Notify Me!"></div>
   </div>
@@ -427,54 +585,60 @@
 .rg-li i{ width:9px; height:9px; border-radius:50%; }
 .rg-li b{ font-family:var(--font-display); font-weight:700; font-size:15px; color:var(--g2); }
 .rg-li.hero{ color:#fff; } .rg-li.hero b{ color:#fff; }
-.rg-note{ font-family:var(--font-body); font-weight:300; font-size:14.5px; color:var(--g3);
-  line-height:1.5; margin-top:24px; padding-top:16px; border-top:1px solid var(--hair); }
-.rg-note b{ color:var(--g2); font-weight:500; }
 
-/* ---- the hero: one team, two products -> two pairs, one product each ---- */
+/* ---- the hero: one team, four products -> four teams, one product each ----
+   Geometry contract: every box here is border-box, so `left` + `width` ARE the edges the
+   wire paths are drawn against. This was content-box before, which silently inflated
+   .rg-spec to 480..882 (not 480..840) and left the coloured wires running 22px underneath
+   the cards - visible because .rg-spec has a 3.5% fill and no backdrop blur to hide them.
+   If you change a width or a padding here, re-check the <path d> numbers. */
 .rg-map{ position:relative; width:1700px; height:400px; margin-top:50px; }
 .rg-wire{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
 .rg-wire path{ fill:none; stroke-width:1.5; stroke-dasharray:1 1; stroke-dashoffset:1; }
 .rg-wire .w1{ stroke:var(--g3); opacity:.5; }
+.rg-wire .w1.wf{ opacity:.18; }                    /* feeds a faded "and more" row */
 .rg-wire .wb{ stroke:var(--blue-elec); opacity:.85; filter:drop-shadow(0 0 5px var(--blue-elec)); }
 .rg-wire .wm{ stroke:var(--mint); opacity:.85; filter:drop-shadow(0 0 5px var(--mint)); }
+.rg-wire .wc{ stroke:var(--coral); opacity:.85; filter:drop-shadow(0 0 5px var(--coral)); }
+.rg-wire .wp{ stroke:var(--purple); opacity:.85; filter:drop-shadow(0 0 5px var(--purple)); }
 
 .rg-cap{ position:absolute; font-family:var(--font-mono); font-weight:500; font-size:11.5px;
   letter-spacing:.16em; text-transform:uppercase; color:var(--g3); white-space:nowrap; }
 
-/* stage 1 */
-.rg-team{ position:absolute; left:0; top:44px; width:360px; height:200px; z-index:1;
-  display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:22px; padding:0 34px;
+/* stage 1 - the single team that owned all four products */
+.rg-team{ box-sizing:border-box; position:absolute; left:0; top:70px; width:360px; height:260px; z-index:1;
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:15px; padding:0 30px;
   border-radius:22px; background:var(--glass); border:1px solid var(--glass-border);
   backdrop-filter:blur(18px) saturate(120%); -webkit-backdrop-filter:blur(18px) saturate(120%); }
-.rg-team img{ height:30px; width:auto; display:block; }
+.rg-team img{ height:27px; width:auto; display:block; }
 .rg-team .rg-hair{ height:1px; width:100%; background:var(--hair); }
 
-/* stage 2 · the shared pool. grey = owns no product yet */
-.rg-spec{ position:absolute; left:480px; width:360px; height:44px; z-index:1;
+/* stage 2 - the shared pool. grey = owns no product yet. rows 5-6 fade out: the pool is
+   bigger than the slide, these six are a sample. */
+.rg-spec{ box-sizing:border-box; position:absolute; left:480px; width:360px; height:44px; z-index:1;
   display:flex; align-items:center; gap:13px; padding:0 20px; border-radius:12px;
   background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.09);
   font-family:var(--font-body); font-weight:300; font-size:19px; color:var(--g1); }
 .rg-spec i{ width:7px; height:7px; border-radius:50%; background:var(--g3); flex:none; }
+.rg-spec.f1{ opacity:.42; } .rg-spec.f2{ opacity:.18; }
+.rg-more{ position:absolute; left:480px; top:406px; font-family:var(--font-body); font-weight:300;
+  font-size:15px; color:var(--g3); opacity:.55; }
 
-/* stage 3 · a pair per product, wearing that product's colour */
-.rg-own{ position:absolute; left:1220px; width:480px; height:156px; z-index:1;
-  display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:14px; padding:0 32px;
-  border-radius:22px; background:var(--glass); border:1px solid var(--glass-border);
+/* stage 3 - one team per product, wearing that product's colour. Compact + horizontal so
+   four of them fit the same 400px the two tall cards used to. */
+.rg-own{ box-sizing:border-box; position:absolute; left:1220px; width:480px; height:78px; z-index:1;
+  display:flex; align-items:center; gap:18px; padding:0 24px;
+  border-radius:16px; background:var(--glass); border:1px solid var(--glass-border);
   backdrop-filter:blur(18px) saturate(120%); -webkit-backdrop-filter:blur(18px) saturate(120%);
-  box-shadow:0 0 0 1px var(--glass-border), 0 20px 50px rgba(0,0,0,.45),
+  box-shadow:0 0 0 1px var(--glass-border), 0 16px 40px rgba(0,0,0,.45),
              inset 0 0 60px -26px var(--ac); }
-.rg-own img{ height:27px; width:auto; display:block; }
-.rg-own .rg-hair{ height:1px; width:100%; background:var(--hair); }
-.rg-roles{ display:flex; gap:34px; }
-.rg-role{ display:flex; align-items:center; gap:11px; font-family:var(--font-body);
-  font-weight:300; font-size:18px; color:#fff; white-space:nowrap; }
-.rg-role i{ width:7px; height:7px; border-radius:50%; flex:none; background:var(--ac);
+.rg-own img{ height:24px; width:auto; display:block; flex:none; }
+.rg-own .rg-hair{ width:1px; height:44px; background:var(--hair); flex:none; }
+.rg-roles{ display:flex; flex-direction:column; gap:5px; }
+.rg-role{ display:flex; align-items:center; gap:9px; font-family:var(--font-body);
+  font-weight:300; font-size:15px; color:#fff; white-space:nowrap; }
+.rg-role i{ width:6px; height:6px; border-radius:50%; flex:none; background:var(--ac);
   box-shadow:0 0 10px var(--ac); }
-
-.rg-foot{ margin-top:26px; font-family:var(--font-body); font-weight:300; font-size:16px;
-  color:var(--g3); }
-.rg-foot b{ color:var(--g2); font-weight:500; }
 
 /* ---- motion: the regroup plays itself out on entry, OusMous pacing ---- */
 @keyframes rgDraw{ to{ stroke-dashoffset:0 } }
@@ -483,15 +647,20 @@
 .reveal section.present .rg-spec{ animation:riseIn .6s both ease-out; }
 .reveal section.present .rg-spec.s1{ animation-delay:.85s } .reveal section.present .rg-spec.s2{ animation-delay:.97s }
 .reveal section.present .rg-spec.s3{ animation-delay:1.09s } .reveal section.present .rg-spec.s4{ animation-delay:1.21s }
-/* the regroup itself: blue lines pull two people to Back in Stock, mint pulls the other two */
-.reveal section.present .rg-wire .wb{ animation:rgDraw .85s 1.55s both cubic-bezier(.4,0,.2,1); }
-.reveal section.present .rg-wire .wm{ animation:rgDraw .85s 1.75s both cubic-bezier(.4,0,.2,1); }
-.reveal section.present .rg-own.o1{ animation:riseIn .7s 2.1s both ease-out; }
-.reveal section.present .rg-own.o2{ animation:riseIn .7s 2.3s both ease-out; }
+.reveal section.present .rg-spec.s5{ animation-delay:1.33s } .reveal section.present .rg-spec.s6{ animation-delay:1.45s }
+.reveal section.present .rg-more{ animation:riseIn .6s 1.6s both ease-out; }
+/* the regroup itself: one coloured wire pulls the pool into each product team */
+.reveal section.present .rg-wire .wb{ animation:rgDraw .85s 1.70s both cubic-bezier(.4,0,.2,1); }
+.reveal section.present .rg-wire .wm{ animation:rgDraw .85s 1.82s both cubic-bezier(.4,0,.2,1); }
+.reveal section.present .rg-wire .wc{ animation:rgDraw .85s 1.94s both cubic-bezier(.4,0,.2,1); }
+.reveal section.present .rg-wire .wp{ animation:rgDraw .85s 2.06s both cubic-bezier(.4,0,.2,1); }
+.reveal section.present .rg-own.o1{ animation:riseIn .7s 2.25s both ease-out; }
+.reveal section.present .rg-own.o2{ animation:riseIn .7s 2.37s both ease-out; }
+.reveal section.present .rg-own.o3{ animation:riseIn .7s 2.49s both ease-out; }
+.reveal section.present .rg-own.o4{ animation:riseIn .7s 2.61s both ease-out; }
 .reveal section.present .rg-cap{ animation:riseIn .6s both ease-out; }
 .reveal section.present .rg-cap.c1{ animation-delay:.25s } .reveal section.present .rg-cap.c2{ animation-delay:.95s }
-.reveal section.present .rg-cap.c3{ animation-delay:2.2s }
-.reveal section.present .rg-foot{ animation:riseIn .7s 2.5s both ease-out; }
+.reveal section.present .rg-cap.c3{ animation-delay:2.4s }
 /* QA renders must be byte-stable */
 .qa .rg-wire path{ animation:none !important; stroke-dashoffset:0 !important; }
 </style>
@@ -524,38 +693,48 @@
           <span class="rg-li"><i style="background:rgba(76,135,255,.17)"></i><span>Marketing</span><b>8%</b></span>
         </div>
       </div>
-      <p class="rg-note"><b>Technical &amp; Product</b> was our largest team, so that&rsquo;s where we started.</p>
     </div>
     
   </div>
 
   <div class="rg-map">
-    <span class="rg-cap c1" style="left:0; top:8px">One team &middot; two products</span>
-    <span class="rg-cap c2" style="left:480px; top:8px">Four specialists, shared</span>
-    <span class="rg-cap c3" style="left:1220px; top:8px">Two pairs &middot; one product each</span>
+    <span class="rg-cap c1" style="left:0; top:8px">One team &middot; four products</span>
+    <span class="rg-cap c2" style="left:480px; top:8px">Specialists, shared</span>
+    <span class="rg-cap c3" style="left:1220px; top:8px">Four teams &middot; four products</span>
 
-    <!-- grey fan out to the shared pool, then blue/mint pull each person to their product -->
+    <!-- grey fan out to the shared pool, then one coloured wire per product team.
+         Endpoints are card borders: 360 = .rg-team right, 480/840 = .rg-spec edges,
+         1220 = .rg-own left. All border-box, so these numbers are real. -->
     <svg class="rg-wire" viewBox="0 0 1700 400" aria-hidden="true">
-      <path class="w1" pathLength="1" d="M360 144 C420 144 430 66 480 66"/>
-      <path class="w1" pathLength="1" d="M360 144 C420 144 430 128 480 128"/>
-      <path class="w1" pathLength="1" d="M360 144 C420 144 430 190 480 190"/>
-      <path class="w1" pathLength="1" d="M360 144 C420 144 430 252 480 252"/>
-      <path class="wb" pathLength="1" d="M860 66 C990 66 1090 122 1220 122"/>
-      <path class="wb" pathLength="1" d="M860 190 C990 190 1090 122 1220 122"/>
-      <path class="wm" pathLength="1" d="M860 128 C990 128 1090 304 1220 304"/>
-      <path class="wm" pathLength="1" d="M860 252 C990 252 1090 304 1220 304"/>
+      <path class="w1" pathLength="1" d="M360 200 C420 200 430 66 480 66"/>
+      <path class="w1" pathLength="1" d="M360 200 C420 200 430 128 480 128"/>
+      <path class="w1" pathLength="1" d="M360 200 C420 200 430 190 480 190"/>
+      <path class="w1" pathLength="1" d="M360 200 C420 200 430 252 480 252"/>
+      <path class="w1 wf" pathLength="1" d="M360 200 C420 200 430 314 480 314"/>
+      <path class="w1 wf" pathLength="1" d="M360 200 C420 200 430 376 480 376"/>
+      <path class="wb" pathLength="1" d="M840 66 C990 66 1090 83 1220 83"/>
+      <path class="wm" pathLength="1" d="M840 128 C990 128 1090 175 1220 175"/>
+      <path class="wc" pathLength="1" d="M840 190 C990 190 1090 267 1220 267"/>
+      <path class="wp" pathLength="1" d="M840 252 C990 252 1090 359 1220 359"/>
     </svg>
 
     <div class="rg-team">
       <img src="img/back-in-stock-logo.svg" alt="Back in Stock">
       <span class="rg-hair"></span>
       <img src="img/preorder-logo.svg" alt="Pre-order">
+      <span class="rg-hair"></span>
+      <img src="img/low-stock-logo.svg" alt="Low Stock">
+      <span class="rg-hair"></span>
+      <img src="img/wishlist-logo.svg" alt="Wishlist">
     </div>
 
     <div class="rg-spec s1" style="top:44px"><i></i>Frontend</div>
     <div class="rg-spec s2" style="top:106px"><i></i>Backend</div>
     <div class="rg-spec s3" style="top:168px"><i></i>Product</div>
     <div class="rg-spec s4" style="top:230px"><i></i>Design</div>
+    <div class="rg-spec s5 f1" style="top:292px"><i></i>Frontend</div>
+    <div class="rg-spec s6 f2" style="top:354px"><i></i>Backend</div>
+    <span class="rg-more">&hellip; and the rest of the team</span>
 
     <div class="rg-own o1 accent-blue" style="top:44px">
       <img src="img/back-in-stock-logo.svg" alt="Back in Stock">
@@ -565,8 +744,24 @@
         <span class="rg-role"><i></i>Product Designer</span>
       </div>
     </div>
-    <div class="rg-own o2 accent-mint" style="top:226px">
+    <div class="rg-own o2 accent-mint" style="top:136px">
       <img src="img/preorder-logo.svg" alt="Pre-order">
+      <span class="rg-hair"></span>
+      <div class="rg-roles">
+        <span class="rg-role"><i></i>Full-stack Engineer</span>
+        <span class="rg-role"><i></i>Product Designer</span>
+      </div>
+    </div>
+    <div class="rg-own o3 accent-coral" style="top:228px">
+      <img src="img/low-stock-logo.svg" alt="Low Stock">
+      <span class="rg-hair"></span>
+      <div class="rg-roles">
+        <span class="rg-role"><i></i>Full-stack Engineer</span>
+        <span class="rg-role"><i></i>Product Designer</span>
+      </div>
+    </div>
+    <div class="rg-own o4 accent-purple" style="top:320px">
+      <img src="img/wishlist-logo.svg" alt="Wishlist">
       <span class="rg-hair"></span>
       <div class="rg-roles">
         <span class="rg-role"><i></i>Full-stack Engineer</span>
@@ -575,56 +770,157 @@
     </div>
   </div>
 
-  <p class="rg-foot">Same four people. <b>Full-stack</b> runs on the Cursor Rules we built, <b>Product Designer</b> on Figma Make and Shopify Polaris.</p>
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 01</span></div>
 </section>
 
 <!-- ================= 10 · THE DIAGNOSIS (three frictions) ================= -->
 <style>
-/* --- Diagnosis / reframe (scoped) --- */
-.bn-lede{ max-width:1180px; }
-.bn-diag{ display:flex; flex-direction:column; gap:18px; margin-top:40px; width:100%; max-width:1620px; }
-.bn-row{ display:grid; grid-template-columns:56px 1fr 316px; align-items:center; gap:34px;
-  padding:34px 34px; border-radius:18px; background:var(--glass); border:1px solid var(--hair);
-  box-shadow:inset 0 0 40px -26px var(--ac, var(--blue-elec)); }
-.bn-row .bn-i{ font-family:var(--font-display); font-weight:700; font-size:34px; line-height:1;
-  color:var(--ac,var(--blue-elec)); text-shadow:0 0 18px var(--ac,transparent); }
-.bn-row .bn-txt h3{ font-family:var(--font-display); font-weight:400; font-size:34px; color:#fff;
-  margin:0; letter-spacing:-.01em; }
-.bn-row .bn-txt p{ font-family:var(--font-body); font-weight:300; font-size:17.5px; line-height:1.45;
-  color:var(--g2); margin:0; max-width:960px; }
-.bn-row .bn-txt p b{ color:var(--g1); font-weight:500; }
-.bn-vis{ height:74px; display:flex; align-items:center; justify-content:flex-end; }
-.bn-row.a1{ --ac:var(--blue-elec); } .bn-row.a2{ --ac:var(--purple); } .bn-row.a3{ --ac:var(--coral); }
+/* --- Diagnosis (scoped). Three animated diagnostic cards; each visual literally plays out its
+   friction so the metaphor lands before the speaker says it. Deliberately MONOCHROME: brightness,
+   dashing and motion carry the meaning, not hue, so the three cards read as one calm system rather
+   than three coloured callouts. Inner loops run continuously; the card fades in as a reveal fragment.
+   QA/PDF force-shows the cards and freezes each loop on a chosen frame (negative delay + paused). --- */
+.dg-lede{ max-width:1200px; }
+.dg-wrap{ display:grid; grid-template-columns:repeat(3,1fr); gap:26px; width:100%;
+  max-width:1720px; margin-top:50px; }
+/* uniform neutral glass: no per-card tint, no coloured glow, no numerals. A hairline frame, a soft
+   inner top edge, and a quiet drop shadow. The visual sits above a thin divider; the line below. */
+.dg-card{ position:relative; min-height:498px; border-radius:20px; padding:32px 30px;
+  display:flex; flex-direction:column; overflow:hidden; isolation:isolate;
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.09);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 26px 60px rgba(0,0,0,.36);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  transform:translateY(30px); opacity:0; transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
+.dg-card.visible{ opacity:1; transform:none; }
 
-/* mini-visual 1 · the return loop (AI does the work, it comes back to a human) */
-.mv-loop{ display:flex; align-items:center; gap:0; font-family:var(--font-mono); }
-.mv-node{ width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center;
-  background:rgba(255,255,255,.05); border:1px solid var(--glass-border); color:var(--blue-elec); position:relative; }
-.mv-node svg{ width:26px; height:26px; }
-.mv-node.human{ color:#fff; border-color:rgba(255,255,255,.28); background:rgba(255,255,255,.09); }
-.mv-loop .ret{ position:relative; width:82px; height:52px; }
-.mv-loop .ret svg{ width:82px; height:52px; overflow:visible; color:var(--blue-elec); }
+.dg-stage{ position:relative; z-index:1; flex:1; display:flex; align-items:center; justify-content:center; }
+.dg-meta{ position:relative; z-index:1; padding-top:24px; margin-top:6px;
+  border-top:1px solid rgba(255,255,255,.08); }
+.dg-t{ font-family:var(--font-display); --emph:700; font-weight:400; font-size:28px; line-height:1.14;
+  letter-spacing:-.015em; color:#fff; margin:0; max-width:16ch; }
 
-/* mini-visual 2 · speed lanes (Eng races, Product/Marketing lag) */
-.mv-lanes{ display:flex; flex-direction:column; gap:9px; width:300px; }
-.mv-lane{ display:grid; grid-template-columns:34px 1fr; align-items:center; gap:11px; }
-.mv-lane .lb{ font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; color:var(--g3); text-align:right; }
-.mv-track{ height:9px; border-radius:5px; background:rgba(255,255,255,.06); overflow:hidden; position:relative; }
-.mv-fill{ display:block; height:100%; border-radius:5px; position:relative;
-  background:linear-gradient(90deg, var(--blue-deep), var(--blue-elec)); }
-.mv-lane.fast .mv-fill{ background:linear-gradient(90deg, var(--blue-bright), var(--blue-elec));
-  box-shadow:0 0 14px rgba(76,135,255,.6); }
-.mv-fill::after{ content:''; position:absolute; right:0; top:50%; width:7px; height:7px; border-radius:50%;
-  transform:translate(50%,-50%); background:#fff; box-shadow:0 0 10px var(--blue-elec); }
-.mv-lane.slow .mv-fill::after{ background:var(--g2); box-shadow:none; }
+/* ---------- 01 · the return loop: work is delegated to the agent, then boomerangs back.
+   A comet streaks out white, comes back CORAL (the one accent). Chips are opaque, comet z below
+   them, so it streaks on the straights and slips behind a chip at each turn. ---------- */
+.dg-canvas{ position:relative; width:308px; height:196px; transform:scale(1.12); }
+.dg-canvas svg.wire{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; z-index:0; }
+.dg-node{ position:absolute; width:58px; height:58px; border-radius:17px; display:flex;
+  align-items:center; justify-content:center; z-index:2; color:rgba(255,255,255,.9);
+  background:linear-gradient(158deg,#1b2540,#0c1322); border:1px solid rgba(255,255,255,.13);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 12px 30px rgba(0,0,0,.5); }
+.dg-node svg{ width:29px; height:29px; }
+.dg-node.hum{ left:39px; top:69px; color:#fff;
+  background:linear-gradient(158deg,#243050,#141c30); border-color:rgba(255,255,255,.24); }
+.dg-node.bot{ left:211px; top:69px; color:#dbe6ff;   /* faint AI-blue inner glow marks the agent */
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 24px -9px rgba(76,135,255,.7), 0 12px 30px rgba(0,0,0,.5); }
+.dg-lbl{ position:absolute; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.16em;
+  text-transform:uppercase; z-index:2; }
+.dg-lbl.out{ left:112px; top:40px; color:var(--g2); }
+.dg-lbl.rew{ left:112px; top:148px; color:rgba(238,68,46,.9); }   /* coral: the return is the problem */
+/* comet = a head (currentColor) + a tapered tail; offset-rotate:auto keeps the tail trailing the
+   head along the path, incl. the turns behind the chips. z-index:1 = behind the opaque chips. */
+.dg-pkt{ position:absolute; left:0; top:0; width:9px; height:9px; margin:-4.5px; border-radius:50%;
+  z-index:1; color:#fff; background:currentColor; offset-rotate:auto;
+  offset-path:path("M68 68 H240 A34 34 0 0 1 240 128 H68 A34 34 0 0 1 68 68 Z");
+  box-shadow:0 0 12px 2px rgba(255,255,255,.6);
+  animation:dgPkt 3.6s cubic-bezier(.5,.05,.5,.95) infinite; }
+.dg-pkt::before{ content:''; position:absolute; right:5px; top:50%; width:42px; height:3px;
+  transform:translateY(-50%); border-radius:2px; opacity:.85;
+  background:linear-gradient(270deg, currentColor, transparent); }
+@keyframes dgPkt{
+  0%   { offset-distance:0%;   color:#fff;    box-shadow:0 0 12px 2px rgba(255,255,255,.6); }
+  8%   { offset-distance:3%;   color:#fff; }
+  42%  { offset-distance:45%;  color:#fff;    box-shadow:0 0 12px 2px rgba(255,255,255,.6); }
+  50%  { offset-distance:53%;  color:#EE442E; box-shadow:0 0 12px 2px rgba(238,68,46,.65); }
+  92%  { offset-distance:98%;  color:#EE442E; }
+  100% { offset-distance:100%; color:#EE442E; box-shadow:0 0 10px 2px rgba(238,68,46,.5); }
+}
+/* the workload piling back on the human: a small coral tag floating up each time it returns */
+.dg-plus{ position:absolute; left:38px; top:50px; z-index:3; font-family:var(--font-mono);
+  font-size:11px; font-weight:600; letter-spacing:.03em; color:#ffd9d3; opacity:0;
+  padding:2px 7px; border-radius:7px; background:rgba(238,68,46,.16); border:1px solid rgba(238,68,46,.42);
+  animation:dgPlus 3.6s ease-out infinite; }
+@keyframes dgPlus{ 0%,66%{ opacity:0; transform:translateY(2px) scale(.92) }
+  75%{ opacity:1; transform:translateY(-9px) scale(1) } 87%{ opacity:1; transform:translateY(-15px) }
+  100%{ opacity:0; transform:translateY(-26px) } }
 
-/* mini-visual 3 · review loop (agent <-> human, retries) */
-.mv-review{ display:flex; align-items:center; gap:14px; }
-.mv-review .mv-node.err{ color:var(--coral); }
-.mv-pp{ display:flex; flex-direction:column; align-items:center; gap:5px; color:var(--coral); }
-.mv-pp svg{ width:52px; height:20px; }
-.mv-pp .rc{ font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; color:var(--coral); }
+/* ---------- 02 · the race: every team runs for the same finish (full adoption); the GAP from each
+   glowing head to the dashed finish line is how far behind it is. ENG leads bright; coral MKTG is
+   the team left behind. ---------- */
+.dg-race{ position:relative; width:330px; display:flex; flex-direction:column; gap:24px;
+  padding-right:16px; }
+/* the shared finish line + a small pennant at its top */
+.dg-finish{ position:absolute; right:16px; top:-11px; bottom:-11px; width:0;
+  border-left:1.5px dashed rgba(255,255,255,.3); }
+.dg-finish::before{ content:''; position:absolute; top:-1px; left:0; width:9px; height:11px;
+  background:rgba(255,255,255,.5); clip-path:polygon(0 0,100% 50%,0 100%); }
+.dg-lane{ display:grid; grid-template-columns:46px 1fr; align-items:center; gap:14px; }
+.dg-lane .lb{ font-family:var(--font-mono); font-size:11.5px; font-weight:500; letter-spacing:.12em;
+  color:var(--g2); text-align:right; }
+.dg-bar{ position:relative; height:9px; border-radius:6px; background:rgba(255,255,255,.055);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.35); }
+.dg-run{ position:absolute; left:0; top:0; bottom:0; width:0; border-radius:6px;
+  animation:dgGrow 1.5s cubic-bezier(.2,.7,.2,1) forwards; }
+/* glowing comet head at the leading edge */
+.dg-run::after{ content:''; position:absolute; right:0; top:50%; width:11px; height:11px;
+  margin:-5.5px -4px 0 0; border-radius:50%; }
+.dg-lane.l-eng .dg-run{ --w:93%; animation-duration:1.2s;
+  background:linear-gradient(90deg, rgba(255,255,255,.3), #fff); }
+.dg-lane.l-eng .dg-run::after{ background:#fff; box-shadow:0 0 12px 2px rgba(255,255,255,.65); }
+.dg-lane.l-prod .dg-run{ --w:57%; animation-duration:1.7s;
+  background:linear-gradient(90deg, rgba(255,255,255,.14), rgba(255,255,255,.6)); }
+.dg-lane.l-prod .dg-run::after{ background:rgba(255,255,255,.85); box-shadow:0 0 9px 1px rgba(255,255,255,.4); }
+.dg-lane.l-mktg .dg-run{ --w:32%; animation-duration:2.15s;
+  background:linear-gradient(90deg, rgba(238,68,46,.28), #EE442E); }
+.dg-lane.l-mktg .dg-run::after{ background:#EE442E; box-shadow:0 0 12px 2px rgba(238,68,46,.6); }
+.dg-lane.l-mktg .lb{ color:rgba(238,68,46,.9); }
+@keyframes dgGrow{ from{ width:0 } to{ width:var(--w) } }
+
+/* ---------- 03 · the fork: the road splits - straight to the flag (correct), or a branch off it
+   (wrong). The agent drives in and, WITHOUT slowing, takes the wrong branch. BLUE = the path + flag
+   it should have held; CORAL = the wrong turn. ---------- */
+.dg-fork{ position:relative; width:264px; height:184px; }
+.dg-fork svg.rd{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; z-index:0; }
+.rd-ok{ filter:drop-shadow(0 0 5px rgba(76,135,255,.6)); animation:dgOkPulse 3.4s ease-in-out infinite; }
+.rd-bad{ filter:drop-shadow(0 0 5px rgba(238,68,46,.5)); }
+.rd-flag{ filter:drop-shadow(0 0 6px rgba(76,135,255,.7)); animation:dgFlag 3.4s ease-in-out infinite; }
+@keyframes dgOkPulse{ 0%,100%{ opacity:.6 } 50%{ opacity:1 } }
+@keyframes dgFlag{ 0%,100%{ opacity:.85 } 50%{ opacity:1 } }
+/* the agent: drives in and continuously onto the wrong branch - no pause at the fork */
+.dg-drv{ position:absolute; left:0; top:0; width:42px; height:42px; margin:-21px; z-index:3;
+  border-radius:13px; display:flex; align-items:center; justify-content:center; color:#fff;
+  background:linear-gradient(158deg,#1b2540,#0c1322); border:1px solid rgba(255,255,255,.26);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.13), 0 12px 28px rgba(0,0,0,.5);
+  offset-path:path("M20 96 H120 L228 46"); offset-rotate:0deg;
+  animation:dgDrive 4s cubic-bezier(.45,0,.55,1) infinite; }
+.dg-drv svg{ width:23px; height:23px; }
+@keyframes dgDrive{
+  0%   { offset-distance:0%;   opacity:0; border-color:rgba(255,255,255,.26); }
+  7%   { opacity:1; }
+  33%  { border-color:rgba(255,255,255,.26); }          /* crossing the fork, still neutral */
+  41%  { border-color:rgba(238,68,46,.95); }            /* committed to the wrong branch */
+  72%  { offset-distance:100%; opacity:1; border-color:rgba(238,68,46,.95); }
+  86%  { offset-distance:100%; opacity:1; }
+  95%  { opacity:0; }
+  100% { offset-distance:100%; opacity:0; }
+}
+/* a coral ✕ blips at the wrong end as the agent lands there = the mistake */
+.dg-x{ position:absolute; left:228px; top:46px; margin:-13px; z-index:2; width:26px; height:26px;
+  display:flex; align-items:center; justify-content:center; color:#EE442E; opacity:0;
+  filter:drop-shadow(0 0 6px rgba(238,68,46,.65)); animation:dgX 4s ease-out infinite; }
+.dg-x svg{ width:26px; height:26px; }
+@keyframes dgX{ 0%,68%{ opacity:0; transform:scale(.5) } 76%{ opacity:1; transform:scale(1) }
+  88%{ opacity:1 } 100%{ opacity:0 } }
+
+/* ---------- QA/PDF: force the fragment cards visible and freeze every loop on a good frame ---------- */
+.qa .dg-card{ opacity:1 !important; transform:none !important; }
+.qa .dg-pkt{ animation-delay:-2.6s; animation-play-state:paused; }    /* comet on the coral return leg */
+.qa .dg-plus{ animation-delay:-2.7s; animation-play-state:paused; }
+.qa .dg-run{ animation-delay:0s; }                                    /* forwards keyframe holds --w */
+.qa .dg-drv{ animation-play-state:paused; animation-delay:-2.5s; }    /* agent out on the wrong branch */
+.qa .dg-x{ animation:none; opacity:1; }                              /* coral ✕ shown at the wrong end */
+.qa .rd-ok, .qa .rd-flag{ animation:none; opacity:1; }
 
 /* --- reframe slide (10B) · three titles, one per click, each dimming the one before --- */
 .rf-stack{ display:flex; flex-direction:column; gap:46px; width:100%; max-width:1620px;
@@ -659,56 +955,75 @@
 </style>
 <section class="slide">
   <p class="eyebrow">The unexpected problem</p>
-  <h2 style="font-size:52px; max-width:1400px" class="bn-lede">Still wasn&rsquo;t the <b>outcome</b> we were hoping for.</h2>
+  <h2 style="font-size:52px; max-width:1400px" class="dg-lede">Still wasn&rsquo;t the <b>outcome</b> we were hoping for.</h2>
 
-  <div class="bn-diag">
+  <div class="dg-wrap">
+
     <!-- 01 · the work still came back to humans -->
-    <div class="bn-row a1 fragment fade-in-up" data-fragment-index="1">
-      <span class="bn-i">01</span>
-      <div class="bn-txt">
-        <h3>The work still came back to humans</h3>
-      </div>
-      <div class="bn-vis">
-        <div class="mv-loop">
-          <span class="mv-node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4"/><circle cx="9" cy="13" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.3" fill="currentColor" stroke="none"/></svg></span>
-          <span class="ret"><svg viewBox="0 0 82 52" fill="none"><path d="M6 20 H76" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M70 14 76 20 70 26" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M76 32 H6" stroke="rgba(238,68,46,.75)" stroke-width="1.7" stroke-linecap="round" stroke-dasharray="3 4"/><path d="M12 26 6 32 12 38" stroke="rgba(238,68,46,.75)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
-          <span class="mv-node human"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20c0-3.4 2.9-5.6 6.5-5.6s6.5 2.2 6.5 5.6"/></svg></span>
+    <article class="dg-card fragment" data-fragment-index="1">
+      <div class="dg-stage">
+        <div class="dg-canvas">
+          <svg class="wire" viewBox="0 0 308 196" fill="none" aria-hidden="true">
+            <!-- Drawn BETWEEN the chips (crisp arrowheads, nothing under the squares). SVG attrs
+                 can't read var(), so strokes are literal. out = white, return = coral dashed. -->
+            <path d="M100 68 H201" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M194 62 201 68 194 74" stroke="rgba(255,255,255,.62)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M208 128 H107" stroke="rgba(238,68,46,.5)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 5.5"/>
+            <path d="M114 122 107 128 114 134" stroke="rgba(238,68,46,.62)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="dg-lbl out">delegated</span>
+          <span class="dg-lbl rew">back to you</span>
+          <span class="dg-node hum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20c0-3.4 2.9-5.6 6.5-5.6s6.5 2.2 6.5 5.6"/></svg></span>
+          <span class="dg-node bot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4"/><circle cx="9" cy="13" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.3" fill="currentColor" stroke="none"/></svg></span>
+          <span class="dg-pkt"></span>
+          <span class="dg-plus">+1</span>
         </div>
       </div>
-    </div>
+      <div class="dg-meta">
+        <h3 class="dg-t">The work still came back to <b>humans</b></h3>
+      </div>
+    </article>
 
-    <!-- 02 · uneven adoption / speed mismatch -->
-    <div class="bn-row a2 fragment fade-in-up" data-fragment-index="2">
-      <span class="bn-i">02</span>
-      <div class="bn-txt">
-        <h3>Teams adopted AI at very different speeds</h3>
-      </div>
-      <div class="bn-vis">
-        <div class="mv-lanes">
-          <div class="mv-lane fast"><span class="lb">ENG</span><span class="mv-track"><span class="mv-fill" style="width:100%"></span></span></div>
-          <div class="mv-lane slow"><span class="lb">PROD</span><span class="mv-track"><span class="mv-fill" style="width:52%"></span></span></div>
-          <div class="mv-lane slow"><span class="lb">MKTG</span><span class="mv-track"><span class="mv-fill" style="width:34%"></span></span></div>
+    <!-- 02 · teams adopted AI at very different speeds -->
+    <article class="dg-card fragment" data-fragment-index="2">
+      <div class="dg-stage">
+        <div class="dg-race">
+          <span class="dg-finish"></span>
+          <div class="dg-lane l-eng"><span class="lb">ENG</span><span class="dg-bar"><span class="dg-run"></span></span></div>
+          <div class="dg-lane l-prod"><span class="lb">PROD</span><span class="dg-bar"><span class="dg-run"></span></span></div>
+          <div class="dg-lane l-mktg"><span class="lb">MKTG</span><span class="dg-bar"><span class="dg-run"></span></span></div>
         </div>
       </div>
-    </div>
+      <div class="dg-meta">
+        <h3 class="dg-t">Teams adopted AI at very <b>different</b> speeds</h3>
+      </div>
+    </article>
 
-    <!-- 03 · agents still make mistakes -->
-    <div class="bn-row a3 fragment fade-in-up" data-fragment-index="3">
-      <span class="bn-i">03</span>
-      <div class="bn-txt">
-        <h3>The agents still made mistakes</h3>
-      </div>
-      <div class="bn-vis">
-        <div class="mv-review">
-          <span class="mv-node err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 9l6 6M15 9l-6 6"/></svg></span>
-          <span class="mv-pp">
-            <svg viewBox="0 0 52 20" fill="none"><path d="M4 6H44" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M39 2 44 6 39 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M48 14H8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M13 10 8 14 13 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-            <span class="rc">&times;&thinsp;n&nbsp;retries</span>
-          </span>
-          <span class="mv-node human"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20c0-3.4 2.9-5.6 6.5-5.6s6.5 2.2 6.5 5.6"/></svg></span>
+    <!-- 03 · the agents still made mistakes - the road forks, the agent takes the wrong path -->
+    <article class="dg-card fragment" data-fragment-index="3">
+      <div class="dg-stage">
+        <div class="dg-fork">
+          <svg class="rd" viewBox="0 0 264 184" fill="none" aria-hidden="true">
+            <!-- incoming road (neutral), correct straight path (blue), wrong branch (coral), and a
+                 blue flag at the correct destination. SVG attrs can't read var(), colours literal. -->
+            <path d="M20 96 H120" stroke="rgba(255,255,255,.42)" stroke-width="3.5" stroke-linecap="round"/>
+            <path class="rd-ok" d="M120 96 H240" stroke="#4C87FF" stroke-width="3.5" stroke-linecap="round"/>
+            <path class="rd-bad" d="M120 96 L228 46" stroke="#EE442E" stroke-width="3.5" stroke-linecap="round"/>
+            <circle cx="120" cy="96" r="5" fill="#0e1424" stroke="rgba(255,255,255,.6)" stroke-width="2"/>
+            <g class="rd-flag">
+              <path d="M242 96 V58" stroke="#4C87FF" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M242 60 L260 66 242 72 Z" fill="#4C87FF"/>
+            </g>
+          </svg>
+          <span class="dg-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg></span>
+          <span class="dg-drv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4"/><circle cx="9" cy="13" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.3" fill="currentColor" stroke="none"/></svg></span>
         </div>
       </div>
-    </div>
+      <div class="dg-meta">
+        <h3 class="dg-t">The agents still made <b>mistakes</b></h3>
+      </div>
+    </article>
+
   </div>
 
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 01</span></div>
@@ -720,6 +1035,12 @@
    Both dwell identically at every one; only the travel between them differs.
    That is the argument: the work got faster, the total barely moved, because
    the stops ARE the process. Driven by js/deck.js. --- */
+/* --pl-dot is the shared station-dot diameter (was a hardcoded 14px in four coupled places:
+   the dot, its halo, the rail-centering offset, and the legend dot). 5.6px = 60% smaller.
+   Declared on the section so both the rail (.pl-wrap) and the legend (.pl-note, a sibling of
+   .pl-wrap) inherit it. Changing it moves the halo and re-centers the dot on the rail via
+   calc(), so it can't drift. Rings/glows/orb below are scaled literals, not multiples of this. */
+.pl-slide{ --pl-dot:5.6px; }
 .pl-wrap{ width:100%; max-width:1640px; margin-top:58px; display:flex; flex-direction:column;
   gap:118px; }
 .pl-tag{ display:flex; align-items:center; gap:12px; font-family:var(--font-mono); font-size:13px;
@@ -745,19 +1066,20 @@
 .pl-orb{ position:absolute; top:11px; left:0; width:0; height:0; z-index:4;
   opacity:0; transition:opacity .22s ease; }
 .pl-line.is-moving .pl-orb{ opacity:1; }
-.pl-orb .hd{ position:absolute; left:-5px; top:-5px; width:10px; height:10px; border-radius:50%;
-  background:#fff; box-shadow:0 0 10px #fff, 0 0 22px rgba(150,190,255,.95); }
+.pl-orb .hd{ position:absolute; left:-2px; top:-2px; width:4px; height:4px; border-radius:50%;
+  background:#fff; box-shadow:0 0 6px #fff, 0 0 13px rgba(150,190,255,.95); }
 .pl-orb::before{ content:''; position:absolute; right:3px; top:-1px; width:86px; height:2px;
   border-radius:2px;
   background:linear-gradient(90deg, rgba(190,218,255,0), rgba(190,218,255,.9)); }
 /* the slow rail's head and tail carry the line's red too */
-.pl-line.is-slow .pl-orb .hd{ box-shadow:0 0 10px #fff, 0 0 22px rgba(255,150,130,.95); }
+.pl-line.is-slow .pl-orb .hd{ box-shadow:0 0 6px #fff, 0 0 13px rgba(255,150,130,.95); }
 .pl-line.is-slow .pl-orb::before{
   background:linear-gradient(90deg, rgba(255,176,160,0), rgba(255,176,160,.9)); }
 
 .pl-steps{ position:absolute; inset:0; }
-/* the 14px dot straddles the rail: its centre sits on the 2px line at y=11 */
-.pl-step{ position:absolute; top:4px; transform:translateX(-50%); width:190px;
+/* the dot straddles the rail: its centre must sit on the 2px line at y=11. Held there by calc
+   so it stays centred at any --pl-dot size (a plain top:4px only centres the old 14px dot). */
+.pl-step{ position:absolute; top:calc(11px - var(--pl-dot)/2); transform:translateX(-50%); width:190px;
   display:flex; flex-direction:column; align-items:center; }
 /* seven stations, evenly spaced end to end, so 0% and 100% land on the rail's tips */
 .pl-step:nth-child(1){ left:0; }
@@ -769,22 +1091,23 @@
 .pl-step:nth-child(7){ left:100%; }
 /* every stage is red on BOTH rails. that is the argument: the process got faster,
    the wait at each stage did not. */
-.pl-dot{ position:relative; width:14px; height:14px; border-radius:50%; background:#1b1119;
-  border:1px solid rgba(238,68,46,.34);
+/* unreached: a hollow red-bordered ring, no fill */
+.pl-dot{ position:relative; width:var(--pl-dot); height:var(--pl-dot); border-radius:50%; background:transparent;
+  border:1px solid rgba(238,68,46,.5);
   transition:background .35s ease, box-shadow .35s ease, transform .3s ease,
              border-color .35s ease; }
-.pl-lb{ margin-top:20px; font-family:var(--font-body); font-weight:300; font-size:15px;
+.pl-lb{ margin-top:22px; font-family:var(--font-body); font-weight:300; font-size:15px;
   line-height:1.35; color:var(--g3); text-align:center; transition:color .35s ease; }
-/* reached: the stage lights up. still red, because it is still a wait */
+/* reached: the ring fills red. still red, because it is still a wait */
 .pl-step.is-done .pl-dot{ border-color:transparent;
   background:radial-gradient(circle at 35% 32%, #ffb3a4, var(--coral) 72%);
-  box-shadow:0 0 0 5px rgba(238,68,46,.14), 0 0 18px rgba(238,68,46,.8); }
+  box-shadow:0 0 0 3px rgba(238,68,46,.14), 0 0 13px rgba(238,68,46,.8); }
 .pl-step.is-done .pl-lb{ color:var(--g1); }
 /* the work is sitting here, waiting on this stage. the stop is the point */
-.pl-step.is-at .pl-dot{ transform:scale(1.2);
-  box-shadow:0 0 0 6px rgba(238,68,46,.18), 0 0 24px rgba(238,68,46,.95); }
+.pl-step.is-at .pl-dot{ transform:scale(1.25);
+  box-shadow:0 0 0 4px rgba(238,68,46,.18), 0 0 18px rgba(238,68,46,.95); }
 .pl-step.is-at .pl-lb{ color:#fff; }
-.pl-halo{ position:absolute; left:50%; top:50%; width:14px; height:14px; margin:-7px 0 0 -7px;
+.pl-halo{ position:absolute; left:50%; top:50%; width:var(--pl-dot); height:var(--pl-dot); margin:calc(var(--pl-dot)/-2) 0 0 calc(var(--pl-dot)/-2);
   border-radius:50%; border:1px solid var(--coral); opacity:0; pointer-events:none; }
 .pl-step.is-at .pl-halo{ animation:plHalo 1.6s ease-out infinite; }
 @keyframes plHalo{ from{ transform:scale(1); opacity:.7 } to{ transform:scale(3.4); opacity:0 } }
@@ -796,9 +1119,9 @@
 .pl-note{ display:flex; align-items:center; gap:14px; margin:126px 0 0 132px;
   font-family:var(--font-body); font-weight:300; font-size:21px; color:var(--g2); }
 /* the legend dot, styled exactly like a reached station so the red maps back to the rails */
-.pl-note .ic{ width:14px; height:14px; flex:none; border-radius:50%;
+.pl-note .ic{ width:var(--pl-dot); height:var(--pl-dot); flex:none; border-radius:50%;
   background:radial-gradient(circle at 35% 32%, #ffb3a4, var(--coral) 72%);
-  box-shadow:0 0 0 5px rgba(238,68,46,.14), 0 0 18px rgba(238,68,46,.8); }
+  box-shadow:0 0 0 3px rgba(238,68,46,.14), 0 0 13px rgba(238,68,46,.8); }
 .pl-note b{ color:#fff; }
 </style>
 <section class="slide pl-slide">
@@ -2744,7 +3067,63 @@
 </div>
 
 <script src="vendor/reveal.js"></script>
-<script src="js/deck.js?v=2"></script>
+<script src="js/deck.js?v=5"></script>
 <script src="js/walkthrough.js?v=11"></script>
+<!-- Introducing OusMous (11C): auto-advance the six-stage tour so the presenter never clicks
+     through each stage (Sam's call, 2026-07-17). It steps Research -> ... -> Delivery & Learning
+     and then STOPS on the last stage; the four core components stay MANUAL (Sam's call, 2026-07-17).
+     Boundaries are read from the cues at boot(), NOT hardcoded: reveal.js renumbers
+     data-fragment-index to a contiguous 0-based run at init, so the authored 1..14 become 0..13.
+     Hardcoding the authored numbers stopped it one fragment too late, landing on the first core
+     instead of the last stage. Cancels on a manual step, a backward step, or leaving the slide.
+     Pure reveal-fragment driver; the slide's visuals are CSS :has() on the cues. -->
+<script>
+(function () {
+  'use strict';
+  // Scope to the real section: reveal clones the slide into .backgrounds, so a bare
+  // '.om-slide' can match the clone (which carries no fragment children).
+  var slide = document.querySelector('.reveal .slides .om-slide');
+  if (!slide) return;
+  // QA / reduced-motion: fragments are shown all at once, no timers — leave it static.
+  if (document.documentElement.classList.contains('qa') ||
+      (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  var STAGE_HOLD = 3600;          // ms a stage holds before auto-advancing. Keep it above the
+                                  // ~3.2s station-tick reveal (Engineering & Delivery each have
+                                  // 4 stations at var(--i)*.5s+.85s) or a stage gets cut off.
+  // Runtime fragment indices, resolved from the cues at boot() (see the block comment above on
+  // why hardcoding fails). FIRST = first auto-advanced stage (Research); STOP_AT = the last stage
+  // (Delivery & Learning), which ends the tour. Auto-advance runs while FIRST <= top < STOP_AT.
+  var FIRST = null, STOP_AT = null;
+  function frag(sel) { var el = slide.querySelector(sel); return el ? parseInt(el.getAttribute('data-fragment-index'), 10) : NaN; }
+  var timer = null;
+  function clearTimer() { if (timer) { clearTimeout(timer); timer = null; } }
+  function onSlide() { return window.Reveal && Reveal.getCurrentSlide && Reveal.getCurrentSlide() === slide; }
+  function topFragmentIndex() {
+    var vis = slide.querySelectorAll('.fragment.visible'), max = -1;
+    for (var i = 0; i < vis.length; i++) {
+      var n = parseInt(vis[i].getAttribute('data-fragment-index'), 10);
+      if (!isNaN(n) && n > max) max = n;
+    }
+    return max;
+  }
+  function schedule() {
+    clearTimer();
+    if (!onSlide()) return;
+    var idx = topFragmentIndex();
+    if (idx >= FIRST && idx <= LAST_AUTO) {
+      timer = setTimeout(function () { if (onSlide()) Reveal.next(); }, STAGE_HOLD);
+    }
+  }
+  function boot() {
+    if (!window.Reveal) return;
+    Reveal.on('fragmentshown', schedule);   // each stage that appears queues the next
+    Reveal.on('fragmenthidden', clearTimer); // stepping back pauses the tour
+    Reveal.on('slidechanged', clearTimer);   // leaving the slide cancels it
+  }
+  if (window.Reveal && Reveal.isReady && Reveal.isReady()) boot();
+  else if (window.Reveal) Reveal.on('ready', boot);
+  else window.addEventListener('load', boot);
+})();
+</script>
 </body>
 </html>
