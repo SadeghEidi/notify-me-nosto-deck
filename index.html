@@ -877,50 +877,54 @@
 .dg-lane.l-mktg .lb{ color:rgba(238,68,46,.9); }
 @keyframes dgGrow{ from{ width:0 } to{ width:var(--w) } }
 
-/* ---------- 03 · the fork: the road splits - straight to the flag (correct), or a branch off it
-   (wrong). The agent drives in and, WITHOUT slowing, takes the wrong branch. BLUE = the path + flag
-   it should have held; CORAL = the wrong turn. ---------- */
+/* ---------- 03 · the fork: the road splits - straight to a flash (correct), or a branch that
+   curves away (wrong). The agent drives in and, WITHOUT slowing, sweeps onto the wrong branch.
+   BLUE = the path + flash it should have held; CORAL = the wrong turn. ---------- */
 .dg-fork{ position:relative; width:264px; height:184px; }
 .dg-fork svg.rd{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; z-index:0; }
-.rd-ok{ filter:drop-shadow(0 0 5px rgba(76,135,255,.6)); animation:dgOkPulse 3.4s ease-in-out infinite; }
+.rd-ok{ filter:drop-shadow(0 0 5px rgba(76,135,255,.55)); animation:dgOkPulse 3.4s ease-in-out infinite; }
 .rd-bad{ filter:drop-shadow(0 0 5px rgba(238,68,46,.5)); }
-.rd-flag{ filter:drop-shadow(0 0 6px rgba(76,135,255,.7)); animation:dgFlag 3.4s ease-in-out infinite; }
-@keyframes dgOkPulse{ 0%,100%{ opacity:.6 } 50%{ opacity:1 } }
-@keyframes dgFlag{ 0%,100%{ opacity:.85 } 50%{ opacity:1 } }
-/* the agent: drives in and continuously onto the wrong branch - no pause at the fork */
+/* the flash = the bright correct destination: a blue spark that pulses, never a solid disc */
+.rd-flash{ transform-box:fill-box; transform-origin:center;
+  filter:drop-shadow(0 0 8px rgba(76,135,255,.9)); animation:dgFlash 2.4s ease-in-out infinite; }
+@keyframes dgOkPulse{ 0%,100%{ opacity:.55 } 50%{ opacity:1 } }
+@keyframes dgFlash{ 0%,100%{ opacity:.5; transform:scale(.78) } 45%{ opacity:1; transform:scale(1.12) } }
+/* the agent: drives in at a constant pace and sweeps straight onto the curved wrong branch,
+   never pausing at the fork. Linear timing = no deceleration at the split. */
 .dg-drv{ position:absolute; left:0; top:0; width:42px; height:42px; margin:-21px; z-index:3;
   border-radius:13px; display:flex; align-items:center; justify-content:center; color:#fff;
   background:linear-gradient(158deg,#1b2540,#0c1322); border:1px solid rgba(255,255,255,.26);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.13), 0 12px 28px rgba(0,0,0,.5);
-  offset-path:path("M20 96 H120 L228 46"); offset-rotate:0deg;
-  animation:dgDrive 4s cubic-bezier(.45,0,.55,1) infinite; }
+  offset-path:path("M20 96 H116 C 152 96 190 74 226 48"); offset-rotate:0deg;
+  animation:dgDrive 4.4s linear infinite; }
 .dg-drv svg{ width:23px; height:23px; }
 @keyframes dgDrive{
-  0%   { offset-distance:0%;   opacity:0; border-color:rgba(255,255,255,.26); }
-  7%   { opacity:1; }
-  33%  { border-color:rgba(255,255,255,.26); }          /* crossing the fork, still neutral */
-  41%  { border-color:rgba(238,68,46,.95); }            /* committed to the wrong branch */
-  72%  { offset-distance:100%; opacity:1; border-color:rgba(238,68,46,.95); }
-  86%  { offset-distance:100%; opacity:1; }
-  95%  { opacity:0; }
-  100% { offset-distance:100%; opacity:0; }
+  0%   { offset-distance:0%;   opacity:0; border-color:rgba(255,255,255,.28); }
+  5%   { opacity:1; }
+  8%   { offset-distance:5%; }                            /* eased pull-away from rest */
+  25%  { border-color:rgba(255,255,255,.28); }            /* on the shared road, still neutral */
+  32%  { border-color:rgba(238,68,46,.95); }              /* past the fork, committed to the wrong branch */
+  52%  { offset-distance:90%; opacity:1; border-color:rgba(238,68,46,.95); } /* constant speed the whole way */
+  84%  { offset-distance:90%; opacity:1; }                /* dwell at the wrong end */
+  93%  { opacity:0; }
+  100% { offset-distance:90%; opacity:0; }
 }
-/* a coral ✕ blips at the wrong end as the agent lands there = the mistake */
-.dg-x{ position:absolute; left:228px; top:46px; margin:-13px; z-index:2; width:26px; height:26px;
+/* a coral ✕ stamps at the wrong end as the agent lands there = the mistake */
+.dg-x{ position:absolute; left:224px; top:50px; margin:-13px; z-index:2; width:26px; height:26px;
   display:flex; align-items:center; justify-content:center; color:#EE442E; opacity:0;
-  filter:drop-shadow(0 0 6px rgba(238,68,46,.65)); animation:dgX 4s ease-out infinite; }
+  filter:drop-shadow(0 0 6px rgba(238,68,46,.7)); animation:dgX 4.4s ease-out infinite; }
 .dg-x svg{ width:26px; height:26px; }
-@keyframes dgX{ 0%,68%{ opacity:0; transform:scale(.5) } 76%{ opacity:1; transform:scale(1) }
-  88%{ opacity:1 } 100%{ opacity:0 } }
+@keyframes dgX{ 0%,50%{ opacity:0; transform:scale(.5) } 58%{ opacity:1; transform:scale(1.08) }
+  66%{ transform:scale(1) } 86%{ opacity:1 } 95%{ opacity:0 } }
 
 /* ---------- QA/PDF: force the fragment cards visible and freeze every loop on a good frame ---------- */
 .qa .dg-card{ opacity:1 !important; transform:none !important; }
 .qa .dg-pkt{ animation-delay:-2.6s; animation-play-state:paused; }    /* comet on the coral return leg */
 .qa .dg-plus{ animation-delay:-2.7s; animation-play-state:paused; }
 .qa .dg-run{ animation-delay:0s; }                                    /* forwards keyframe holds --w */
-.qa .dg-drv{ animation-play-state:paused; animation-delay:-2.5s; }    /* agent out on the wrong branch */
-.qa .dg-x{ animation:none; opacity:1; }                              /* coral ✕ shown at the wrong end */
-.qa .rd-ok, .qa .rd-flag{ animation:none; opacity:1; }
+.qa .dg-drv{ animation-play-state:paused; animation-delay:-2.4s; }    /* agent out on the wrong branch */
+.qa .dg-x{ animation:none; opacity:1; transform:scale(1); }          /* coral ✕ shown at the wrong end */
+.qa .rd-ok, .qa .rd-flash{ animation:none; opacity:1; }
 
 /* --- reframe slide (10B) · three titles, one per click, each dimming the one before --- */
 .rf-stack{ display:flex; flex-direction:column; gap:46px; width:100%; max-width:1620px;
@@ -1004,15 +1008,16 @@
       <div class="dg-stage">
         <div class="dg-fork">
           <svg class="rd" viewBox="0 0 264 184" fill="none" aria-hidden="true">
-            <!-- incoming road (neutral), correct straight path (blue), wrong branch (coral), and a
-                 blue flag at the correct destination. SVG attrs can't read var(), colours literal. -->
-            <path d="M20 96 H120" stroke="rgba(255,255,255,.42)" stroke-width="3.5" stroke-linecap="round"/>
-            <path class="rd-ok" d="M120 96 H240" stroke="#4C87FF" stroke-width="3.5" stroke-linecap="round"/>
-            <path class="rd-bad" d="M120 96 L228 46" stroke="#EE442E" stroke-width="3.5" stroke-linecap="round"/>
-            <circle cx="120" cy="96" r="5" fill="#0e1424" stroke="rgba(255,255,255,.6)" stroke-width="2"/>
-            <g class="rd-flag">
-              <path d="M242 96 V58" stroke="#4C87FF" stroke-width="2.5" stroke-linecap="round"/>
-              <path d="M242 60 L260 66 242 72 Z" fill="#4C87FF"/>
+            <!-- incoming road (neutral), correct straight path (blue) to a flash, and a wrong branch
+                 (coral) that curves away. SVG attrs can't read var(), colours literal. -->
+            <path d="M20 96 H116" stroke="rgba(255,255,255,.42)" stroke-width="3.5" stroke-linecap="round"/>
+            <path class="rd-ok" d="M116 96 H231" stroke="#4C87FF" stroke-width="3.5" stroke-linecap="round"/>
+            <path class="rd-bad" d="M116 96 C 152 96 190 74 226 48" stroke="#EE442E" stroke-width="3.5" stroke-linecap="round"/>
+            <circle cx="116" cy="96" r="4.5" fill="#0e1424" stroke="rgba(255,255,255,.6)" stroke-width="2"/>
+            <!-- the flash: the bright correct destination the agent should have reached -->
+            <g class="rd-flash">
+              <path d="M238 82 L241.4 92.6 252 96 241.4 99.4 238 110 234.6 99.4 224 96 234.6 92.6 Z" fill="#dbe8ff"/>
+              <path d="M238 86 V106 M228 96 H248" stroke="#8fb6ff" stroke-width="1.4" stroke-linecap="round" opacity=".55"/>
             </g>
           </svg>
           <span class="dg-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg></span>
@@ -1736,8 +1741,32 @@
 @keyframes omFadeOut{ from{ opacity:1 } to{ opacity:0 } }
 .om-slide:has(.om-c1.visible) .om-txt > .eyebrow,
 .om-slide:has(.om-c1.visible) .om-mission{ animation:omFadeOut .5s both ease; }
-.om-slide:has(.om-c1.visible) .om-swap,
-.om-slide:has(.om-c1.visible) .om-plans{ opacity:0; }
+.om-slide:has(.om-c1.visible) .om-swap{ opacity:0; }
+
+/* The station checklist stays in the ring for the component view, but now reads as the ONE
+   station we're inside: swap the ring's centre back to the Design stage's list, keep UI/UX
+   Design loading while the components assemble, and check it only when the Review agents land
+   (c4). It never advances to the next station. */
+.om-slide:has(.om-c1.visible) .om-plan.p1,
+.om-slide:has(.om-c1.visible) .om-plan.p3,
+.om-slide:has(.om-c1.visible) .om-plan.p4,
+.om-slide:has(.om-c1.visible) .om-plan.p5,
+.om-slide:has(.om-c1.visible) .om-plan.p6{ opacity:0; }
+.om-slide:has(.om-c1.visible) .om-plan.p2{ opacity:1; }
+/* Hand-drive p2's checks: its auto-run from beat s2 has long finished and would otherwise show
+   all three done. animation:none hands each layer back to these plain opacities. Base state =
+   every station pending (ring visible, spinner + check hidden). */
+.om-slide:has(.om-c1.visible) .om-plan.p2 li .ck .pd{ animation:none; opacity:1; }
+.om-slide:has(.om-c1.visible) .om-plan.p2 li .ck .sp{ animation:none; opacity:0; }
+.om-slide:has(.om-c1.visible) .om-plan.p2 li .ck .dn{ animation:none; opacity:0; }
+/* UI/UX Design is the station we open up: keep it spinning through c1-c3 (does not auto-check) */
+.om-slide:has(.om-c1.visible) .om-plan.p2 li:nth-child(1) .ck .pd{ opacity:0; }
+.om-slide:has(.om-c1.visible) .om-plan.p2 li:nth-child(1) .ck .sp{ opacity:1;
+  animation:omSpRot .8s linear infinite; }
+/* the Review-agents beat (c4) closes it out: UI/UX Design checks, and the line stops there. */
+.om-slide:has(.om-c4.visible) .om-plan.p2 li:nth-child(1) .ck .sp{ animation:none; opacity:0; }
+.om-slide:has(.om-c4.visible) .om-plan.p2 li:nth-child(1) .ck .dn{ opacity:1;
+  animation:omDone .34s both cubic-bezier(.2,.8,.25,1); }
 
 /* The name travels to the top-left and shrinks. Transform sits on the WRAPPER, never the h1:
    `section.present h1` is a filled riseIn that would pin transform:none. 315.7 - 208 = 107.7,
@@ -1861,6 +1890,14 @@
 /* QA/PDF freeze on the finished checklist: every station checked, no ring, no spinner */
 .qa .om-plan .ck .pd, .qa .om-plan .ck .sp{ animation:none !important; opacity:0 !important; }
 .qa .om-plan .ck .dn{ animation:none !important; opacity:1 !important; transform:none !important; }
+/* ...but p2 is the panel left on screen in the component view (the QA end state), so freeze it
+   to the c4 beat instead: UI/UX Design done, Design Review + Design Handoff still pending. */
+.qa .om-plan.p2 li:nth-child(1) .ck .pd,
+.qa .om-plan.p2 li:nth-child(1) .ck .sp{ opacity:0 !important; }
+.qa .om-plan.p2 li:nth-child(1) .ck .dn{ opacity:1 !important; }
+.qa .om-plan.p2 li:nth-child(n+2) .ck .pd{ opacity:1 !important; }
+.qa .om-plan.p2 li:nth-child(n+2) .ck .sp,
+.qa .om-plan.p2 li:nth-child(n+2) .ck .dn{ opacity:0 !important; }
 </style>
 <section class="slide om-slide">
   <div class="om-grid">
@@ -2011,7 +2048,7 @@
        rest of the deck: Agents purple, Skills blue, Hooks coral, Review agents mint. Three
        steps across, because Skills live inside the Agent rather than following it. -->
   <div class="om-comp">
-    <span class="cw-h">Inside the Design stage</span>
+    <span class="cw-h">Inside each station</span>
     <div class="cw-flow">
       <div class="cw-card cw-agent">
         <span class="cw-kind">Agent</span>
