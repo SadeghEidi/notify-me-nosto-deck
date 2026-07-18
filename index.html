@@ -1794,7 +1794,7 @@
 
 /* The station checklist stays in the ring for the component view, but now reads as the ONE
    station we're inside: swap the ring's centre back to the Design stage's list, keep UI/UX
-   Design loading while the components assemble, and check it only when the Review agents land
+   Design loading while the components assemble, until the last component lands
    (c4). It never advances to the next station. */
 .om-slide:has(.om-c1.visible) .om-plan.p1,
 .om-slide:has(.om-c1.visible) .om-plan.p3,
@@ -1847,8 +1847,8 @@
 .om-slide:has(.om-c1.visible) .om-ct{ opacity:1; transform:none; transition-delay:.6s; }
 
 /* ---- top-right tally: how much reusable machinery the factory has built, revealed with the
-   Review agents (c4). Skills echo the blue skills box, Agents the purple agent card, so the two
-   numerals read as those same two components, counted, and the block sits right above the Review
+   Hooks view (c3, the last component). Skills echo the blue skills box, Agents the purple agent card,
+   so the two numerals read as those same two components, counted, and the block sits in the right
    agents card to balance the right column. Mirrors om-ct on the left. Deliberately NOT
    .eyebrow/.metric class names: those carry a global `section.present` filled entrance that would
    pin the block on from the slide's first beat (the trap logged all over this deck). --emph:700 =
@@ -1877,14 +1877,14 @@
   text-transform:uppercase; color:var(--g1); }
 .om-tally .skills{ --ac:var(--blue-elec); --acr:76,135,255; }
 .om-tally .agents{ --ac:var(--purple);    --acr:155,38,240; }
-/* land it with the Review agents (c4), staggered skills -> agents */
-.om-slide:has(.om-c4.visible) .om-tally .eye{ opacity:1; transform:none; transition-delay:.15s; }
-.om-slide:has(.om-c4.visible) .om-tally .cell{ opacity:1; transform:none; }
-.om-slide:has(.om-c4.visible) .om-tally .skills{ transition-delay:.3s; }
-.om-slide:has(.om-c4.visible) .om-tally .agents{ transition-delay:.46s; }
-.om-slide:has(.om-c4.visible) .om-tally .rule{ transform:scaleX(1); }
-.om-slide:has(.om-c4.visible) .om-tally .skills .rule{ transition-delay:.62s; }
-.om-slide:has(.om-c4.visible) .om-tally .agents .rule{ transition-delay:.78s; }
+/* land it with the Hooks view (c3), staggered skills -> agents */
+.om-slide:has(.om-c3.visible) .om-tally .eye{ opacity:1; transform:none; transition-delay:.15s; }
+.om-slide:has(.om-c3.visible) .om-tally .cell{ opacity:1; transform:none; }
+.om-slide:has(.om-c3.visible) .om-tally .skills{ transition-delay:.3s; }
+.om-slide:has(.om-c3.visible) .om-tally .agents{ transition-delay:.46s; }
+.om-slide:has(.om-c3.visible) .om-tally .rule{ transform:scaleX(1); }
+.om-slide:has(.om-c3.visible) .om-tally .skills .rule{ transition-delay:.62s; }
+.om-slide:has(.om-c3.visible) .om-tally .agents .rule{ transition-delay:.78s; }
 
 /* ---- the component flow ---- */
 .om-comp{ position:absolute; left:960px; top:230px; width:810px; height:620px; z-index:5;
@@ -1908,7 +1908,6 @@
   transition:opacity .5s ease; }
 .cw-agent{ width:300px; --ac:var(--purple); }
 .cw-hooks{ width:232px; --ac:var(--coral); }
-.cw-review{ width:232px; --ac:var(--mint); }
 /* Neutral, not var(--ac): accent-on-dark was too low-contrast to read at 11.5px. The left edge
    already tells the components apart, so the label only has to be legible. */
 .cw-kind{ font-family:var(--font-mono); font-size:12.5px; font-weight:500; letter-spacing:.18em;
@@ -1951,9 +1950,6 @@
 .om-slide:has(.om-c3.visible) .cw-a1,
 .om-slide:has(.om-c3.visible) .cw-hooks{ opacity:1; }
 .om-slide:has(.om-c3.visible) .cw-hooks{ transition-delay:.18s; }
-.om-slide:has(.om-c4.visible) .cw-a2,
-.om-slide:has(.om-c4.visible) .cw-review{ opacity:1; }
-.om-slide:has(.om-c4.visible) .cw-review{ transition-delay:.18s; }
 
 /* QA (?qa) shows every fragment, so the build settles on its own and the LAST cue wins:
    the finished state is now the **component view** (name at top, ring left with Design lit,
@@ -2001,11 +1997,10 @@
       </div>
 
       <!-- the four core-component views (jumped to straight from "The knowledge compounds."):
-           agent (+ its skills) -> hooks -> review agents. The six-stage tour was removed. -->
+           agent (+ its skills) -> hooks. The six-stage tour was removed. -->
       <span class="om-cue om-c1 fragment" data-fragment-index="11"></span>
       <span class="om-cue om-c2 fragment" data-fragment-index="12"></span>
       <span class="om-cue om-c3 fragment" data-fragment-index="13"></span>
-      <span class="om-cue om-c4 fragment" data-fragment-index="14"></span>
     </div>
 
     <div class="om-stagewrap">
@@ -2059,9 +2054,9 @@
     </div>
   </div>
 
-  <p class="om-ct">The <b>4</b> core components</p>
+  <p class="om-ct">The <b>3</b> core components</p>
 
-  <!-- Top-right tally, revealed with the Review agents (c4): the reusable machinery the factory
+  <!-- Top-right tally, revealed with the Hooks view (c3): the reusable machinery the factory
        has built so far. Skills = blue (the skills box), Agents = purple (the agent card). -->
   <div class="om-tally" aria-hidden="true">
     <p class="eye">In total</p>
@@ -2081,9 +2076,9 @@
     <circle cx="960" cy="561" r="4"/>
   </svg>
 
-  <!-- The atomic process inside one stage. Four core components, colour-coded to match the
-       rest of the deck: Agents purple, Skills blue, Hooks coral, Review agents mint. Three
-       steps across, because Skills live inside the Agent rather than following it. -->
+  <!-- The atomic process inside one stage. Three core components, colour-coded to match the
+       rest of the deck: Agents purple, Skills blue, Hooks coral. Two boxes across,
+       because Skills live inside the Agent rather than following it. -->
   <div class="om-comp">
     <span class="cw-h">Inside each station</span>
     <div class="cw-flow">
@@ -2110,16 +2105,6 @@
         <span class="cw-kind">Hooks</span>
         <ul class="cw-list">
           <li><svg class="cw-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>polaris-guard.md</li>
-        </ul>
-      </div>
-
-      <span class="cw-arrow cw-a2"></span>
-
-      <div class="cw-card cw-review">
-        <span class="cw-kind">Review agents</span>
-        <ul class="cw-list">
-          <li><svg class="cw-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>velocity-guard.md</li>
-          <li><svg class="cw-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>states-guard.md</li>
         </ul>
       </div>
     </div>
@@ -2409,7 +2394,6 @@ section.present .bl-act::before{ transform:scaleY(1); }
   .cx-cd.cx-agent { --ac:var(--purple); }
   .cx-cd.cx-skill { --ac:var(--blue-elec); }
   .cx-cd.cx-hook  { --ac:var(--coral); }
-  .cx-cd.cx-review{ --ac:var(--mint); }
   .cx-k{ display:block; font-family:var(--font-mono); font-size:10.5px; font-weight:500;
     letter-spacing:.18em; text-transform:uppercase; color:var(--g1); }
   .cx-f{ display:flex; align-items:center; gap:8px; margin-top:8px;
@@ -2523,10 +2507,9 @@ section.present .bl-act::before{ transform:scaleY(1); }
   var FICON='<svg class="cx-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';
   // wide name pools + a per-type running index => neighbours never repeat a filename
   var TYPES=[
-    {c:'cx-agent', k:'Agent',  n:0, names:['prd-agent.md','design-agent.md','eng-agent.md','research-agent.md','qa-agent.md','planner-agent.md','review-agent.md','delivery-agent.md','growth-agent.md','data-agent.md','support-agent.md','release-agent.md']},
+    {c:'cx-agent', k:'Agent',  n:0, names:['prd-agent.md','design-agent.md','eng-agent.md','research-agent.md','qa-agent.md','planner-agent.md','ops-agent.md','delivery-agent.md','growth-agent.md','data-agent.md','support-agent.md','release-agent.md']},
     {c:'cx-skill', k:'Skill',  n:0, names:['polaris-guidelines.md','ux-ui-designer.md','market-research.md','prd-writer.md','api-designer.md','test-runner.md','changelog.md','competitor-scan.md','schema-migrate.md','a11y-audit.md','seo-brief.md','copywriter.md','data-viz.md','user-interview.md','roadmap.md','release-notes.md']},
-    {c:'cx-hook',  k:'Hook',   n:0, names:['polaris-guard.md','states-guard.md','lint-guard.md','type-guard.md','secret-guard.md','commit-guard.md','format-guard.md','size-guard.md']},
-    {c:'cx-review',k:'Review', n:0, names:['velocity-guard.md','states-guard.md','a11y-review.md','perf-review.md','copy-review.md','diff-review.md','security-review.md','ux-review.md','api-review.md','test-review.md']}
+    {c:'cx-hook',  k:'Hook',   n:0, names:['polaris-guard.md','states-guard.md','lint-guard.md','type-guard.md','secret-guard.md','commit-guard.md','format-guard.md','size-guard.md']}
   ];
   // deterministic pseudo-random so live, ?qa and the PDF all agree; s selects the stream
   function hash(i,s){ var x=Math.sin((i+1)*12.9898 + s*78.233)*43758.5453; return x-Math.floor(x); }
@@ -2545,7 +2528,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
     var rf=Math.sqrt((i+.55)/NC);                          // sqrt keeps the area density even
     var rad=innerR + (outerR-innerR)*rf + (hash(i,2)-.5)*44;
     var x=Math.cos(ang)*rad, y=Math.sin(ang)*rad*squash;
-    var rt=hash(i,3), ti; if(rt<.22) ti=0; else if(rt<.64) ti=1; else if(rt<.79) ti=2; else ti=3;
+    var rt=hash(i,3), ti; if(rt<.24) ti=0; else if(rt<.68) ti=1; else ti=2;
     var T=TYPES[ti], nm=T.names[T.n++ % T.names.length];
     var rot=(hash(i,5)-.5)*6, op=.50+.42*(1-rf);
     var t=birth[i]/(NC/.72);                               // last card in around p .70
