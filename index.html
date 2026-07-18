@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/reset.css">
 <link rel="stylesheet" href="vendor/reveal.css">
 <link rel="stylesheet" href="css/theme.css?v=7">
-<link rel="stylesheet" href="css/walkthrough.css?v=19">
+<link rel="stylesheet" href="css/walkthrough.css?v=20">
 <link rel="stylesheet" href="css/bento.css?v=hue7">
 </head>
 <body>
@@ -1073,12 +1073,14 @@
 
 /* the work in transit. It only exists between stages: once it reaches a person it is
    theirs, so the head hands off to the pulsing station rather than sitting on top of them. */
-.pl-orb{ position:absolute; top:11px; left:0; width:0; height:0; z-index:4;
+/* --tail is the comet-tail length. deck.js shrinks it toward 0 as the head nears the first
+   station, so the tail never renders behind Research (see paint() in deck.js). Full length is 86px. */
+.pl-orb{ position:absolute; top:11px; left:0; width:0; height:0; z-index:4; --tail:86px;
   opacity:0; transition:opacity .22s ease; }
 .pl-line.is-moving .pl-orb{ opacity:1; }
 .pl-orb .hd{ position:absolute; left:-2px; top:-2px; width:4px; height:4px; border-radius:50%;
   background:#fff; box-shadow:0 0 6px #fff, 0 0 13px rgba(150,190,255,.95); }
-.pl-orb::before{ content:''; position:absolute; right:3px; top:-1px; width:86px; height:2px;
+.pl-orb::before{ content:''; position:absolute; right:3px; top:-1px; width:var(--tail); height:2px;
   border-radius:2px;
   background:linear-gradient(90deg, rgba(190,218,255,0), rgba(190,218,255,.9)); }
 /* the slow rail's head and tail carry the line's red too */
@@ -1128,8 +1130,10 @@
 /* clears the station labels, which overflow the rail box by ~64px */
 .pl-note{ display:flex; align-items:center; gap:14px; margin:126px 0 0 132px;
   font-family:var(--font-body); font-weight:300; font-size:21px; color:var(--g2); }
-/* the legend dot, styled exactly like a reached station so the red maps back to the rails */
-.pl-note .ic{ width:var(--pl-dot); height:var(--pl-dot); flex:none; border-radius:50%;
+/* the legend dot, styled exactly like a reached station so the red maps back to the rails.
+   Scoped as .pl-ic, NOT .ic: walkthrough.css has an unscoped `.ic{ position:absolute; inset:... }`
+   (the browser-content panel) that would otherwise hijack this dot to the top-left corner. */
+.pl-note .pl-ic{ width:var(--pl-dot); height:var(--pl-dot); flex:none; border-radius:50%;
   background:radial-gradient(circle at 35% 32%, #ffb3a4, var(--coral) 72%);
   box-shadow:0 0 0 3px rgba(238,68,46,.14), 0 0 13px rgba(238,68,46,.8); }
 .pl-note b{ color:#fff; }
@@ -1178,7 +1182,7 @@
     </div>
   </div>
 
-  <p class="pl-note"><span class="ic"></span><span>Every stage still waits on a human. <b>That wait never got faster.</b></span></p>
+  <p class="pl-note"><span class="pl-ic"></span><span>Every stage still waits on a human. <b>That wait never got faster.</b></span></p>
 
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 01</span></div>
 </section>
@@ -1907,14 +1911,16 @@
    already tells the components apart, so the label only has to be legible. */
 .cw-kind{ font-family:var(--font-mono); font-size:11.5px; font-weight:500; letter-spacing:.18em;
   text-transform:uppercase; color:var(--g1); display:block; }
-.cw-name{ display:flex; align-items:center; gap:10px; margin-top:12px;
+/* .cw-fname (not .cw-name): a parallel slide's orbital block defines a global .cw-name that
+   hijacks position/font here. Renamed to insulate the OusMous component view from that collision. */
+.cw-fname{ display:flex; align-items:center; gap:10px; margin-top:12px;
   font-family:var(--font-body); font-size:20px; font-weight:400; color:#fff; }
 .cw-list{ list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:10px; }
 .cw-list li{ display:flex; align-items:center; gap:10px; font-family:var(--font-body); font-size:15.5px;
   font-weight:300; color:var(--g1); white-space:nowrap; }
 /* the file glyph carries the accent, so the filename itself can stay neutral and readable */
 .cw-fi{ width:13px; height:13px; flex:none; color:var(--ac); }
-.cw-name .cw-fi{ width:16px; height:16px; }
+.cw-fname .cw-fi{ width:16px; height:16px; }
 /* the skills box grows the agent card open. 0fr -> 1fr animates to auto height; the row sits
    in a fixed-height flex row with align-items:center, so only this card changes size. */
 .cw-skills{ display:grid; grid-template-rows:0fr; opacity:0; margin-top:0;
@@ -2036,13 +2042,8 @@
            stations as the walkthrough's `notes` arrays, minus that suffix (and Engineering's
            "Technical" prefix, which the Engineering title already implies). -->
       <div class="om-plans">
-        <div class="om-plan p1">
-          <span class="pt tk" style="--i:0">Research stations</span>
-          <ul>
-            <li class="tk" style="--i:1"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Market Research</span></li>
-            <li class="tk" style="--i:2"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>PRD <em>Product Requirements Document</em></span></li>
-          </ul>
-        </div>
+        <!-- Only p2 (Design stations) remains: the component view drills into the Design stage.
+             The other five stage panels went with the removed six-stage tour. -->
         <div class="om-plan p2">
           <span class="pt tk" style="--i:0">Design stations</span>
           <ul>
@@ -2119,7 +2120,7 @@
     <div class="cw-flow">
       <div class="cw-card cw-agent">
         <span class="cw-kind">Agent</span>
-        <span class="cw-name"><svg class="cw-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>design-agent.md</span>
+        <span class="cw-fname"><svg class="cw-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>design-agent.md</span>
         <div class="cw-skills">
           <div>
             <div class="in">
@@ -2696,7 +2697,10 @@ section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both 
 .dept-core .cs{ position:relative; z-index:1; display:block; width:50px; height:50px;
   filter:drop-shadow(0 0 10px rgba(var(--acr),.95)) drop-shadow(0 0 26px rgba(var(--acr),.5)); }
 .dept-core .cs path{ fill:var(--ac2); }
-.dept-core .cn{ position:relative; z-index:1; margin-top:17px; white-space:nowrap;
+/* the spark sits on the orbital centre (where the spokes + comet converge); the name
+   floats just beneath it, out of flow, so it never lifts the spark off centre. */
+.dept-core .cn{ position:absolute; top:100%; left:50%; transform:translateX(-50%);
+  margin-top:14px; z-index:1; white-space:nowrap;
   font-family:var(--font-display); font-weight:400; font-size:38px; color:#fff;
   line-height:1; letter-spacing:-.01em; }
 @keyframes deptCoreIn{
@@ -3211,69 +3215,9 @@ section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both 
 </div>
 
 <script src="vendor/reveal.js"></script>
-<script src="js/deck.js?v=6"></script>
-<script src="js/walkthrough.js?v=28"></script>
-<!-- Introducing Tous (11C): auto-advance the six-stage tour so the presenter never clicks
-     through each stage (Sam's call, 2026-07-17). It steps Research -> ... -> Delivery & Learning
-     and then STOPS on the last stage; the four core components stay MANUAL (Sam's call, 2026-07-17).
-     Boundaries are read from the cues at boot(), NOT hardcoded: reveal.js renumbers
-     data-fragment-index to a contiguous 0-based run at init, so the authored 1..14 become 0..13.
-     Hardcoding the authored numbers stopped it one fragment too late, landing on the first core
-     instead of the last stage. Cancels on a manual step, a backward step, or leaving the slide.
-     Pure reveal-fragment driver; the slide's visuals are CSS :has() on the cues. -->
-<script>
-(function () {
-  'use strict';
-  // Scope to the real section: reveal clones the slide into .backgrounds, so a bare
-  // '.om-slide' can match the clone (which carries no fragment children).
-  var slide = document.querySelector('.reveal .slides .om-slide');
-  if (!slide) return;
-  // QA / reduced-motion: fragments are shown all at once, no timers — leave it static.
-  if (document.documentElement.classList.contains('qa') ||
-      (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-  var STAGE_HOLD = 3600;          // ms a stage holds before auto-advancing. Keep it above the
-                                  // ~3.2s station-tick reveal (Engineering & Delivery each have
-                                  // 4 stations at var(--i)*.5s+.85s) or a stage gets cut off.
-  // Runtime fragment indices, resolved from the cues at boot() (see the block comment above on
-  // why hardcoding fails). FIRST = the stage list (auto-advance begins once it is shown); STOP_AT =
-  // the last stage (Delivery & Learning), which ends the tour. Auto-advance runs while
-  // FIRST <= top < STOP_AT, so it steps stage list -> Research -> ... -> Delivery & Learning, then
-  // stops there (the four core components stay manual).
-  var FIRST = null, STOP_AT = null;
-  function frag(sel) { var el = slide.querySelector(sel); return el ? parseInt(el.getAttribute('data-fragment-index'), 10) : NaN; }
-  var timer = null;
-  function clearTimer() { if (timer) { clearTimeout(timer); timer = null; } }
-  function onSlide() { return window.Reveal && Reveal.getCurrentSlide && Reveal.getCurrentSlide() === slide; }
-  function topFragmentIndex() {
-    var vis = slide.querySelectorAll('.fragment.visible'), max = -1;
-    for (var i = 0; i < vis.length; i++) {
-      var n = parseInt(vis[i].getAttribute('data-fragment-index'), 10);
-      if (!isNaN(n) && n > max) max = n;
-    }
-    return max;
-  }
-  function schedule() {
-    clearTimer();
-    if (!onSlide()) return;
-    var idx = topFragmentIndex();
-    if (idx >= FIRST && idx < STOP_AT) {
-      timer = setTimeout(function () { if (onSlide()) Reveal.next(); }, STAGE_HOLD);
-    }
-  }
-  function boot() {
-    if (!window.Reveal) return;
-    // Resolve the boundaries now that reveal has renumbered data-fragment-index to its contiguous
-    // 0-based run. om-s1 is Research, the tour's first stage (the old "all stages at once" list
-    // beat was removed); om-s6 is the last stage (Delivery & Learning), where the tour stops.
-    FIRST = frag('.om-s1'); STOP_AT = frag('.om-s6');
-    Reveal.on('fragmentshown', schedule);   // each stage that appears queues the next
-    Reveal.on('fragmenthidden', clearTimer); // stepping back pauses the tour
-    Reveal.on('slidechanged', clearTimer);   // leaving the slide cancels it
-  }
-  if (window.Reveal && Reveal.isReady && Reveal.isReady()) boot();
-  else if (window.Reveal) Reveal.on('ready', boot);
-  else window.addEventListener('load', boot);
-})();
-</script>
+<script src="js/deck.js?v=7"></script>
+<script src="js/walkthrough.js?v=29"></script>
+<!-- The Tous ring slide is fully manual now: the six-stage tour was removed, so the beats (b1-b3)
+     and the four component views (c1-c4) all advance on click. No auto-advance script needed. -->
 </body>
 </html>

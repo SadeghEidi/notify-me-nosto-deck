@@ -101,11 +101,13 @@ Reveal.initialize({
   //   WITH AI  (fast rail)  jumps fast between stages but STOPS at each (DWELL) - that pause
   //   is the human-in-the-loop bottleneck, the point of the slide. Slow finishes well after
   //   fast, so it still reads as the slower process.
-  var DWELL      = 3400;                   // fast rail only: the wait at each stage (the bottleneck)
+  var DWELL      = 2380;                   // fast rail only: the wait at each stage (the bottleneck).
+                                           // 30% shorter than the old 3400: WITH AI clears each
+                                           // bottleneck faster, so the bottom rail passes quicker.
   var TRAVEL     = { fast: 1920 };         // fast rail per-gap travel (halved speed = 2x duration)
   var SWEEP_SLOW = 40000;                  // slow rail: one continuous sweep, tip to tip
-  var CYCLE      = 44000;                  // slow finishes at 40s (fast ~32s), ~4s hold, then loop
-  var FREEZE_AT  = 0;                  // slow mid-flow past Design, fast stopped at Coding
+  var CYCLE      = 44000;                  // slow finishes at 40s (fast ~28s), ~4s hold, then loop
+  var FREEZE_AT  = 18000;                  // slow mid-flow past Design, fast stopped at Quality Assurance
 
   function wire() {
     var slide = document.querySelector('.pl-slide');
@@ -152,6 +154,12 @@ Reveal.initialize({
         var pct = (s.p * 100).toFixed(3) + '%';
         r.fill.style.width = pct;
         r.orb.style.left = pct;
+        // the comet's tail trails ~86px to the LEFT of the head. At the first station the head sits
+        // at x=0, so a fixed-length tail pokes out behind Research into the empty margin (reads as
+        // "the line starts before the first stop"). Clamp the tail to the head's distance from the
+        // rail start so it grows OUT of Research instead of starting behind it.
+        var orbX = s.p * r.orb.parentElement.clientWidth;
+        r.orb.style.setProperty('--tail', Math.max(0, Math.min(86, orbX - 3)).toFixed(1) + 'px');
         r.el.classList.toggle('is-moving', s.moving);
         for (var i = 0; i < r.n; i++) {
           r.steps[i].classList.toggle('is-done', i <= s.at);
