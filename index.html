@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="vendor/reveal.css">
 <link rel="stylesheet" href="css/theme.css?v=7">
 <link rel="stylesheet" href="css/walkthrough.css?v=21">
-<link rel="stylesheet" href="css/bento.css?v=hue10">
+<link rel="stylesheet" href="css/bento.css?v=hue11">
 </head>
 <body>
 <div class="bg-aurora"></div>
@@ -94,7 +94,7 @@
 .spd-cap{ position:absolute; top:300px; left:0; right:0; z-index:3; text-align:center;
   font-family:var(--font-display); font-weight:400; font-size:25px; color:#fff; letter-spacing:-.01em; }
 .spd-tag{ position:absolute; top:340px; left:0; right:0; z-index:3; text-align:center;
-  font-family:var(--font-mono); font-weight:500; font-size:13px; letter-spacing:.22em;
+  font-family:var(--font-mono); font-weight:500; font-size:15px; letter-spacing:.22em;
   text-transform:uppercase; color:var(--lab); }
 
 /* ---- the run ---- */
@@ -514,37 +514,37 @@
           <div class="wf-node is-trigger" style="--x:95px; --y:140px">
             <span class="wf-box" style="--d:1.95s; --f:2.95s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.2V12l3.2 1.9"/></svg></span>
             <span class="wf-ck" style="--dc:3.25s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span>
-            <span class="wf-lb" style="--d:2.07s">Schedule<i>Every Monday</i></span>
+            <span class="wf-lb" style="--d:2.07s">Schedule</span>
           </div>
           <!-- Canny -->
           <div class="wf-node" style="--x:345px; --y:66px">
             <span class="wf-box" style="--d:2.04s; --f:3.55s"><img src="img/logo-canny.png" alt="Canny"></span>
             <span class="wf-ck" style="--dc:3.85s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span>
-            <span class="wf-lb" style="--d:2.16s">Canny<i>Feature requests</i></span>
+            <span class="wf-lb" style="--d:2.16s">Canny</span>
           </div>
           <!-- Intercom -->
           <div class="wf-node" style="--x:345px; --y:214px">
             <span class="wf-box" style="--d:2.13s; --f:3.55s"><img src="img/logo-intercom.svg" alt="Intercom"></span>
             <span class="wf-ck" style="--dc:3.85s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span>
-            <span class="wf-lb" style="--d:2.25s">Intercom<i>Conversations</i></span>
+            <span class="wf-lb" style="--d:2.25s">Intercom</span>
           </div>
           <!-- Merge -->
           <div class="wf-node" style="--x:605px; --y:140px">
             <span class="wf-box" style="--d:2.22s; --f:4.15s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5h4c1 0 2 .5 2.6 1.3L13.5 12"/><path d="M3.5 17.5h4c1 0 2-.5 2.6-1.3L13.5 12"/><path d="M13.5 12h6.6"/><path d="M17.6 9.1 20.5 12l-2.9 2.9"/></svg></span>
             <span class="wf-ck" style="--dc:4.45s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span>
-            <span class="wf-lb" style="--d:2.34s">Merge<i>Combine sources</i></span>
+            <span class="wf-lb" style="--d:2.34s">Merge</span>
           </div>
           <!-- OpenAI: the green node the ChatGPT card feeds -->
           <div class="wf-node is-ai" style="--x:855px; --y:140px">
             <span class="wf-box" style="--d:2.31s; --f:4.75s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997z"/></svg></span>
             <span class="wf-ck" style="--dc:5.45s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span>
-            <span class="wf-lb" style="--d:2.43s">OpenAI<i>Summarize the themes</i></span>
+            <span class="wf-lb" style="--d:2.43s">OpenAI</span>
           </div>
           <!-- Slack -->
           <div class="wf-node" style="--x:1120px; --y:140px">
             <span class="wf-box" style="--d:2.40s; --f:6.05s"><img src="img/logo-slack.svg" alt="Slack"></span>
             <span class="wf-ck" style="--dc:6.35s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span>
-            <span class="wf-lb" style="--d:2.52s">Slack<i>Post the digest</i></span>
+            <span class="wf-lb" style="--d:2.52s">Slack</span>
           </div>
         </div>
       </div>
@@ -571,7 +571,7 @@
    business lines (theme.md) and would misread as those here. 38/21/20/13/8 sums to exactly 100,
    so the ring closes with no rounding fudge. */
 .rg-org{ width:540px; flex:none; padding-top:4px; }
-.rg-org-h{ font-family:var(--font-mono); font-weight:500; font-size:11.5px; letter-spacing:.18em;
+.rg-org-h{ font-family:var(--font-mono); font-weight:500; font-size:13px; letter-spacing:.18em;
   text-transform:uppercase; color:var(--g3); }
 .rg-donut{ display:flex; align-items:center; gap:38px; margin-top:26px; }
 .rg-ring{ position:relative; width:200px; height:200px; flex:none; }
@@ -606,7 +606,7 @@
 .rg-wire .wc{ stroke:var(--coral); opacity:.85; filter:drop-shadow(0 0 5px var(--coral)); }
 .rg-wire .wp{ stroke:var(--purple); opacity:.85; filter:drop-shadow(0 0 5px var(--purple)); }
 
-.rg-cap{ position:absolute; font-family:var(--font-mono); font-weight:500; font-size:11.5px;
+.rg-cap{ position:absolute; font-family:var(--font-mono); font-weight:500; font-size:13.5px;
   letter-spacing:.16em; text-transform:uppercase; color:var(--g3); white-space:nowrap; }
 
 /* stage 1 - the single team that owned all four products */
@@ -1057,7 +1057,7 @@
 .pl-slide{ --pl-dot:5.6px; }
 .pl-wrap{ width:100%; max-width:1640px; margin-top:58px; display:flex; flex-direction:column;
   gap:118px; }
-.pl-tag{ display:flex; align-items:center; gap:12px; font-family:var(--font-mono); font-size:13px;
+.pl-tag{ display:flex; align-items:center; gap:12px; font-family:var(--font-mono); font-size:15px;
   font-weight:500; letter-spacing:.24em; text-transform:uppercase; color:var(--g3);
   margin:0 0 28px 132px; }
 .pl-tag .tk{ width:22px; height:1px; background:currentColor; opacity:.7; }
@@ -1112,7 +1112,7 @@
   border:1px solid rgba(238,68,46,.5);
   transition:background .35s ease, box-shadow .35s ease, transform .3s ease,
              border-color .35s ease; }
-.pl-lb{ margin-top:22px; font-family:var(--font-body); font-weight:300; font-size:15px;
+.pl-lb{ margin-top:22px; font-family:var(--font-body); font-weight:300; font-size:17px;
   line-height:1.35; color:var(--g3); text-align:center; transition:color .35s ease; }
 /* reached: the ring fills red. still red, because it is still a wait */
 .pl-step.is-done .pl-dot{ border-color:transparent;
@@ -1483,7 +1483,6 @@
         <svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 11v6M9 14h6"/></svg>
         Feature request
       </span>
-      <span class="s">One input, any size</span>
     </div>
 
     <!-- one human, watching every bot -->
@@ -1510,7 +1509,6 @@
         <svg viewBox="0 0 24 24"><path d="M20.5 3.5c-4 .3-7 2-9.2 4.8L9.4 11 13 14.6l2.7-1.9c2.8-2.2 4.5-5.2 4.8-9.2z"/><path d="M9.4 11 6 10.2 3.5 13l3.1 1.2M13 14.6l.8 3.4L11 20.5l-1.2-3.1"/><path d="M5.6 18.4 3.5 20.5"/></svg>
         Feature shipped
       </span>
-      <span class="s">Live on the product</span>
     </div>
 
     <span class="fx2-cap">Agents collaborate and improve each other&rsquo;s work</span>
@@ -2278,14 +2276,14 @@ section.present .bl-act::before{ transform:scaleY(1); }
 .bl-num{ display:block; font-family:var(--font-display); font-weight:700; font-size:19px;
   line-height:1; color:var(--ac); }
 .bl-lab{ display:block; margin-top:11px; font-family:var(--font-mono); font-weight:500;
-  font-size:12.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--g1); }
+  font-size:14px; letter-spacing:.16em; text-transform:uppercase; color:var(--g1); }
 
 /* One 4-column grid shared by every act. Rows carry 2-3 cells and leave the right columns as
    breathing room, all landing on the same grid. The cells are deliberately NOT boxed: bare type
    on the grid reads as margin, where a glass tile would read as a half-empty container. */
 .bl-cells{ display:grid; grid-template-columns:repeat(4,1fr); gap:30px; align-items:stretch; }
 .bl-t{ display:flex; flex-direction:column; }
-.bl-tl{ font-family:var(--font-mono); font-weight:500; font-size:12px; letter-spacing:.15em;
+.bl-tl{ font-family:var(--font-mono); font-weight:500; font-size:15px; letter-spacing:.15em;
   text-transform:uppercase; color:var(--g2); }
 /* The after-value is the headline; the before-value is context. Type scale carries the delta,
    but the context bits (before-value, arrow, "to", unit, multiplier) are sized up and lifted to
@@ -2302,7 +2300,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
 /* the multiplier is the unit on "10", so it stays attached to it */
 .bl-v .x{ font-size:.66em; font-weight:300; color:var(--g2); }
 .bl-m{ margin-top:auto; padding-top:15px; font-family:var(--font-mono); font-weight:500;
-  font-size:12.5px; color:var(--ac); }
+  font-size:15px; color:var(--ac); }
 
 /* The numbers reveal one by one in reading order (row by row, left to right), quick (~1s total). */
 @keyframes blSeq{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
@@ -2334,7 +2332,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
         </div>
         <div class="bl-t">
           <span class="bl-tl">Releases</span>
-          <div class="bl-v"><span class="was">4.7</span><i class="ar">&rarr;</i>9.5</div>
+          <div class="bl-v"><span class="was">1.6</span><i class="ar">&rarr;</i>3.2</div>
           <span class="bl-m">per day</span>
         </div>
         <div class="bl-t">
@@ -2440,13 +2438,16 @@ section.present .bl-act::before{ transform:scaleY(1); }
     transform:translateY(-192px); }
   @keyframes cxSpin{ to{ transform:rotate(360deg); } }
   /* the mint Knowledge spark at the core - what actually compounds */
+  /* The spark + label are ONE unit: the block stacks them, and translate(-50%,-50%) centres the
+     whole stack on the ring's centre, so the pair reads as a single centred mark (spark just above
+     centre, label just below) rather than the spark pinned dead-centre with the label dropped off. */
   .cx-core{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); text-align:center; }
-  .cx-core .cbloom{ position:absolute; left:50%; top:30px; width:150px; height:150px; transform:translate(-50%,-50%);
+  .cx-core .cbloom{ position:absolute; left:50%; top:33px; width:150px; height:150px; transform:translate(-50%,-50%);
     border-radius:50%; filter:blur(30px); background:radial-gradient(circle, rgba(95,208,166,.34), transparent 60%); }
-  .cx-core .spark{ position:relative; display:block;
+  .cx-core .spark{ position:relative; display:block; margin:0 auto;
     filter:drop-shadow(0 0 10px rgba(95,208,166,.85)) drop-shadow(0 0 30px rgba(95,208,166,.4)); }
   .cx-core .spark path{ fill:#EAFFF6; }
-  .cx-core .cl{ position:relative; display:block; margin-top:26px; font-family:var(--font-mono);
+  .cx-core .cl{ position:relative; display:block; margin-top:14px; font-family:var(--font-mono);
     font-size:12px; font-weight:500; letter-spacing:.34em; text-transform:uppercase; color:#bff0dc;
     text-shadow:0 0 10px rgba(95,208,166,.5); }
 
@@ -2464,9 +2465,6 @@ section.present .bl-act::before{ transform:scaleY(1); }
     background:linear-gradient(90deg, transparent, var(--ac)); transform:scaleX(var(--rs,0)); transform-origin:right; }
   .cx-lab{ font-family:var(--font-body); font-size:15px; letter-spacing:.2em; text-transform:uppercase; color:var(--g1); }
 
-  .cx-pay{ position:absolute; left:96px; bottom:120px; z-index:6; font-family:var(--font-body); font-weight:300;
-    font-size:27px; color:var(--g2); opacity:0; }
-  .cx-pay b{ color:#fff; }
 
   /* QA / reduced-motion: the driver paints the final frame; pin the looping comet to a fixed angle */
   .qa .cx-orbit{ animation:none !important; transform:rotate(-42deg) !important; }
@@ -2512,7 +2510,6 @@ section.present .bl-act::before{ transform:scaleY(1); }
     </div>
   </div>
 
-  <p class="cx-pay">The workflow is easy to copy. <b>What it&rsquo;s learned isn&rsquo;t.</b></p>
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 04</span></div>
 </section>
 <script>
@@ -2521,7 +2518,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
   var slide=document.querySelector('.reveal .slides .cx-slide'); if(!slide) return;
   var field=slide.querySelector('.cx-field'), ring=slide.querySelector('.cx-ring'),
       band=slide.querySelector('.cx-band'),
-      pay=slide.querySelector('.cx-pay'), nSk=slide.querySelector('.cx-nsk'), nAg=slide.querySelector('.cx-nag'),
+      nSk=slide.querySelector('.cx-nsk'), nAg=slide.querySelector('.cx-nag'),
       rules=slide.querySelectorAll('.cx-rule');
   var FICON='<svg class="cx-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';
   // wide name pools + a per-type running index => neighbours never repeat a filename
@@ -2560,7 +2557,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
 
   function paint(p,tms){
     p=clamp(p,0,1);
-    var gScale=1.10-.70*smooth(p);                         // 1.10 -> 0.40 as the field multiplies
+    var gScale=1.15-.53*smooth(p);                         // 1.15 -> 0.62 as the field multiplies
     for(var i=0;i<cards.length;i++){ var c=cards[i];
       var ap=(p-c.t)/.07, e=smooth(ap);
       if(ap<=0){ c.el.style.opacity='0'; continue; }
@@ -2575,7 +2572,6 @@ section.present .bl-act::before{ transform:scaleY(1); }
     band.style.setProperty('--bs',(.34+.66*re).toFixed(3));
     var ez=p*p; nSk.textContent=Math.round(ez*120); nAg.textContent=Math.round(ez*28);
     rules.forEach(function(r){ r.style.setProperty('--rs',clamp(p*1.4,0,1)); });
-    pay.style.opacity=clamp((p-.85)/.12,0,1);
   }
 
   // computed at call time, NOT parse time: deck.js adds the `qa` class after this inline script parses
@@ -2922,283 +2918,6 @@ section.present .bl-act::before{ transform:scaleY(1); }
   <h3 style="font-size:40px; margin-bottom:22px">Together, they capture revenue that would <b>otherwise be lost.</b></h3>
   <div class="bento-fit">
     <div class="nm-bento nm-bento--drift" role="list" aria-label="The four ways Notify Me! recovers lost sales">
-
-      <!-- 1 · Back in Stock — flagship, wide top-left -->
-      <div role="listitem" class="nm-bento__cell nm-bento__cell--bis" aria-label="Back in Stock">
-        <div class="nm-bento__head">
-          <h3 class="nm-bento__title">Never lose a sale to &ldquo;Sold&nbsp;out&rdquo; again</h3>
-          <img class="nm-bento__logo" src="img/back-in-stock-logo.svg" width="288" height="86" alt="Notify Me! Back in Stock">
-        </div>
-        <div class="nm-bento__stage nm-shop" aria-hidden="true">
-          <div class="nm-shop__frame">
-            <div class="nm-shop__pdp">
-              <span class="nm-shop__brand">Maison&nbsp;Stella</span>
-              <span class="nm-shop__photo"><img src="img/maison-stella-suzie.webp" alt="" width="540" height="810"></span>
-              <span class="nm-shop__row">
-                <span class="nm-shop__name">Suzie Knit Top</span>
-                <span class="nm-shop__price">$128.00</span>
-              </span>
-              <span class="nm-shop__soldout">Sold out</span>
-              <span class="nm-shop__notify">Notify me when available</span>
-              <div class="nm-shop__scrim"></div>
-              <div class="nm-shop__modal">
-                <span class="nm-shop__modal-close" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
-                <span class="nm-shop__modal-h">Get notified when it&rsquo;s back</span>
-                <span class="nm-shop__field">lily@studio.com</span>
-                <span class="nm-shop__field">+1 (555) 240-1180</span>
-                <div class="nm-shop__chips">
-                  <span class="nm-shop__chip is-on">Email</span>
-                  <span class="nm-shop__chip is-on">SMS</span>
-                  <span class="nm-shop__chip">Push</span>
-                  <span class="nm-shop__chip">WhatsApp</span>
-                </div>
-                <span class="nm-shop__submit">Notify me</span>
-              </div>
-            </div>
-            <div class="nm-shop__lock">
-              <span class="nm-shop__lock-clock">
-                <span class="nm-shop__lock-time">9:41</span>
-                <span class="nm-shop__lock-date">Tuesday, April 18</span>
-              </span>
-              <div class="nm-shop__notif">
-                <span class="nm-shop__notif-ico"><img src="img/notifylogo.svg" alt="" width="36" height="34"></span>
-                <span class="nm-shop__notif-body">
-                  <span class="nm-shop__notif-top"><span class="nm-shop__notif-app">Notify Me!</span><span class="nm-shop__notif-time">now</span></span>
-                  <span class="nm-shop__notif-text">Suzie Knit Top is back in stock. Shop now &rarr;</span>
-                </span>
-              </div>
-            </div>
-            <div class="nm-shop__done">
-              <span class="nm-shop__done-check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span class="nm-shop__done-h">Order placed!</span>
-              <span class="nm-shop__done-sub">Suzie Knit Top is on its way.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2 · Preorder — narrow top-right -->
-      <div role="listitem" class="nm-bento__cell nm-bento__cell--pre fragment" aria-label="Preorder">
-        <div class="nm-bento__head">
-          <h3 class="nm-bento__title">Keep selling while you wait on stock</h3>
-          <img class="nm-bento__logo" src="img/preorder-logo.svg" width="232" height="86" alt="Notify Me! Preorder">
-        </div>
-        <div class="nm-bento__stage nm-preshop" aria-hidden="true">
-          <div class="nm-preshop__frame">
-            <div class="nm-preshop__pdp">
-              <span class="nm-preshop__brand">Lune&nbsp;Atelier</span>
-              <span class="nm-preshop__photo"><img src="img/roller-rabbit-product.webp" alt="" width="600" height="917"></span>
-              <span class="nm-preshop__row">
-                <span class="nm-preshop__name">Bloom Print Dress</span>
-                <span class="nm-preshop__price">$168.00</span>
-              </span>
-              <span class="nm-preshop__ship">
-                <span class="nm-preshop__ship-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l8 4v10l-8 4-8-4V7l8-4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 7l8 4 8-4M12 11v9" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
-                <span class="nm-preshop__ship-body">
-                  <span class="nm-preshop__ship-main">Ships by Apr 18</span>
-                  <span class="nm-preshop__ship-sub">50% deposit today</span>
-                </span>
-              </span>
-              <span class="nm-preshop__btn">Pre-order</span>
-            </div>
-            <div class="nm-preshop__checkout">
-              <span class="nm-preshop__co-h">Checkout</span>
-              <div class="nm-preshop__inv">
-                <span class="nm-preshop__inv-row">
-                  <span class="nm-preshop__inv-label">Bloom Print Dress</span>
-                  <span class="nm-preshop__inv-val">$168.00</span>
-                </span>
-                <span class="nm-preshop__inv-row nm-preshop__inv-row--due">
-                  <span class="nm-preshop__inv-label">50% deposit<span class="nm-preshop__inv-tag">Due today</span></span>
-                  <span class="nm-preshop__inv-val">$84.00</span>
-                </span>
-              </div>
-              <span class="nm-preshop__card">
-                <span class="nm-preshop__card-mc" aria-hidden="true"><i></i><i></i></span>
-                <span class="nm-preshop__card-txt">Mastercard &middot;&middot;&middot;&middot; 4242</span>
-                <span class="nm-preshop__card-tag">Saved</span>
-              </span>
-              <span class="nm-preshop__pay">Place preorder</span>
-            </div>
-            <div class="nm-preshop__done">
-              <span class="nm-preshop__done-check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span class="nm-preshop__done-h">Preorder confirmed</span>
-              <span class="nm-preshop__done-sub">Arrives by Apr 18</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3 · Low Stock — narrow bottom-left -->
-      <div role="listitem" class="nm-bento__cell nm-bento__cell--low fragment" aria-label="Low Stock">
-        <div class="nm-bento__head">
-          <h3 class="nm-bento__title">A little urgency goes a long way</h3>
-          <img class="nm-bento__logo" src="img/low-stock-logo.svg" width="229" height="89" alt="Notify Me! Low Stock">
-        </div>
-        <div class="nm-bento__stage nm-lowshop" aria-hidden="true">
-          <div class="nm-lowshop__frame">
-            <div class="nm-lowshop__pdp">
-              <img class="nm-lowshop__brand" src="img/atari.svg" alt="Atari" width="68" height="16">
-              <span class="nm-lowshop__photo"><img src="img/atari-product.webp" alt="" width="900" height="1200"></span>
-              <span class="nm-lowshop__row">
-                <span class="nm-lowshop__name">Atari 2600+ Console</span>
-                <span class="nm-lowshop__price">$129.99</span>
-              </span>
-              <span class="nm-lowshop__stock">
-                <i class="nm-lowshop__dot" aria-hidden="true"></i> Only 3 left in stock
-              </span>
-              <span class="nm-lowshop__cart">Add to cart</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 4 · Wishlist — wide bottom-right -->
-      <div role="listitem" class="nm-bento__cell nm-bento__cell--wish fragment" aria-label="Wishlist">
-        <div class="nm-bento__head">
-          <h3 class="nm-bento__title">Let shoppers save now, buy later</h3>
-          <img class="nm-bento__logo" src="img/wishlist-logo.svg" width="212" height="89" alt="Notify Me! Wishlist">
-        </div>
-        <div class="nm-bento__stage nm-wishshop" aria-hidden="true">
-          <div class="nm-wishshop__frame">
-            <div class="nm-wishshop__pdp">
-              <span class="nm-wishshop__brand">Stanley</span>
-              <span class="nm-wishshop__photo"><img src="img/stanley-product.webp" alt="" width="900" height="1200"></span>
-              <span class="nm-wishshop__row">
-                <span class="nm-wishshop__name">Classic Legendary Bottle</span>
-                <span class="nm-wishshop__price">$50.00</span>
-              </span>
-              <span class="nm-wishshop__cart">Add to cart</span>
-              <span class="nm-wishshop__wish">
-                <span class="nm-wishshop__heart" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                </span>
-                <span class="nm-wishshop__wish-txt">Add to wishlist</span>
-              </span>
-            </div>
-            <div class="nm-wishshop__email">
-              <div class="nm-wishshop__mail-head">
-                <span class="nm-wishshop__mail-field"><span class="nm-wishshop__mail-k">From</span><span class="nm-wishshop__mail-v">Stanley 1913</span></span>
-                <span class="nm-wishshop__mail-field"><span class="nm-wishshop__mail-k">To</span><span class="nm-wishshop__mail-v">you@email.com</span></span>
-                <span class="nm-wishshop__mail-field"><span class="nm-wishshop__mail-k">Subject</span><span class="nm-wishshop__mail-v nm-wishshop__mail-subj">Price drop on your wishlist</span></span>
-              </div>
-              <span class="nm-wishshop__mail-h">Your wishlisted item is on sale</span>
-              <span class="nm-wishshop__mail-prod">
-                <span class="nm-wishshop__mail-thumb"><img src="img/stanley-product.webp" alt="" width="900" height="1200"></span>
-                <span class="nm-wishshop__mail-body">
-                  <span class="nm-wishshop__mail-name">Classic Legendary Bottle</span>
-                  <span class="nm-wishshop__mail-prices">
-                    <span class="nm-wishshop__was">$50.00</span>
-                    <span class="nm-wishshop__now">$40.00</span>
-                    <span class="nm-wishshop__sale">&minus;20%</span>
-                  </span>
-                </span>
-              </span>
-              <span class="nm-wishshop__buy">
-                <span class="nm-wishshop__buy-default">Buy it now</span>
-                <span class="nm-wishshop__buy-placed"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Order placed!</span>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 5 · Hueshi — narrow full-height rail (right rail); in-app copilot chat -->
-      <div role="listitem" class="nm-bento__cell nm-bento__cell--hue fragment" aria-label="Hueshi — in-app AI copilot">
-        <div class="nm-bento__head">
-          <h3 class="nm-bento__title">Turn store data into decisions</h3>
-        </div>
-        <div class="nm-bento__stage nm-hue" aria-hidden="true">
-          <div class="nm-hue__frame">
-
-            <!-- Scene 1 · empty state (also the static / reduced-motion frame) -->
-            <div class="nm-hue__empty">
-              <div class="nm-hue__hero">
-                <span class="nm-hue__orb">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
-                </span>
-                <span class="nm-hue__eyebrow">Hueshi <i>·</i> Beta</span>
-                <span class="nm-hue__hi">Analyze, set up,<br>and take action</span>
-                <span class="nm-hue__sub">Your Notify&nbsp;Me! copilot</span>
-              </div>
-              <div class="nm-hue__chips">
-                <span class="nm-hue__chip">What should I restock first? <i>&rarr;</i></span>
-                <span class="nm-hue__chip">Where am I losing sales? <i>&rarr;</i></span>
-              </div>
-              <div class="nm-hue__composer">
-                <span class="nm-hue__composer-txt">Ask about your store&hellip;</span>
-                <span class="nm-hue__send">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
-                </span>
-              </div>
-            </div>
-
-            <!-- Scene 2 · conversation (reveals progressively) -->
-            <div class="nm-hue__chat">
-              <div class="nm-hue__bar">
-                <span class="nm-hue__bar-orb">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
-                </span>
-                <span class="nm-hue__bar-name">Ask Hueshi</span>
-                <span class="nm-hue__bar-beta">BETA</span>
-                <span class="nm-hue__bar-role">copilot</span>
-              </div>
-
-              <div class="nm-hue__thread">
-                <span class="nm-hue__q">Which products should I restock first?</span>
-
-                <div class="nm-hue__a">
-                  <span class="nm-hue__typing" aria-hidden="true"><i></i><i></i><i></i></span>
-
-                  <span class="nm-hue__ans">Three SKUs drive <b>61%</b> of your back-in-stock demand this month.</span>
-
-                  <span class="nm-hue__cite">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 3h8l4 4v14H6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v4h4M9 13h6M9 17h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-                    Based on Restock demand
-                  </span>
-
-                  <div class="nm-hue__chart" aria-hidden="true">
-                    <span class="nm-hue__col nm-hue__col--hot" style="--h:100%; --d:0ms"><i></i></span>
-                    <span class="nm-hue__col nm-hue__col--hot" style="--h:86%; --d:70ms"><i></i></span>
-                    <span class="nm-hue__col nm-hue__col--hot" style="--h:72%; --d:140ms"><i></i></span>
-                    <span class="nm-hue__col" style="--h:41%; --d:210ms"><i></i></span>
-                    <span class="nm-hue__col" style="--h:27%; --d:280ms"><i></i></span>
-                  </div>
-                  <span class="nm-hue__chart-cap">Top 3 SKUs &middot; 61% of unmet demand</span>
-
-                  <div class="nm-hue__rec">
-                    <div class="nm-hue__rec-face">
-                      <span class="nm-hue__rec-body">
-                        <span class="nm-hue__rec-h">Restock these 3 first</span>
-                        <span class="nm-hue__rec-sub">Recovers ~$18k in lost sales</span>
-                      </span>
-                      <span class="nm-hue__rec-cta">Apply</span>
-                    </div>
-                    <div class="nm-hue__rec-done">
-                      <span class="nm-hue__rec-check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                      <span class="nm-hue__rec-donetxt">Applied</span>
-                      <span class="nm-hue__rec-undo">Undo</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-  <div class="foot"><img src="img/lockup-white.png" alt=""></div>
-</section>
-
-<!-- ===== DUPLICATE of the product bento with a NEW card layout (title top / logo bottom-left / animation right + enlarged; Hueshi +30% width). Only the .nm-bento--wide class differs from the slide above. ===== -->
-<section class="slide">
-  <p class="eyebrow">Five core products · one platform</p>
-  <h3 style="font-size:40px; margin-bottom:22px">Together, they capture revenue that would <b>otherwise be lost.</b></h3>
-  <div class="bento-fit">
-    <div class="nm-bento nm-bento--drift nm-bento--wide" role="list" aria-label="The four ways Notify Me! recovers lost sales">
 
       <!-- 1 · Back in Stock — flagship, wide top-left -->
       <div role="listitem" class="nm-bento__cell nm-bento__cell--bis" aria-label="Back in Stock">
