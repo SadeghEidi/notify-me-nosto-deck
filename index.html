@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/reset.css">
 <link rel="stylesheet" href="vendor/reveal.css">
 <link rel="stylesheet" href="css/theme.css?v=7">
-<link rel="stylesheet" href="css/walkthrough.css?v=20">
+<link rel="stylesheet" href="css/walkthrough.css?v=21">
 <link rel="stylesheet" href="css/bento.css?v=hue7">
 </head>
 <body>
@@ -882,42 +882,51 @@
 /* the task, bouncing agent <-> human: neutral in flight, coral when kicked back, green when it passes */
 .dg-try{ position:absolute; top:98px; left:95px; width:9px; height:9px; margin:-4.5px 0 0 -4.5px;
   border-radius:50%; z-index:1; color:#eaf1ff; background:currentColor;
-  filter:drop-shadow(0 0 5px currentColor); animation:dgTry 6.6s cubic-bezier(.45,.05,.55,.95) infinite; }
+  filter:drop-shadow(0 0 5px currentColor); animation:dgTry 8s cubic-bezier(.45,.05,.55,.95) infinite; }
+/* the task rests ~400ms (5% of 8s) at each node before it shoots to the other side. The verdict
+   (reject / retry / pass) flips DURING that pause, so the ✕/✓ land while it is held, not in flight. */
 @keyframes dgTry{
   0%   { left:95px;  opacity:0; color:#eaf1ff; }
-  3%   { opacity:1; }
-  12%  { left:200px; color:#eaf1ff; }     /* attempt 1 reaches the human */
-  17%  { color:#EE442E; }                  /* rejected */
-  24%  { left:95px;  color:#EE442E; }      /* kicked back to the agent */
-  28%  { color:#eaf1ff; }                  /* retry */
-  35%  { left:200px; color:#eaf1ff; }      /* attempt 2 */
-  40%  { color:#EE442E; }                  /* rejected again */
-  47%  { left:95px;  color:#EE442E; }      /* back */
-  51%  { color:#eaf1ff; }
-  58%  { left:200px; color:#eaf1ff; }      /* attempt 3 reaches the human */
-  63%  { color:#2fd39b; }                   /* it passes -> green */
-  68%  { left:200px; color:#2fd39b; }       /* a beat at the human */
-  84%  { left:330px; color:#2fd39b; opacity:1; }  /* clears past the human, out to the right */
-  92%  { opacity:0; }
+  2%   { opacity:1; }
+  5%   { left:95px;  color:#eaf1ff; }      /* pause at the agent, then set off */
+  13%  { left:200px; color:#eaf1ff; }      /* attempt 1 reaches the human */
+  15%  { color:#EE442E; }                   /* rejected, during the pause */
+  18%  { left:200px; color:#EE442E; }       /* ~400ms pause at the human */
+  26%  { left:95px;  color:#EE442E; }       /* kicked back to the agent */
+  28%  { color:#eaf1ff; }                   /* retry, during the pause */
+  31%  { left:95px;  color:#eaf1ff; }       /* ~400ms pause at the agent */
+  39%  { left:200px; color:#eaf1ff; }       /* attempt 2 reaches the human */
+  41%  { color:#EE442E; }                    /* rejected again */
+  44%  { left:200px; color:#EE442E; }        /* pause at the human */
+  52%  { left:95px;  color:#EE442E; }        /* back to the agent */
+  54%  { color:#eaf1ff; }
+  57%  { left:95px;  color:#eaf1ff; }        /* pause at the agent */
+  65%  { left:200px; color:#eaf1ff; }        /* attempt 3 reaches the human */
+  67%  { color:#2fd39b; }                     /* it passes -> green */
+  70%  { left:200px; color:#2fd39b; }         /* ~400ms pause at the human */
+  79%  { left:330px; color:#2fd39b; opacity:1; }  /* clears past the human, out to the right */
+  83%  { opacity:0; }
   100% { left:330px; opacity:0; }
 }
 /* the human's verdict, right where the task lands: coral ✕ on each rejection... */
 .dg-x{ position:absolute; left:200px; top:72px; margin:-13px; z-index:3; width:26px; height:26px;
   display:flex; align-items:center; justify-content:center; color:#EE442E; opacity:0;
-  filter:drop-shadow(0 0 6px rgba(238,68,46,.7)); animation:dgTryX 6.6s ease-out infinite; }
+  filter:drop-shadow(0 0 6px rgba(238,68,46,.7)); animation:dgTryX 8s ease-out infinite; }
 .dg-x svg{ width:21px; height:21px; }
+/* the ✕ lands while the task is paused at the human on each rejection (dwells 13-18% and 39-44%) */
 @keyframes dgTryX{
-  0%,9%{ opacity:0; transform:scale(.5) }  14%{ opacity:1; transform:scale(1.06) }  20%{ opacity:1 }  24%{ opacity:0 }
-  32%{ opacity:0; transform:scale(.5) }    37%{ opacity:1; transform:scale(1.06) }  43%{ opacity:1 }  47%{ opacity:0 }
+  0%,13%{ opacity:0; transform:scale(.5) }  15%{ opacity:1; transform:scale(1.06) }  18%{ opacity:1 }  20%{ opacity:0 }
+  39%{ opacity:0; transform:scale(.5) }     41%{ opacity:1; transform:scale(1.06) }  44%{ opacity:1 }  46%{ opacity:0 }
   100%{ opacity:0 } }
 /* ...then a green ✓ when it finally passes */
 .dg-chk{ position:absolute; left:200px; top:72px; margin:-13px; z-index:3; width:26px; height:26px;
   display:flex; align-items:center; justify-content:center; color:#2fd39b; opacity:0;
-  filter:drop-shadow(0 0 7px rgba(47,211,155,.85)); animation:dgTryChk 6.6s ease-out infinite; }
+  filter:drop-shadow(0 0 7px rgba(47,211,155,.85)); animation:dgTryChk 8s ease-out infinite; }
 .dg-chk svg{ width:23px; height:23px; }
+/* the ✓ lands while the task is paused at the human on the winning attempt (dwell 65-70%) */
 @keyframes dgTryChk{
-  0%,56%{ opacity:0; transform:scale(.3) }  61%{ opacity:1; transform:scale(1.14) }  67%{ transform:scale(1) }
-  86%{ opacity:1 }  93%{ opacity:0 }  100%{ opacity:0 } }
+  0%,65%{ opacity:0; transform:scale(.3) }  67%{ opacity:1; transform:scale(1.14) }  70%{ transform:scale(1) }
+  79%{ opacity:1 }  84%{ opacity:0 }  100%{ opacity:0 } }
 
 /* ---------- presentation build: only the LAST-revealed card keeps animating; a passed card freezes
    at its initial resting state (comet / +1 / agent / ✕ gone, bars settled, roads steady). The deck.js
@@ -935,7 +944,7 @@
 .qa .dg-card{ opacity:1 !important; transform:none !important; }
 .qa .dg-flow{ animation-delay:-2.7s; animation-play-state:paused; }   /* dots piled at the human = bottleneck */
 .qa .dg-run{ animation-delay:0s; }                                    /* forwards keyframe holds --w */
-.qa .dg-try{ animation-delay:-4.15s; animation-play-state:paused; }   /* task at the human on the winning attempt */
+.qa .dg-try{ animation-delay:-5.4s; animation-play-state:paused; }   /* task at the human on the winning attempt */
 .qa .dg-x{ animation:none; opacity:0; }                               /* no reject at the success frame */
 .qa .dg-chk{ animation:none; opacity:1; transform:scale(1); }         /* green ✓ shown */
 
@@ -2052,39 +2061,6 @@
             <li class="tk" style="--i:3"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Design Handoff</span></li>
           </ul>
         </div>
-        <div class="om-plan p3">
-          <span class="pt tk" style="--i:0">Engineering stations</span>
-          <ul>
-            <li class="tk" style="--i:1"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Definition of Done</span></li>
-            <li class="tk" style="--i:2"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>DoD Review</span></li>
-            <li class="tk" style="--i:3"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Planning</span></li>
-            <li class="tk" style="--i:4"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Plan Review</span></li>
-          </ul>
-        </div>
-        <div class="om-plan p4">
-          <span class="pt tk" style="--i:0">Production stations</span>
-          <ul>
-            <li class="tk" style="--i:1"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Coding</span></li>
-            <li class="tk" style="--i:2"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Code Review</span></li>
-          </ul>
-        </div>
-        <div class="om-plan p5">
-          <span class="pt tk" style="--i:0">Testing stations</span>
-          <ul>
-            <li class="tk" style="--i:1"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Technical QA</span></li>
-            <li class="tk" style="--i:2"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Product QA</span></li>
-            <li class="tk" style="--i:3"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Visual QA</span></li>
-          </ul>
-        </div>
-        <div class="om-plan p6">
-          <span class="pt tk" style="--i:0">Delivery &amp; Learning stations</span>
-          <ul>
-            <li class="tk" style="--i:1"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Release</span></li>
-            <li class="tk" style="--i:2"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Release Announcement</span></li>
-            <li class="tk" style="--i:3"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Documentation</span></li>
-            <li class="tk" style="--i:4"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Learning</span></li>
-          </ul>
-        </div>
       </div>
     </div>
     </div>
@@ -2322,8 +2298,8 @@ section.present .bl-act::before{ transform:scaleY(1); }
 .bl-v{ font-family:var(--font-display); font-weight:700; font-size:68px; color:#fff;
   line-height:1; letter-spacing:-.025em; margin-top:15px; white-space:nowrap;
   text-shadow:0 0 46px rgba(255,255,255,.18); }
-.bl-v .was{ font-size:36px; font-weight:300; color:var(--g2); letter-spacing:0; }
-.bl-v .ar{ font-style:normal; font-size:27px; font-weight:300; color:var(--g2); margin:0 12px 0 10px; }
+.bl-v .was{ font-size:68px; font-weight:300; color:var(--g2); letter-spacing:-.025em; }
+.bl-v .ar{ font-style:normal; font-size:38px; font-weight:300; color:var(--g2); margin:0 13px 0 11px; vertical-align:baseline; }
 /* "3 to 10x" is a spoken range, not a before/after, so its joiner is a word at reading size. */
 .bl-v .tw{ font-style:normal; font-size:32px; font-weight:300; color:var(--g2); margin:0 11px; }
 .bl-v .u{ font-size:31px; font-weight:300; color:var(--g2); margin-right:9px; letter-spacing:0; }
@@ -2333,21 +2309,19 @@ section.present .bl-act::before{ transform:scaleY(1); }
 .bl-m{ margin-top:auto; padding-top:15px; font-family:var(--font-mono); font-weight:500;
   font-size:12.5px; color:var(--ac); }
 
-/* Numerals focus in, cell by cell, when the slide enters. transform + filter only (no opacity),
-   so nothing outranks reveal's own entrance or lands blank. */
-@keyframes blNum{ from{ transform:translateY(13px); filter:blur(8px); } to{ transform:none; filter:blur(0); } }
-section.present .bl-act .bl-t:nth-child(1) .bl-v{ animation:blNum .6s .06s both cubic-bezier(.2,.7,.2,1); }
-section.present .bl-act .bl-t:nth-child(2) .bl-v{ animation:blNum .6s .17s both cubic-bezier(.2,.7,.2,1); }
-section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both cubic-bezier(.2,.7,.2,1); }
-
-/* particle-assembly overlay: dots swarm in and form the numbers, then cross-fade to the DOM values */
-.bl-fx{ position:absolute; inset:0; width:100%; height:100%; z-index:6; pointer-events:none; }
+/* The numbers reveal one by one in reading order (row by row, left to right), quick (~1s total). */
+@keyframes blSeq{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+.reveal section.present .bl-act:nth-child(1) .bl-t:nth-child(1){ animation:blSeq .32s 0s   both cubic-bezier(.2,.7,.2,1); }
+.reveal section.present .bl-act:nth-child(1) .bl-t:nth-child(2){ animation:blSeq .32s .12s both cubic-bezier(.2,.7,.2,1); }
+.reveal section.present .bl-act:nth-child(1) .bl-t:nth-child(3){ animation:blSeq .32s .24s both cubic-bezier(.2,.7,.2,1); }
+.reveal section.present .bl-act:nth-child(2) .bl-t:nth-child(1){ animation:blSeq .32s .36s both cubic-bezier(.2,.7,.2,1); }
+.reveal section.present .bl-act:nth-child(2) .bl-t:nth-child(2){ animation:blSeq .32s .48s both cubic-bezier(.2,.7,.2,1); }
+.reveal section.present .bl-act:nth-child(3) .bl-t:nth-child(1){ animation:blSeq .32s .60s both cubic-bezier(.2,.7,.2,1); }
+.reveal section.present .bl-act:nth-child(3) .bl-t:nth-child(2){ animation:blSeq .32s .72s both cubic-bezier(.2,.7,.2,1); }
 
 .qa .bl-act::before{ transform:none !important; }
-.qa .bl-v{ animation:none !important; }
 </style>
-<section class="slide" id="bottomline">
-  <canvas class="bl-fx" aria-hidden="true"></canvas>
+<section class="slide">
   <p class="eyebrow">Part 04 &middot; what it delivered</p>
   <h2 style="font-size:52px">The bottom line.</h2>
 
@@ -2410,113 +2384,6 @@ section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both 
 
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 04</span></div>
 </section>
-
-<script>
-/* "The bottom line" — the metric numbers assemble from thousands of drifting dots, then cross-fade
-   to the crisp DOM values. Dots are sampled from the real rendered glyphs via canvas fillText (no
-   taint on file://), tinted per row accent. Auto-plays on slide enter; skips entirely in ?qa. */
-(function(){
-  var qa = /(^|[?&])qa($|[=&])/.test(location.search);
-  var SEC = document.getElementById('bottomline');
-  if(!SEC) return;
-  var canvas = SEC.querySelector('.bl-fx');
-  if(!canvas || !canvas.getContext) return;
-  var ctx = canvas.getContext('2d');
-  var vals = [].slice.call(SEC.querySelectorAll('.bl-v'));
-  var SS = 2, raf = 0, running = false;
-
-  function accentOf(el){
-    var act = el.closest('.bl-act'), n = act && act.querySelector('.bl-num');
-    return n ? getComputedStyle(n).color : 'rgb(76,135,255)';
-  }
-  function drawValue(c, blv, x0, baseY){
-    var x = x0;
-    [].forEach.call(blv.childNodes, function(node){
-      var text, st;
-      if(node.nodeType===3){ text=node.nodeValue; st=getComputedStyle(blv); }
-      else if(node.nodeType===1){ text=node.textContent; st=getComputedStyle(node); }
-      else return;
-      if(text==null) return;
-      text = text.replace(/ /g,' ');
-      if(text==='') return;
-      var fs = parseFloat(st.fontSize)||0;
-      c.font = st.fontStyle+' '+st.fontWeight+' '+(fs*SS)+'px '+st.fontFamily;
-      c.fillStyle = st.color; c.textBaseline='alphabetic';
-      x += (parseFloat(st.marginLeft)||0)*SS;
-      c.fillText(text, x, baseY);
-      x += c.measureText(text).width + (parseFloat(st.marginRight)||0)*SS;
-    });
-  }
-  function build(){
-    var sr = SEC.getBoundingClientRect(), scale = sr.width/SEC.offsetWidth || 1;
-    canvas.width = Math.round(SEC.offsetWidth*SS);
-    canvas.height = Math.round(SEC.offsetHeight*SS);
-    var W = canvas.width, H = canvas.height, groups = {};
-    vals.forEach(function(blv){
-      var r = blv.getBoundingClientRect();
-      var x=(r.left-sr.left)/scale, y=(r.top-sr.top)/scale;
-      var fs = parseFloat(getComputedStyle(blv).fontSize)||60;
-      var X0 = x*SS, topB = y*SS, baseY = topB + fs*SS*0.78, col = accentOf(blv);
-      ctx.clearRect(0,0,W,H);
-      drawValue(ctx, blv, X0, baseY);
-      var rx=Math.max(0,Math.floor(X0-4)), ry=Math.max(0,Math.floor(topB-fs*SS*0.3));
-      var rw=Math.min(W-rx,Math.ceil((r.width/scale)*SS+fs*SS*1.4)), rh=Math.min(H-ry,Math.ceil(fs*SS*1.3));
-      if(rw<=0||rh<=0) return;
-      var d = ctx.getImageData(rx,ry,rw,rh).data, STEP=6;
-      groups[col] = groups[col] || [];
-      for(var py=0;py<rh;py+=STEP) for(var px=0;px<rw;px+=STEP){
-        if(d[(py*rw+px)*4+3]>128) groups[col].push({tx:rx+px, ty:ry+py});
-      }
-    });
-    ctx.clearRect(0,0,W,H);
-    Object.keys(groups).forEach(function(col){ groups[col].forEach(function(p){
-      p.sx=Math.random()*W; p.sy=Math.random()*H; p.delay=Math.random()*700; p.dur=1000+Math.random()*450;
-    });});
-    return {groups:groups, W:W, H:H};
-  }
-  function cancel(){ running=false; if(raf) cancelAnimationFrame(raf); raf=0; if(ctx) ctx.clearRect(0,0,canvas.width,canvas.height); }
-  function run(){
-    cancel(); if(qa) return;
-    var s; try{ s=build(); }catch(e){ vals.forEach(function(v){ v.style.opacity='1'; }); return; }
-    var start = performance.now(), END = 700+1450, FADE = 420, revealed = false;
-    running = true;
-    (function frame(now){
-      if(!running) return;
-      var t = now-start, W=s.W, H=s.H;
-      ctx.clearRect(0,0,W,H);
-      var ga = t>END ? Math.max(0, 1-(t-END)/FADE) : 1;
-      Object.keys(s.groups).forEach(function(col){
-        ctx.fillStyle=col; ctx.globalAlpha=ga;
-        var arr=s.groups[col], dd=1.5*SS;
-        for(var i=0;i<arr.length;i++){ var p=arr[i];
-          var lt=(t-p.delay)/p.dur; lt = lt<0?0:(lt>1?1:lt); var e=1-Math.pow(1-lt,3);
-          ctx.fillRect(p.sx+(p.tx-p.sx)*e, p.sy+(p.ty-p.sy)*e, dd, dd);
-        }
-      });
-      ctx.globalAlpha=1;
-      if(t>END && !revealed){ revealed=true; vals.forEach(function(v){ v.style.transition='opacity '+FADE+'ms ease'; v.style.opacity='1'; }); }
-      if(ga<=0){ ctx.clearRect(0,0,W,H); running=false; return; }
-      raf = requestAnimationFrame(frame);
-    })(start);
-  }
-  function onChange(){
-    var cur = (typeof Reveal!=='undefined' && Reveal.getCurrentSlide) ? Reveal.getCurrentSlide() : null;
-    if(cur===SEC){
-      if(!qa) vals.forEach(function(v){ v.style.transition='none'; v.style.opacity='0'; });
-      if(document.fonts && document.fonts.ready) document.fonts.ready.then(run); else run();
-    } else {
-      cancel();
-      vals.forEach(function(v){ v.style.transition='none'; v.style.opacity=''; });
-    }
-  }
-  function init(){
-    if(typeof Reveal==='undefined' || !Reveal.on){ return setTimeout(init,150); }
-    Reveal.on('slidechanged', onChange);
-    if(Reveal.isReady && Reveal.isReady()) onChange(); else Reveal.on('ready', onChange);
-  }
-  if(document.readyState!=='loading') init(); else document.addEventListener('DOMContentLoaded', init);
-})();
-</script>
 
 <!-- ================= 18 · THE MOAT (redesign · compounding workflow loops) =================
      A few workflow loops sit at one size (colour = purpose, dot-count = steps): a workflow is a
@@ -3216,7 +3083,7 @@ section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both 
 
 <script src="vendor/reveal.js"></script>
 <script src="js/deck.js?v=7"></script>
-<script src="js/walkthrough.js?v=29"></script>
+<script src="js/walkthrough.js?v=31"></script>
 <!-- The Tous ring slide is fully manual now: the six-stage tour was removed, so the beats (b1-b3)
      and the four component views (c1-c4) all advance on click. No auto-advance script needed. -->
 </body>

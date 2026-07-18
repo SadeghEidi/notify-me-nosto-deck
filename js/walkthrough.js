@@ -439,13 +439,64 @@
   var WARN_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 22 20H2z"/><path d="M12 10v4M12 17v.01"/></svg>';
   var NOSTO_MARK = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 6h20a8 8 0 0 1 8 8v20L20 20 6 6z" fill="#FF66BF"/></svg>';
 
+  // the Shopify shopping-bag glyph (green) for the admin top bar
+  var SH_BAG = '<svg class="sh-bag" viewBox="0 0 24 24" fill="none">' +
+    '<path d="M7.1 6.35c.01-.2.16-.34.35-.36l1.86-.14 1.28-1.28c.1-.1.24-.13.35-.09l.66.2v16.9L6 19.55 7.1 6.35z" fill="#95BF47"/>' +
+    '<path d="M11.6 4.68l.65.2 1.28 1.28 1.86.14c.2.02.34.16.35.36l.96 12.86-3.99.85-1.07-15.69z" fill="#5E8E3E"/>' +
+    '<path d="M13.28 9.05l-.5 1.86s-.6-.3-1.3-.3c-1 0-1.05.63-1.05.83 0 1.08 2.83 1.5 2.83 4.04 0 2-1.26 3.28-2.96 3.28-2.04 0-3.08-1.27-3.08-1.27l.54-1.8s1.07.92 1.98.92c.6 0 .84-.47.84-.8 0-1.42-2.32-1.5-2.32-3.83 0-1.96 1.4-3.86 4.27-3.86 1.09 0 1.62.32 1.62.32z" fill="#fff"/>' +
+    '</svg>';
+  // minimalist Shopify-nav icons (16px line)
+  var SH_IC = {
+    home:'<path d="M4 11l8-6 8 6M6 10v9h5v-5h2v5h5v-9"/>',
+    orders:'<path d="M7 8h10l-.8 10.5a1.2 1.2 0 0 1-1.2 1.1H9a1.2 1.2 0 0 1-1.2-1.1L7 8z"/><path d="M9.5 8V6.3a2.5 2.5 0 0 1 5 0V8"/>',
+    products:'<path d="M4 5h6.6L20 14.4 14.4 20 5 10.6V5z"/><circle cx="8" cy="8" r="1.2"/>',
+    customers:'<circle cx="12" cy="8.4" r="3"/><path d="M6 20c0-3.3 2.7-5.6 6-5.6s6 2.3 6 5.6"/>',
+    discounts:'<circle cx="8.2" cy="8.2" r="1.5"/><circle cx="15.8" cy="15.8" r="1.5"/><path d="M6.5 17.5 17.5 6.5"/>',
+    content:'<rect x="4.5" y="5" width="15" height="14" rx="2"/><path d="M4.5 9.2h15"/>',
+    markets:'<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.7 2.6 2.7 13.4 0 16M12 4c-2.7 2.6-2.7 13.4 0 16"/>',
+    analytics:'<path d="M5 19v-7M10 19V6M15 19v-4M20 19V9"/>',
+    store:'<path d="M4.6 9l1-4h12.8l1 4M5.2 9v10h13.6V9M4.6 9h14.8"/><path d="M9.4 19v-5h5.2v5"/>',
+    agentic:'<rect x="5" y="8.5" width="14" height="10" rx="2.5"/><path d="M12 4.6v3.9M8.6 13h.01M15.4 13h.01"/>',
+    gear:'<circle cx="12" cy="12" r="2.6"/><path d="M12 3.4v2.3M12 18.3v2.3M4.7 12h2.3M17 12h2.3M6.5 6.5l1.6 1.6M15.9 15.9l1.6 1.6M17.5 6.5l-1.6 1.6M8.1 15.9l-1.6 1.6"/>'
+  };
+  function shIc(k){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + SH_IC[k] + '</svg>'; }
+  function shNi(icon, label){ return '<div class="sh-ni">' + shIc(icon) + '<span>' + label + '</span></div>'; }
+
+  // The Notify Me app rendered inside the Shopify admin (Built for Shopify).
   function designPreviewHTML() {
-    return '<div class="dp">' +
-      '<div class="dp-bar"><span class="dp-dots"><i></i><i></i><i></i></span>' +
-        '<span class="dp-url">localhost:3000  ·  Settings › Integrations › Nosto</span>' +
-        '<span class="dp-tag">preview</span></div>' +
-      '<div class="dp-page">' +
-        '<div class="dp-back"><span class="dp-chev">‹</span><span class="dp-title">Connect to Nosto</span><span class="dp-beta">Beta</span></div>' +
+    var top = '<div class="sh-top">' +
+        '<div class="sh-brand">' + SH_BAG + '<span class="sh-wm">shopify</span><span class="sh-badge">Spring ’26</span></div>' +
+        '<div class="sh-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span class="ph">Search</span><span class="kbd">⌘K</span></div>' +
+        '<div class="sh-acct">' +
+          '<svg class="sh-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 4.5 2 5.6 2 5.6H4S6 13.5 6 9"/><path d="M10.4 18.5a1.8 1.8 0 0 0 3.2 0"/></svg>' +
+          '<div class="sh-store"><span class="sh-av">NS</span><span class="sh-sname">Notify Me Demo Store</span></div>' +
+        '</div>' +
+      '</div>';
+
+    var nav = '<nav class="sh-nav">' +
+        shNi('home', 'Home') + shNi('orders', 'Orders') + shNi('products', 'Products') + shNi('customers', 'Customers') +
+        shNi('discounts', 'Discounts') + shNi('content', 'Content') + shNi('markets', 'Markets') + shNi('analytics', 'Analytics') +
+        '<div class="sh-glabel">Sales channels</div>' +
+        shNi('store', 'Online Store') + shNi('agentic', 'Agentic') +
+        '<div class="sh-glabel">Apps</div>' +
+        '<div class="sh-ni app"><img class="nm" src="img/notifylogo.svg" alt=""><span>Notify Me!</span><span class="dot"></span></div>' +
+        '<div class="sh-sub">' +
+          '<div class="sh-si">Back in stock</div><div class="sh-si">PreOrder</div><div class="sh-si">Wishlist</div>' +
+          '<div class="sh-si">Low stock</div><div class="sh-si on">Settings</div><div class="sh-si">Plans</div>' +
+        '</div>' +
+        '<div class="sh-navsp"></div>' +
+        shNi('gear', 'Settings') +
+      '</nav>';
+
+    var main = '<div class="sh-main">' +
+        '<div class="sh-crumb">Settings <i>›</i> Integrations <i>›</i> <b>Nosto</b></div>' +
+        '<div class="dp-hero">' +
+          '<span class="dp-hero-glow"></span>' +
+          '<img class="dp-hero-logo" src="img/Nosto - Primary Logo.svg" alt="Nosto">' +
+          '<span class="dp-hero-div"></span>' +
+          '<span class="dp-hero-tag">Send Notify Me shopper signals<br>to your Nosto customer profiles.</span>' +
+          '<span class="dp-hero-beta">Beta</span>' +
+        '</div>' +
         '<div class="dp-card">' +
           '<div class="dp-h">Connect with an API token</div>' +
           '<div class="dp-desc">Enter a Nosto API token with customer-data access. Nosto issues this token; request it from your Nosto account manager.</div>' +
@@ -462,15 +513,16 @@
           '<div class="dp-attr"><b>nm_wishlist_active</b><span>Has an active wishlist.</span></div>' +
           '<div class="dp-attr"><b>nm_preorder_customer</b><span>Placed a pre-order.</span></div>' +
         '</div>' +
-      '</div>' +
-    '</div>';
+      '</div>';
+
+    return '<div class="dp">' + top + '<div class="sh-body">' + nav + main + '</div></div>';
   }
   // a small static thumbnail of the design, embedded in the handoff doc as a "screenshot"
   function designThumb() {
     return '<div class="dpt">' +
-      '<div class="dpt-bar"><span class="dpt-dots"><i></i><i></i><i></i></span><span class="dpt-t">Connect to Nosto</span></div>' +
+      '<div class="dpt-bar"><span class="dpt-bag"></span><span class="dpt-wm">shopify</span><span class="dpt-dots"><i></i><i></i></span></div>' +
       '<div class="dpt-body">' +
-        '<div class="dpt-back">‹ <b>Connect to Nosto</b> <span class="dpt-beta">Beta</span></div>' +
+        '<div class="dpt-hero"><img class="dpt-logo" src="img/Nosto - Primary Logo.svg" alt="Nosto"><span class="dpt-beta">Beta</span></div>' +
         '<div class="dpt-card">' +
           '<div class="dpt-line w60"></div><div class="dpt-line w90 sm"></div>' +
           '<div class="dpt-field"><span class="dpt-tok">nosto_sk_live_••••4f2a</span><span class="dpt-ck">' + CHECK + '</span></div>' +
@@ -865,11 +917,14 @@
      0 marks a stop. Manual advance always works and resumes the next segment.
      Each STAGE is one segment: its steps auto-advance, then it stops at the
      stage's last step and waits for a manual advance before the next stage.
-     Research bundles the intro (hero/VS Code/prompt). Dwells are brisk but
-     readable; Engineering is fastest ("just the process"). 0 marks a stop.
+     The hero (beat 0) is its own 'intro' segment, so it never auto-advances:
+     it holds "Let's build the Nosto integration" until the presenter advances
+     manually, then research (VS Code/prompt/browser/docs) auto-plays. Dwells are
+     brisk but readable; Engineering is fastest ("just the process"). 0 marks a stop.
      ------------------------------------------------------------ */
   var BEAT_SEG = [
-    'research', 'research', 'research', 'research', 'research', 'research', // 0-5
+    'intro',                                                               // 0 — hero: its own segment, waits for a manual advance
+    'research', 'research', 'research', 'research', 'research',            // 1-5
     'design', 'design', 'design',                                          // 6-8
     'engineering', 'engineering',                                          // 9-10
     'production', 'production',                                            // 11-12
@@ -877,7 +932,8 @@
     'delivery', 'delivery', 'delivery', 'delivery'                         // 16-19
   ];
   var BEAT_HOLD = [
-    2100, 1600, 2600, 2600, 3000, 0,   // research
+    0,                                 // intro — hero stops; presenter starts the build manually
+    1600, 2600, 2600, 3000, 0,         // research (VS Code, prompt, browser, market-research, prd-stop)
     2600, 1400, 0,                     // design (UI/UX, review-quick, handoff-stop)
     2000, 0,                           // engineering (DoD, plan-stop) — fast
     2400, 0,                           // production (coding, review-stop)
