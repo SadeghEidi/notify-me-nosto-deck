@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="vendor/reveal.css">
 <link rel="stylesheet" href="css/theme.css?v=7">
 <link rel="stylesheet" href="css/walkthrough.css?v=21">
-<link rel="stylesheet" href="css/bento.css?v=hue7">
+<link rel="stylesheet" href="css/bento.css?v=hue10">
 </head>
 <body>
 <div class="bg-aurora"></div>
@@ -172,7 +172,7 @@
         <div class="spd-sweep"><div class="spd-jit"><div class="spd-needle"></div></div></div>
         <span class="spd-hub"></span>
         <span class="spd-cap">Organization speed</span>
-        <span class="spd-tag">Slower</span>
+        <span class="spd-tag">Slow</span>
       </div>
     </div>
   </div>
@@ -2370,7 +2370,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
       <div class="bl-cells">
         <div class="bl-t">
           <span class="bl-tl">We spend</span>
-          <div class="bl-v"><span class="u">~CAD</span>$20K</div>
+          <div class="bl-v">$20K</div>
           <span class="bl-m">per month, on AI</span>
         </div>
         <div class="bl-t">
@@ -2384,6 +2384,140 @@ section.present .bl-act::before{ transform:scaleY(1); }
 
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 04</span></div>
 </section>
+
+<!-- ================= 15 · THE COMPOUNDING (animated moat) =================
+     An auto-playing build that IS the argument. Component orbs (skills=blue, agents=purple,
+     hooks=coral) appear and multiply; a workflow ring forms and gains stages; behind it faint
+     "generation rings" accumulate outward - every cycle's learned rules/evals/safeguards; the mint
+     Knowledge core swells; the Skills/Agents tally climbs to the real 120+/28+. Count AND size grow,
+     accelerating, then it stops at a dense radiant state. Driven by an inline paint(p) wall-clock
+     ticker (headless-renderable, QA freezes the final frame). Reuses the Tous language (spark core,
+     node dots, tally, accents). Scoped .cx-. No em dashes. -->
+<style>
+  /* only the eyebrow + title are in flow; keep them pinned to the top (the base .slide centers) */
+  .reveal .slides section.slide.cx-slide{ justify-content:flex-start; }
+  .cx-hl{ font-size:60px; max-width:1080px; --emph:700; margin-top:4px; }
+  .cx-stage{ position:absolute; left:50%; top:600px; transform:translate(-50%,-50%); width:730px; height:730px; z-index:1; }
+  .cx-stage svg.geo{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .cx-gen{ fill:none; }
+  .cx-band{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:50%;
+    z-index:0; filter:blur(30px); pointer-events:none; opacity:0;
+    background:radial-gradient(circle, rgba(95,208,166,.16) 0%, rgba(76,135,255,.12) 40%, transparent 66%); }
+  .cx-core{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:4; opacity:0; }
+  .cx-core .bloom{ position:absolute; left:50%; top:50%; width:340px; height:340px; transform:translate(-50%,-50%);
+    border-radius:50%; filter:blur(22px); background:radial-gradient(circle, rgba(95,208,166,.5), transparent 62%); }
+  .cx-core .spark{ position:relative; display:block; filter:drop-shadow(0 0 14px rgba(95,208,166,.98)) drop-shadow(0 0 40px rgba(95,208,166,.6)); }
+  .cx-core .spark path{ fill:#EAFFF6; }
+  .cx-core .cl{ position:absolute; top:100%; left:50%; transform:translateX(-50%); margin-top:20px; white-space:nowrap;
+    font-family:var(--font-mono); font-size:14px; font-weight:500; letter-spacing:.28em; text-transform:uppercase;
+    color:#a9ecd2; text-shadow:0 0 12px rgba(95,208,166,.7); }
+  .cx-orb{ position:absolute; border-radius:50%; transform:translate(-50%,-50%); }
+  /* the Skills / Agents tally, same look as the Tous slide (solid accent + two-layer glow) */
+  .cx-tally{ position:absolute; top:150px; right:110px; z-index:5; text-align:right; }
+  .cx-tally .eye{ margin:0 0 20px; font-family:var(--font-mono); font-size:13px; font-weight:500;
+    letter-spacing:.26em; text-transform:uppercase; color:var(--g2); }
+  .cx-tally .row{ display:flex; justify-content:flex-end; gap:44px; }
+  .cx-cell{ display:flex; flex-direction:column; align-items:flex-end; --ac:var(--blue-elec); --acr:76,135,255; }
+  .cx-cell.agents{ --ac:var(--purple); --acr:155,38,240; }
+  .cx-num{ font-family:var(--font-display); font-weight:700; --emph:700; font-size:76px; line-height:.9;
+    letter-spacing:-.02em; color:var(--ac); text-shadow:0 0 4px rgba(var(--acr),.3), 0 0 34px rgba(var(--acr),.5); }
+  .cx-num .plus{ font-size:.4em; font-weight:700; vertical-align:.66em; margin-left:.02em; }
+  .cx-rule{ width:100%; height:2px; margin:15px 0 13px; border-radius:2px;
+    background:linear-gradient(90deg, transparent, var(--ac)); transform:scaleX(var(--rs,0)); transform-origin:right; }
+  .cx-lab{ font-family:var(--font-body); font-size:15px; letter-spacing:.2em; text-transform:uppercase; color:var(--g1); }
+  .cx-pay{ position:absolute; left:96px; bottom:120px; z-index:5; font-family:var(--font-body); font-weight:300;
+    font-size:27px; color:var(--g2); opacity:0; }
+  .cx-pay b{ color:#fff; }
+  /* QA / reduced-motion: the driver paints the final frame; keep the core + band visible */
+  .qa .cx-core, .qa .cx-band{ opacity:1; }
+</style>
+<section class="slide cx-slide">
+  <p class="eyebrow">So where&rsquo;s the moat?</p>
+  <h2 class="cx-hl">It was never the agents.<br>It&rsquo;s the <b>compounding.</b></h2>
+
+  <div class="cx-tally" aria-hidden="true">
+    <p class="eye">In total</p>
+    <div class="row">
+      <div class="cx-cell skills"><span class="cx-num"><span class="cx-nsk">0</span><span class="plus">+</span></span><span class="cx-rule"></span><span class="cx-lab">Skills</span></div>
+      <div class="cx-cell agents"><span class="cx-num"><span class="cx-nag">0</span><span class="plus">+</span></span><span class="cx-rule"></span><span class="cx-lab">Agents</span></div>
+    </div>
+  </div>
+
+  <div class="cx-stage" aria-hidden="true">
+    <span class="cx-band"></span>
+    <svg class="geo" viewBox="-360 -360 720 720"><g class="cx-gens"></g><g class="cx-nodes"></g><g class="cx-comet"></g></svg>
+    <div class="cx-core"><span class="bloom"></span><svg class="spark" width="66" height="66" viewBox="0 0 100 100"><path d="M50 1.5 C52.4 26 74 47.6 98.5 50 C74 52.4 52.4 74 50 98.5 C47.6 74 26 52.4 1.5 50 C26 47.6 47.6 26 50 1.5 Z"/></svg><span class="cl">Knowledge</span></div>
+    <div class="cx-orbs"></div>
+  </div>
+
+  <p class="cx-pay">The workflow is easy to copy. <b>What it&rsquo;s learned isn&rsquo;t.</b></p>
+  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 04</span></div>
+</section>
+<script>
+(function(){
+  'use strict';
+  var slide=document.querySelector('.reveal .slides .cx-slide'); if(!slide) return;
+  var NS='http://www.w3.org/2000/svg';
+  var gens=slide.querySelector('.cx-gens'), nodesG=slide.querySelector('.cx-nodes'),
+      cometG=slide.querySelector('.cx-comet'), orbsW=slide.querySelector('.cx-orbs'),
+      core=slide.querySelector('.cx-core'), band=slide.querySelector('.cx-band'),
+      spark=slide.querySelector('.cx-core .spark'), bloom=slide.querySelector('.cx-core .bloom'),
+      pay=slide.querySelector('.cx-pay'), nSk=slide.querySelector('.cx-nsk'), nAg=slide.querySelector('.cx-nag'),
+      rules=slide.querySelectorAll('.cx-rule');
+  var NGEN=15, R0=68, DR=19, ORBC=[[76,135,255],[155,38,240],[238,68,46]];   // skills, agents, hooks
+  var genEls=[];
+  for(var i=0;i<NGEN;i++){ var c=document.createElementNS(NS,'circle'); c.setAttribute('r',R0+i*DR);
+    c.setAttribute('class','cx-gen'); gens.appendChild(c); genEls.push(c); }
+  var orbDefs=[], orbEls=[];
+  for(var j=0;j<18;j++){ orbDefs.push({t:j%3, ang:(j*137.5)%360, rad:0.34+((j*0.11)%0.60), sp:(j%2?1:-1)*(0.6+(j%5)*0.12)});
+    var e=document.createElement('div'); e.className='cx-orb'; orbsW.appendChild(e); orbEls.push(e); }
+  function clamp(x,a,b){ return Math.max(a,Math.min(b,x)); }
+  function paint(p,tms){
+    p=clamp(p,0,1); var T=(tms||0)/1000;
+    var frontier=Math.floor(p*NGEN), activeR=R0+Math.max(0,frontier-1)*DR;
+    for(var i=0;i<NGEN;i++){ var on=i<frontier, isF=(i===frontier-1), age=frontier>0?(frontier-1-i)/NGEN:0;
+      genEls[i].style.opacity=on?(isF?.98:clamp(.40-age*.42,.07,.40)):0;
+      genEls[i].setAttribute('stroke',isF?'rgba(76,135,255,1)':'rgba(120,162,255,.85)');
+      genEls[i].setAttribute('stroke-width',isF?2:1.1);
+      genEls[i].style.filter=isF?'drop-shadow(0 0 9px rgba(76,135,255,.9))':(on?'drop-shadow(0 0 3px rgba(76,135,255,.35))':'none'); }
+    var N=Math.round(3+p*6); nodesG.textContent='';
+    if(frontier>0) for(var k=0;k<N;k++){ var a=(k/N)*6.2832-1.5708+T*0.10, x=Math.cos(a)*activeR, y=Math.sin(a)*activeR;
+      var d=document.createElementNS(NS,'circle'); d.setAttribute('cx',x.toFixed(1)); d.setAttribute('cy',y.toFixed(1)); d.setAttribute('r',5.2);
+      d.setAttribute('fill','#dce8ff'); d.setAttribute('style','filter:drop-shadow(0 0 5px rgba(76,135,255,1)) drop-shadow(0 0 12px rgba(76,135,255,.7))'); nodesG.appendChild(d); }
+    cometG.textContent='';
+    if(frontier>0){ var ca=T*1.7, cm=document.createElementNS(NS,'circle');
+      cm.setAttribute('cx',(Math.cos(ca)*activeR).toFixed(1)); cm.setAttribute('cy',(Math.sin(ca)*activeR).toFixed(1));
+      cm.setAttribute('r',5.5); cm.setAttribute('fill','#fff');
+      cm.setAttribute('style','filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 20px rgba(76,135,255,.95))'); cometG.appendChild(cm); }
+    var M=Math.round(3+p*15), SR=360;
+    orbEls.forEach(function(el,idx){ var o=orbDefs[idx]; if(idx<M){ var col=ORBC[o.t], breathe=0.86+0.14*Math.sin(T*1.1+idx),
+      rr=o.rad*activeR*breathe, aa=o.ang*Math.PI/180+T*0.14*o.sp, sz=8+p*7;
+      el.style.opacity=.92; el.style.width=el.style.height=sz+'px'; el.style.left=(50+Math.cos(aa)*rr/SR*50)+'%'; el.style.top=(50+Math.sin(aa)*rr/SR*50)+'%';
+      el.style.background='radial-gradient(circle at 35% 32%, rgba('+col.join(',')+',1), rgba('+col.join(',')+',.45) 72%)';
+      el.style.boxShadow='0 0 '+(9+p*9)+'px rgba('+col.join(',')+',.85)'; } else el.style.opacity=0; });
+    var bd=activeR*2.25; band.style.width=band.style.height=bd+'px'; band.style.opacity=(0.28+p*0.72).toFixed(2);
+    core.style.opacity=1; var cs=66+p*48; spark.setAttribute('width',cs); spark.setAttribute('height',cs);
+    var bbd=300+p*180; bloom.style.width=bloom.style.height=bbd+'px';
+    var ez=p*p; nSk.textContent=Math.round(ez*120); nAg.textContent=Math.round(ez*28);
+    rules.forEach(function(r){ r.style.setProperty('--rs',clamp(p*1.4,0,1)); });
+    pay.style.opacity=clamp((p-.84)/.12,0,1);
+  }
+  // computed at call time, NOT parse time: deck.js adds the `qa` class after this inline script parses
+  function reduced(){ return document.documentElement.classList.contains('qa') ||
+    (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  var DUR=9000, timer=null, t0=0;
+  function tick(){ var el=Date.now()-t0, k=Math.min(el/DUR,1), p=1-Math.pow(1-k,2.0); paint(p,el); timer=setTimeout(tick,16); }
+  function start(){ if(timer)return; t0=Date.now(); tick(); }
+  function stop(){ if(timer){ clearTimeout(timer); timer=null; } }
+  function isCur(){ return window.Reveal && Reveal.getCurrentSlide && Reveal.getCurrentSlide()===slide; }
+  function update(){ if(reduced()){ stop(); paint(1,6000); return; } if(isCur()) start(); else { stop(); paint(0,0); } }
+  function wire(){ if(!window.Reveal){ paint(reduced()?1:0,6000); return; } Reveal.on('slidechanged', update); update(); }
+  function ready(){ if(window.Reveal && Reveal.isReady && Reveal.isReady()) return wire();
+    if(window.Reveal && Reveal.on) return Reveal.on('ready', wire);
+    window.addEventListener('load', ready, {once:true}); }
+  ready();
+})();
+</script>
 
 <!-- ================= 18 · THE MOAT (redesign · compounding workflow loops) =================
      A few workflow loops sit at one size (colour = purpose, dot-count = steps): a workflow is a
@@ -2555,24 +2689,26 @@ section.present .bl-act::before{ transform:scaleY(1); }
   background:var(--ac); box-shadow:0 0 9px rgba(var(--acr),.9); }
 
 /* the core: the same spark in all three, which is the whole point */
-.dept-core{ position:absolute; left:50%; top:50%; z-index:4; opacity:0;
-  transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; }
-.dept-core .cw{ position:relative; display:flex; }
+.dept-core{ position:absolute; inset:0; z-index:4; opacity:0; transform-origin:50% 50%; }
+/* spark + name are centred in the ring as one block: the spark sits just ABOVE the ring centre and
+   the name just below, so the pair is balanced (the spokes fade before the centre + the comet rides
+   the ring, so neither needs the spark exactly on centre). -26px = half the block's height. */
+.dept-core .cw{ position:absolute; left:50%; top:calc(50% - 26px); transform:translate(-50%,-50%); display:flex; }
 .dept-core .cg{ position:absolute; inset:-160%; border-radius:50%; z-index:0; filter:blur(13px);
   background:radial-gradient(circle, rgba(var(--acr),.42), transparent 60%);
   animation:pulse 4.5s ease-in-out infinite; }
 .dept-core .cs{ position:relative; z-index:1; display:block; width:50px; height:50px;
   filter:drop-shadow(0 0 10px rgba(var(--acr),.95)) drop-shadow(0 0 26px rgba(var(--acr),.5)); }
 .dept-core .cs path{ fill:var(--ac2); }
-/* the spark sits on the orbital centre (where the spokes + comet converge); the name
-   floats just beneath it, out of flow, so it never lifts the spark off centre. */
-.dept-core .cn{ position:absolute; top:100%; left:50%; transform:translateX(-50%);
-  margin-top:14px; z-index:1; white-space:nowrap;
+/* the name sits just beneath the spark (13px below centre = the -26px block shift + a 14px gap),
+   positioned absolutely so it never lifts the spark. */
+.dept-core .cn{ position:absolute; top:calc(50% + 13px); left:50%; transform:translateX(-50%);
+  z-index:1; white-space:nowrap;
   font-family:var(--font-display); font-weight:400; font-size:38px; color:#fff;
   line-height:1; letter-spacing:-.01em; }
 @keyframes deptCoreIn{
-  from{ opacity:0; transform:translate(-50%,-50%) scale(.4) }
-  to  { opacity:1; transform:translate(-50%,-50%) scale(1) } }
+  from{ opacity:0; transform:scale(.4) }
+  to  { opacity:1; transform:scale(1) } }
 
 /* the payoff: size and colour carry the antithesis, so only "embedded" is emphasised.
    .post outranks the headline (38px) on purpose - it is this slide's takeaway. */
@@ -2800,7 +2936,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
     <div class="nm-bento nm-bento--drift" role="list" aria-label="The four ways Notify Me! recovers lost sales">
 
       <!-- 1 · Back in Stock — flagship, wide top-left -->
-      <a href="https://notify-me.io/back-in-stock" target="_blank" rel="noopener noreferrer" role="listitem" class="nm-bento__cell nm-bento__cell--bis" aria-label="Back in Stock">
+      <div role="listitem" class="nm-bento__cell nm-bento__cell--bis" aria-label="Back in Stock">
         <div class="nm-bento__head">
           <h3 class="nm-bento__title">Never lose a sale to &ldquo;Sold&nbsp;out&rdquo; again</h3>
           <img class="nm-bento__logo" src="img/back-in-stock-logo.svg" width="288" height="86" alt="Notify Me! Back in Stock">
@@ -2851,10 +2987,10 @@ section.present .bl-act::before{ transform:scaleY(1); }
             </div>
           </div>
         </div>
-      </a>
+      </div>
 
       <!-- 2 · Preorder — narrow top-right -->
-      <a href="https://notify-me.io/shopify-preorder" target="_blank" rel="noopener noreferrer" role="listitem" class="nm-bento__cell nm-bento__cell--pre" aria-label="Preorder">
+      <div role="listitem" class="nm-bento__cell nm-bento__cell--pre fragment" aria-label="Preorder">
         <div class="nm-bento__head">
           <h3 class="nm-bento__title">Keep selling while you wait on stock</h3>
           <img class="nm-bento__logo" src="img/preorder-logo.svg" width="232" height="86" alt="Notify Me! Preorder">
@@ -2903,10 +3039,10 @@ section.present .bl-act::before{ transform:scaleY(1); }
             </div>
           </div>
         </div>
-      </a>
+      </div>
 
       <!-- 3 · Low Stock — narrow bottom-left -->
-      <a href="https://notify-me.io/low-stock" target="_blank" rel="noopener noreferrer" role="listitem" class="nm-bento__cell nm-bento__cell--low" aria-label="Low Stock">
+      <div role="listitem" class="nm-bento__cell nm-bento__cell--low fragment" aria-label="Low Stock">
         <div class="nm-bento__head">
           <h3 class="nm-bento__title">A little urgency goes a long way</h3>
           <img class="nm-bento__logo" src="img/low-stock-logo.svg" width="229" height="89" alt="Notify Me! Low Stock">
@@ -2927,10 +3063,10 @@ section.present .bl-act::before{ transform:scaleY(1); }
             </div>
           </div>
         </div>
-      </a>
+      </div>
 
       <!-- 4 · Wishlist — wide bottom-right -->
-      <a href="https://notify-me.io/wishlist" target="_blank" rel="noopener noreferrer" role="listitem" class="nm-bento__cell nm-bento__cell--wish" aria-label="Wishlist">
+      <div role="listitem" class="nm-bento__cell nm-bento__cell--wish fragment" aria-label="Wishlist">
         <div class="nm-bento__head">
           <h3 class="nm-bento__title">Let shoppers save now, buy later</h3>
           <img class="nm-bento__logo" src="img/wishlist-logo.svg" width="212" height="89" alt="Notify Me! Wishlist">
@@ -2977,10 +3113,10 @@ section.present .bl-act::before{ transform:scaleY(1); }
             </div>
           </div>
         </div>
-      </a>
+      </div>
 
       <!-- 5 · Hueshi — narrow full-height rail (right rail); in-app copilot chat -->
-      <a href="https://notify-me.io/hueshi" target="_blank" rel="noopener noreferrer" role="listitem" class="nm-bento__cell nm-bento__cell--hue" aria-label="Hueshi — in-app AI copilot">
+      <div role="listitem" class="nm-bento__cell nm-bento__cell--hue fragment" aria-label="Hueshi — in-app AI copilot">
         <div class="nm-bento__head">
           <h3 class="nm-bento__title">Turn store data into decisions</h3>
         </div>
@@ -3062,7 +3198,284 @@ section.present .bl-act::before{ transform:scaleY(1); }
 
           </div>
         </div>
-      </a>
+      </div>
+
+    </div>
+  </div>
+  <div class="foot"><img src="img/lockup-white.png" alt=""></div>
+</section>
+
+<!-- ===== DUPLICATE of the product bento with a NEW card layout (title top / logo bottom-left / animation right + enlarged; Hueshi +30% width). Only the .nm-bento--wide class differs from the slide above. ===== -->
+<section class="slide">
+  <p class="eyebrow">Five core products · one platform</p>
+  <h3 style="font-size:40px; margin-bottom:22px">Together, they capture revenue that would <b>otherwise be lost.</b></h3>
+  <div class="bento-fit">
+    <div class="nm-bento nm-bento--drift nm-bento--wide" role="list" aria-label="The four ways Notify Me! recovers lost sales">
+
+      <!-- 1 · Back in Stock — flagship, wide top-left -->
+      <div role="listitem" class="nm-bento__cell nm-bento__cell--bis" aria-label="Back in Stock">
+        <div class="nm-bento__head">
+          <h3 class="nm-bento__title">Never lose a sale to &ldquo;Sold&nbsp;out&rdquo; again</h3>
+          <img class="nm-bento__logo" src="img/back-in-stock-logo.svg" width="288" height="86" alt="Notify Me! Back in Stock">
+        </div>
+        <div class="nm-bento__stage nm-shop" aria-hidden="true">
+          <div class="nm-shop__frame">
+            <div class="nm-shop__pdp">
+              <span class="nm-shop__brand">Maison&nbsp;Stella</span>
+              <span class="nm-shop__photo"><img src="img/maison-stella-suzie.webp" alt="" width="540" height="810"></span>
+              <span class="nm-shop__row">
+                <span class="nm-shop__name">Suzie Knit Top</span>
+                <span class="nm-shop__price">$128.00</span>
+              </span>
+              <span class="nm-shop__soldout">Sold out</span>
+              <span class="nm-shop__notify">Notify me when available</span>
+              <div class="nm-shop__scrim"></div>
+              <div class="nm-shop__modal">
+                <span class="nm-shop__modal-close" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+                <span class="nm-shop__modal-h">Get notified when it&rsquo;s back</span>
+                <span class="nm-shop__field">lily@studio.com</span>
+                <span class="nm-shop__field">+1 (555) 240-1180</span>
+                <div class="nm-shop__chips">
+                  <span class="nm-shop__chip is-on">Email</span>
+                  <span class="nm-shop__chip is-on">SMS</span>
+                  <span class="nm-shop__chip">Push</span>
+                  <span class="nm-shop__chip">WhatsApp</span>
+                </div>
+                <span class="nm-shop__submit">Notify me</span>
+              </div>
+            </div>
+            <div class="nm-shop__lock">
+              <span class="nm-shop__lock-clock">
+                <span class="nm-shop__lock-time">9:41</span>
+                <span class="nm-shop__lock-date">Tuesday, April 18</span>
+              </span>
+              <div class="nm-shop__notif">
+                <span class="nm-shop__notif-ico"><img src="img/notifylogo.svg" alt="" width="36" height="34"></span>
+                <span class="nm-shop__notif-body">
+                  <span class="nm-shop__notif-top"><span class="nm-shop__notif-app">Notify Me!</span><span class="nm-shop__notif-time">now</span></span>
+                  <span class="nm-shop__notif-text">Suzie Knit Top is back in stock. Shop now &rarr;</span>
+                </span>
+              </div>
+            </div>
+            <div class="nm-shop__done">
+              <span class="nm-shop__done-check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="nm-shop__done-h">Order placed!</span>
+              <span class="nm-shop__done-sub">Suzie Knit Top is on its way.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 · Preorder — narrow top-right -->
+      <div role="listitem" class="nm-bento__cell nm-bento__cell--pre fragment" aria-label="Preorder">
+        <div class="nm-bento__head">
+          <h3 class="nm-bento__title">Keep selling while you wait on stock</h3>
+          <img class="nm-bento__logo" src="img/preorder-logo.svg" width="232" height="86" alt="Notify Me! Preorder">
+        </div>
+        <div class="nm-bento__stage nm-preshop" aria-hidden="true">
+          <div class="nm-preshop__frame">
+            <div class="nm-preshop__pdp">
+              <span class="nm-preshop__brand">Lune&nbsp;Atelier</span>
+              <span class="nm-preshop__photo"><img src="img/roller-rabbit-product.webp" alt="" width="600" height="917"></span>
+              <span class="nm-preshop__row">
+                <span class="nm-preshop__name">Bloom Print Dress</span>
+                <span class="nm-preshop__price">$168.00</span>
+              </span>
+              <span class="nm-preshop__ship">
+                <span class="nm-preshop__ship-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l8 4v10l-8 4-8-4V7l8-4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 7l8 4 8-4M12 11v9" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+                <span class="nm-preshop__ship-body">
+                  <span class="nm-preshop__ship-main">Ships by Apr 18</span>
+                  <span class="nm-preshop__ship-sub">50% deposit today</span>
+                </span>
+              </span>
+              <span class="nm-preshop__btn">Pre-order</span>
+            </div>
+            <div class="nm-preshop__checkout">
+              <span class="nm-preshop__co-h">Checkout</span>
+              <div class="nm-preshop__inv">
+                <span class="nm-preshop__inv-row">
+                  <span class="nm-preshop__inv-label">Bloom Print Dress</span>
+                  <span class="nm-preshop__inv-val">$168.00</span>
+                </span>
+                <span class="nm-preshop__inv-row nm-preshop__inv-row--due">
+                  <span class="nm-preshop__inv-label">50% deposit<span class="nm-preshop__inv-tag">Due today</span></span>
+                  <span class="nm-preshop__inv-val">$84.00</span>
+                </span>
+              </div>
+              <span class="nm-preshop__card">
+                <span class="nm-preshop__card-mc" aria-hidden="true"><i></i><i></i></span>
+                <span class="nm-preshop__card-txt">Mastercard &middot;&middot;&middot;&middot; 4242</span>
+                <span class="nm-preshop__card-tag">Saved</span>
+              </span>
+              <span class="nm-preshop__pay">Place preorder</span>
+            </div>
+            <div class="nm-preshop__done">
+              <span class="nm-preshop__done-check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="nm-preshop__done-h">Preorder confirmed</span>
+              <span class="nm-preshop__done-sub">Arrives by Apr 18</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 · Low Stock — narrow bottom-left -->
+      <div role="listitem" class="nm-bento__cell nm-bento__cell--low fragment" aria-label="Low Stock">
+        <div class="nm-bento__head">
+          <h3 class="nm-bento__title">A little urgency goes a long way</h3>
+          <img class="nm-bento__logo" src="img/low-stock-logo.svg" width="229" height="89" alt="Notify Me! Low Stock">
+        </div>
+        <div class="nm-bento__stage nm-lowshop" aria-hidden="true">
+          <div class="nm-lowshop__frame">
+            <div class="nm-lowshop__pdp">
+              <img class="nm-lowshop__brand" src="img/atari.svg" alt="Atari" width="68" height="16">
+              <span class="nm-lowshop__photo"><img src="img/atari-product.webp" alt="" width="900" height="1200"></span>
+              <span class="nm-lowshop__row">
+                <span class="nm-lowshop__name">Atari 2600+ Console</span>
+                <span class="nm-lowshop__price">$129.99</span>
+              </span>
+              <span class="nm-lowshop__stock">
+                <i class="nm-lowshop__dot" aria-hidden="true"></i> Only 3 left in stock
+              </span>
+              <span class="nm-lowshop__cart">Add to cart</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 · Wishlist — wide bottom-right -->
+      <div role="listitem" class="nm-bento__cell nm-bento__cell--wish fragment" aria-label="Wishlist">
+        <div class="nm-bento__head">
+          <h3 class="nm-bento__title">Let shoppers save now, buy later</h3>
+          <img class="nm-bento__logo" src="img/wishlist-logo.svg" width="212" height="89" alt="Notify Me! Wishlist">
+        </div>
+        <div class="nm-bento__stage nm-wishshop" aria-hidden="true">
+          <div class="nm-wishshop__frame">
+            <div class="nm-wishshop__pdp">
+              <span class="nm-wishshop__brand">Stanley</span>
+              <span class="nm-wishshop__photo"><img src="img/stanley-product.webp" alt="" width="900" height="1200"></span>
+              <span class="nm-wishshop__row">
+                <span class="nm-wishshop__name">Classic Legendary Bottle</span>
+                <span class="nm-wishshop__price">$50.00</span>
+              </span>
+              <span class="nm-wishshop__cart">Add to cart</span>
+              <span class="nm-wishshop__wish">
+                <span class="nm-wishshop__heart" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <span class="nm-wishshop__wish-txt">Add to wishlist</span>
+              </span>
+            </div>
+            <div class="nm-wishshop__email">
+              <div class="nm-wishshop__mail-head">
+                <span class="nm-wishshop__mail-field"><span class="nm-wishshop__mail-k">From</span><span class="nm-wishshop__mail-v">Stanley 1913</span></span>
+                <span class="nm-wishshop__mail-field"><span class="nm-wishshop__mail-k">To</span><span class="nm-wishshop__mail-v">you@email.com</span></span>
+                <span class="nm-wishshop__mail-field"><span class="nm-wishshop__mail-k">Subject</span><span class="nm-wishshop__mail-v nm-wishshop__mail-subj">Price drop on your wishlist</span></span>
+              </div>
+              <span class="nm-wishshop__mail-h">Your wishlisted item is on sale</span>
+              <span class="nm-wishshop__mail-prod">
+                <span class="nm-wishshop__mail-thumb"><img src="img/stanley-product.webp" alt="" width="900" height="1200"></span>
+                <span class="nm-wishshop__mail-body">
+                  <span class="nm-wishshop__mail-name">Classic Legendary Bottle</span>
+                  <span class="nm-wishshop__mail-prices">
+                    <span class="nm-wishshop__was">$50.00</span>
+                    <span class="nm-wishshop__now">$40.00</span>
+                    <span class="nm-wishshop__sale">&minus;20%</span>
+                  </span>
+                </span>
+              </span>
+              <span class="nm-wishshop__buy">
+                <span class="nm-wishshop__buy-default">Buy it now</span>
+                <span class="nm-wishshop__buy-placed"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Order placed!</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 · Hueshi — narrow full-height rail (right rail); in-app copilot chat -->
+      <div role="listitem" class="nm-bento__cell nm-bento__cell--hue fragment" aria-label="Hueshi — in-app AI copilot">
+        <div class="nm-bento__head">
+          <h3 class="nm-bento__title">Turn store data into decisions</h3>
+        </div>
+        <div class="nm-bento__stage nm-hue" aria-hidden="true">
+          <div class="nm-hue__frame">
+
+            <!-- Scene 1 · empty state (also the static / reduced-motion frame) -->
+            <div class="nm-hue__empty">
+              <div class="nm-hue__hero">
+                <span class="nm-hue__orb">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+                </span>
+                <span class="nm-hue__eyebrow">Hueshi <i>·</i> Beta</span>
+                <span class="nm-hue__hi">Analyze, set up,<br>and take action</span>
+                <span class="nm-hue__sub">Your Notify&nbsp;Me! copilot</span>
+              </div>
+              <div class="nm-hue__chips">
+                <span class="nm-hue__chip">What should I restock first? <i>&rarr;</i></span>
+                <span class="nm-hue__chip">Where am I losing sales? <i>&rarr;</i></span>
+              </div>
+              <div class="nm-hue__composer">
+                <span class="nm-hue__composer-txt">Ask about your store&hellip;</span>
+                <span class="nm-hue__send">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+                </span>
+              </div>
+            </div>
+
+            <!-- Scene 2 · conversation (reveals progressively) -->
+            <div class="nm-hue__chat">
+              <div class="nm-hue__bar">
+                <span class="nm-hue__bar-orb">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+                </span>
+                <span class="nm-hue__bar-name">Ask Hueshi</span>
+                <span class="nm-hue__bar-beta">BETA</span>
+                <span class="nm-hue__bar-role">copilot</span>
+              </div>
+
+              <div class="nm-hue__thread">
+                <span class="nm-hue__q">Which products should I restock first?</span>
+
+                <div class="nm-hue__a">
+                  <span class="nm-hue__typing" aria-hidden="true"><i></i><i></i><i></i></span>
+
+                  <span class="nm-hue__ans">Three SKUs drive <b>61%</b> of your back-in-stock demand this month.</span>
+
+                  <span class="nm-hue__cite">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 3h8l4 4v14H6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v4h4M9 13h6M9 17h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                    Based on Restock demand
+                  </span>
+
+                  <div class="nm-hue__chart" aria-hidden="true">
+                    <span class="nm-hue__col nm-hue__col--hot" style="--h:100%; --d:0ms"><i></i></span>
+                    <span class="nm-hue__col nm-hue__col--hot" style="--h:86%; --d:70ms"><i></i></span>
+                    <span class="nm-hue__col nm-hue__col--hot" style="--h:72%; --d:140ms"><i></i></span>
+                    <span class="nm-hue__col" style="--h:41%; --d:210ms"><i></i></span>
+                    <span class="nm-hue__col" style="--h:27%; --d:280ms"><i></i></span>
+                  </div>
+                  <span class="nm-hue__chart-cap">Top 3 SKUs &middot; 61% of unmet demand</span>
+
+                  <div class="nm-hue__rec">
+                    <div class="nm-hue__rec-face">
+                      <span class="nm-hue__rec-body">
+                        <span class="nm-hue__rec-h">Restock these 3 first</span>
+                        <span class="nm-hue__rec-sub">Recovers ~$18k in lost sales</span>
+                      </span>
+                      <span class="nm-hue__rec-cta">Apply</span>
+                    </div>
+                    <div class="nm-hue__rec-done">
+                      <span class="nm-hue__rec-check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                      <span class="nm-hue__rec-donetxt">Applied</span>
+                      <span class="nm-hue__rec-undo">Undo</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -3082,7 +3495,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
 </div>
 
 <script src="vendor/reveal.js"></script>
-<script src="js/deck.js?v=7"></script>
+<script src="js/deck.js?v=8"></script>
 <script src="js/walkthrough.js?v=31"></script>
 <!-- The Tous ring slide is fully manual now: the six-stage tour was removed, so the beats (b1-b3)
      and the four component views (c1-c4) all advance on click. No auto-advance script needed. -->

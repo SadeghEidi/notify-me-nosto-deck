@@ -202,7 +202,7 @@
 .reveal .nm-hue__orb svg{ width:2.7rem; height:2.7rem; }
 .reveal .nm-hue__orb svg path{ fill:#fff; filter:drop-shadow(0 1px 2px rgba(150,20,10,.5)); }
 @media (prefers-reduced-motion: no-preference){
-  .reveal .nm-bento.is-playing .nm-hue__orb{ animation:nm-hue-float 6s ease-in-out infinite; }
+  .reveal .nm-bento__cell--hue.is-active .nm-hue__orb{ animation:nm-hue-float 6s ease-in-out infinite; }
 }
 @keyframes nm-hue-float{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-0.5rem); } }
 .reveal .nm-hue__eyebrow{
@@ -1058,5 +1058,47 @@
    The site blinks the Low-Stock scarcity dot only on hover; the deck
    auto-plays with no cursor, so blink it while the slide is live. */
 @media (prefers-reduced-motion: no-preference){
-  .reveal .nm-bento.is-playing .nm-lowshop__dot{ animation: nm-low-dot 1.8s ease-in-out infinite; }
+  .reveal .nm-bento__cell--low.is-active .nm-lowshop__dot{ animation: nm-low-dot 1.8s ease-in-out infinite; }
 }
+
+/* ============================================================================
+   .nm-bento--wide — alternate card layout (the duplicate slide).
+   The four storefront cards go 2-column: title top-left + logo pinned to the
+   bottom-left on the left, the animation on the right, vertically centred and
+   enlarged so it reads from the back of the room. Hueshi keeps its own centred
+   chat layout and only gets ~30% more width (its panel grows mid-conversation).
+   ============================================================================ */
+.reveal .nm-bento--wide .nm-bento__cell:not(.nm-bento__cell--hue){
+  flex-direction:row;
+  align-items:stretch;
+  gap:34px;
+  min-height:36rem;   /* tall enough that the enlarged mockup clears the padding */
+}
+/* left text column: title stays at the top, logo drops to the bottom-left corner */
+.reveal .nm-bento--wide .nm-bento__cell:not(.nm-bento__cell--hue) .nm-bento__head{
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:space-between;
+  flex:0 0 33%;
+  min-width:0;
+  align-self:stretch;
+  gap:1.2rem;
+}
+.reveal .nm-bento--wide .nm-bento__cell:not(.nm-bento__cell--hue) .nm-bento__logo{
+  margin-top:auto;
+}
+/* right side: the animated mockup, vertically centred and enlarged */
+.reveal .nm-bento--wide .nm-bento__cell:not(.nm-bento__cell--hue) .nm-bento__stage{
+  flex:1 1 auto;
+  margin:0;
+  min-height:0;
+  align-self:stretch;
+  transform:scale(1.32);
+  transform-origin:center;
+}
+
+/* Hueshi: unchanged internal layout, ~30% wider (3 -> 4 of 16 cols). Neighbours
+   give back one column so the pinwheel stays gapless; standard padding kept. */
+.reveal .nm-bento--wide .nm-bento__cell--pre  { grid-column:8 / 13; }
+.reveal .nm-bento--wide .nm-bento__cell--wish { grid-column:6 / 13; }
+.reveal .nm-bento--wide .nm-bento__cell--hue  { grid-column:13 / 17; }

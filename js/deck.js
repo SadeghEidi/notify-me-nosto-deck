@@ -46,40 +46,52 @@ Reveal.initialize({
     };
   }
 
+  // Cards reveal one by one (reveal.js fragments); only the LAST-shown ("active")
+  // card in each bento plays its loop, the earlier ones freeze at their idle scene.
+  // Supports multiple bentos on the deck (the base slide + its layout duplicate).
+  var STORY_DEFS = [
+    ['nm-bento__cell--bis',  '.nm-shop',     'data-shop',  ['idle', 'tapA', 'form', 'tapB', 'lock', 'lockn', 'tapN', 'done'], [900, 360, 2000, 360, 1100, 1600, 360, 2400]],
+    ['nm-bento__cell--pre',  '.nm-preshop',  'data-pshop', ['idle', 'tapA', 'checkout', 'tapB', 'done'],                      [900, 360, 2200, 360, 2400]],
+    ['nm-bento__cell--wish', '.nm-wishshop', 'data-wshop', ['idle', 'tapW', 'email', 'tapB', 'done'],                         [900, 1100, 3800, 360, 2400]],
+    ['nm-bento__cell--hue',  '.nm-hue',      'data-hue',   ['idle', 'ask', 'answer', 'chart', 'rec', 'apply', 'done'],        [1500, 1500, 1700, 1600, 1700, 400, 2800]]
+  ];
+
   function wire() {
-    var bento = document.querySelector('.nm-bento');
-    if (!bento) return;
+    var bentos = [].slice.call(document.querySelectorAll('.nm-bento'));
+    if (!bentos.length) return;
 
-    var stories = [
-      makeStory(bento.querySelector('.nm-shop'), 'data-shop',
-        ['idle', 'tapA', 'form', 'tapB', 'lock', 'lockn', 'tapN', 'done'],
-        [  900,   360,    2000,   360,    1100,   1600,    360,    2400 ]),
-      makeStory(bento.querySelector('.nm-preshop'), 'data-pshop',
-        ['idle', 'tapA', 'checkout', 'tapB', 'done'],
-        [  900,   360,    2200,      360,    2400 ]),
-      makeStory(bento.querySelector('.nm-wishshop'), 'data-wshop',
-        ['idle', 'tapW', 'email', 'tapB', 'done'],
-        [  900,   1100,   3800,    360,    2400 ]),
-      makeStory(bento.querySelector('.nm-hue'), 'data-hue',
-        ['idle', 'ask', 'answer', 'chart', 'rec', 'apply', 'done'],
-        [ 1500,  1500,   1700,     1600,    1700,   400,    2800 ])
-    ];
-
-    function bentoIsCurrent() {
-      var cur = Reveal.getCurrentSlide();
-      return !!(cur && cur.contains(bento));
-    }
-    function update() {
-      var live = bentoIsCurrent();
-      bento.classList.toggle('is-playing', live && !reduce);
-      stories.forEach(function (s) {
-        if (!s) return;
-        if (live && !reduce) s.start(); else s.stop();
+    var updaters = bentos.map(function (bento) {
+      var cells = [].slice.call(bento.querySelectorAll('.nm-bento__cell'));
+      var byCell = [];
+      STORY_DEFS.forEach(function (d) {
+        var cell = bento.querySelector('.' + d[0]);
+        if (cell) byCell.push({ cell: cell, story: makeStory(bento.querySelector(d[1]), d[2], d[3], d[4]) });
       });
-    }
 
-    Reveal.on('slidechanged', update);
-    update();
+      function isCurrent() { var cur = Reveal.getCurrentSlide(); return !!(cur && cur.contains(bento)); }
+      function activeCell() {
+        if (reduce || !isCurrent()) return null;
+        var shown = cells.filter(function (c) {
+          return !c.classList.contains('fragment') || c.classList.contains('visible');
+        });
+        return shown[shown.length - 1] || null;   // the last one displayed
+      }
+      return function update() {
+        var active = activeCell();
+        cells.forEach(function (c) { c.classList.toggle('is-active', c === active); });
+        byCell.forEach(function (b) {
+          if (!b.story) return;
+          if (b.cell === active) b.story.start(); else b.story.stop();
+        });
+        bento.classList.toggle('is-playing', !reduce && isCurrent());
+      };
+    });
+
+    function updateAll() { updaters.forEach(function (u) { u(); }); }
+    Reveal.on('slidechanged', updateAll);
+    Reveal.on('fragmentshown', updateAll);
+    Reveal.on('fragmenthidden', updateAll);
+    updateAll();
   }
 
   if (Reveal.isReady()) wire();
