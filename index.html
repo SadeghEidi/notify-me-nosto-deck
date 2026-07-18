@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="vendor/reset.css">
 <link rel="stylesheet" href="vendor/reveal.css">
 <link rel="stylesheet" href="css/theme.css?v=7">
-<link rel="stylesheet" href="css/walkthrough.css?v=17">
+<link rel="stylesheet" href="css/walkthrough.css?v=19">
 <link rel="stylesheet" href="css/bento.css?v=hue7">
 </head>
 <body>
@@ -809,9 +809,10 @@
 .dg-t{ font-family:var(--font-display); --emph:700; font-weight:400; font-size:28px; line-height:1.14;
   letter-spacing:-.015em; color:#fff; margin:0; max-width:16ch; }
 
-/* ---------- 01 · the return loop: work is delegated to the agent, then boomerangs back.
-   A comet streaks out white, comes back CORAL (the one accent). Chips are opaque, comet z below
-   them, so it streaks on the straights and slips behind a chip at each turn. ---------- */
+/* ---------- 01 · the bottleneck: the agent (LEFT) finishes and hands work to the human (RIGHT).
+   A short stream of dots flows agent -> human and PILES UP there (the bottleneck; it holds a few
+   seconds and the dots flush coral), then clears past the human to the right and fades. The nodes +
+   rail are SHARED with card 03, which reuses this same agent/human layout. ---------- */
 .dg-canvas{ position:relative; width:308px; height:196px; transform:scale(1.12); }
 .dg-canvas svg.wire{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; z-index:0; }
 .dg-node{ position:absolute; width:58px; height:58px; border-radius:17px; display:flex;
@@ -819,40 +820,27 @@
   background:linear-gradient(158deg,#1b2540,#0c1322); border:1px solid rgba(255,255,255,.13);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 12px 30px rgba(0,0,0,.5); }
 .dg-node svg{ width:29px; height:29px; }
-.dg-node.hum{ left:39px; top:69px; color:#fff;
-  background:linear-gradient(158deg,#243050,#141c30); border-color:rgba(255,255,255,.24); }
-.dg-node.bot{ left:211px; top:69px; color:#dbe6ff;   /* faint AI-blue inner glow marks the agent */
+/* agent LEFT (faint AI-blue inner glow marks it), human RIGHT */
+.dg-node.bot{ left:34px; top:69px; color:#dbe6ff;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 24px -9px rgba(76,135,255,.7), 0 12px 30px rgba(0,0,0,.5); }
-.dg-lbl{ position:absolute; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.16em;
-  text-transform:uppercase; z-index:2; }
-.dg-lbl.out{ left:112px; top:40px; color:var(--g2); }
-.dg-lbl.rew{ left:112px; top:148px; color:rgba(238,68,46,.9); }   /* coral: the return is the problem */
-/* comet = a head (currentColor) + a tapered tail; offset-rotate:auto keeps the tail trailing the
-   head along the path, incl. the turns behind the chips. z-index:1 = behind the opaque chips. */
-.dg-pkt{ position:absolute; left:0; top:0; width:9px; height:9px; margin:-4.5px; border-radius:50%;
-  z-index:1; color:#fff; background:currentColor; offset-rotate:auto;
-  offset-path:path("M68 68 H240 A34 34 0 0 1 240 128 H68 A34 34 0 0 1 68 68 Z");
-  box-shadow:0 0 12px 2px rgba(255,255,255,.6);
-  animation:dgPkt 3.6s cubic-bezier(.5,.05,.5,.95) infinite; }
-.dg-pkt::before{ content:''; position:absolute; right:5px; top:50%; width:42px; height:3px;
-  transform:translateY(-50%); border-radius:2px; opacity:.85;
-  background:linear-gradient(270deg, currentColor, transparent); }
-@keyframes dgPkt{
-  0%   { offset-distance:0%;   color:#fff;    box-shadow:0 0 12px 2px rgba(255,255,255,.6); }
-  8%   { offset-distance:3%;   color:#fff; }
-  42%  { offset-distance:45%;  color:#fff;    box-shadow:0 0 12px 2px rgba(255,255,255,.6); }
-  50%  { offset-distance:53%;  color:#EE442E; box-shadow:0 0 12px 2px rgba(238,68,46,.65); }
-  92%  { offset-distance:98%;  color:#EE442E; }
-  100% { offset-distance:100%; color:#EE442E; box-shadow:0 0 10px 2px rgba(238,68,46,.5); }
+.dg-node.hum{ left:216px; top:69px; color:#fff;
+  background:linear-gradient(158deg,#243050,#141c30); border-color:rgba(255,255,255,.24); }
+/* work items: a short staggered stream. --qx = each dot's slot in the queue at the human, so they
+   visibly pile up; z below the chips, so they slip behind the human as they finally clear right. */
+.dg-flow{ position:absolute; top:98px; left:92px; width:9px; height:9px; margin:-4.5px 0 0 -4.5px;
+  border-radius:50%; z-index:1; color:#eaf1ff; background:currentColor;
+  filter:drop-shadow(0 0 5px currentColor);
+  animation:dgFlow 5s cubic-bezier(.45,.05,.55,.95) infinite; animation-delay:var(--dly,0s); }
+@keyframes dgFlow{
+  0%   { left:92px;  opacity:0; color:#eaf1ff; }
+  5%   { opacity:1; }
+  22%  { left:var(--qx); color:#eaf1ff; }             /* reaches the human, joins the queue */
+  34%  { color:#ff6a52; }                              /* the wait flushes it coral = friction */
+  58%  { left:var(--qx); color:#ff6a52; opacity:1; }   /* held at the bottleneck (a few seconds) */
+  82%  { left:330px; color:#ff8a76; opacity:1; }       /* clears past the human, out to the right */
+  92%  { opacity:0; }
+  100% { left:330px; opacity:0; }
 }
-/* the workload piling back on the human: a small coral tag floating up each time it returns */
-.dg-plus{ position:absolute; left:38px; top:50px; z-index:3; font-family:var(--font-mono);
-  font-size:11px; font-weight:600; letter-spacing:.03em; color:#ffd9d3; opacity:0;
-  padding:2px 7px; border-radius:7px; background:rgba(238,68,46,.16); border:1px solid rgba(238,68,46,.42);
-  animation:dgPlus 3.6s ease-out infinite; }
-@keyframes dgPlus{ 0%,66%{ opacity:0; transform:translateY(2px) scale(.92) }
-  75%{ opacity:1; transform:translateY(-9px) scale(1) } 87%{ opacity:1; transform:translateY(-15px) }
-  100%{ opacity:0; transform:translateY(-26px) } }
 
 /* ---------- 02 · the race: every team runs for the same finish (full adoption); the GAP from each
    glowing head to the dashed finish line is how far behind it is. ENG leads bright; coral MKTG is
@@ -886,44 +874,50 @@
 .dg-lane.l-mktg .lb{ color:rgba(238,68,46,.9); }
 @keyframes dgGrow{ from{ width:0 } to{ width:var(--w) } }
 
-/* ---------- 03 · the fork: the road splits - straight to a flash (correct), or a branch that
-   curves away (wrong). The agent drives in and, WITHOUT slowing, sweeps onto the wrong branch.
-   BLUE = the path + flash it should have held; CORAL = the wrong turn. ---------- */
-.dg-fork{ position:relative; width:264px; height:184px; }
-.dg-fork svg.rd{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; z-index:0; }
-.rd-ok{ filter:drop-shadow(0 0 5px rgba(76,135,255,.55)); animation:dgOkPulse 3.4s ease-in-out infinite; }
-.rd-bad{ filter:drop-shadow(0 0 5px rgba(238,68,46,.5)); }
-/* the flag = the correct destination the agent should have reached; a calm blue pennant, planted */
-.rd-flag{ filter:drop-shadow(0 0 6px rgba(76,135,255,.75)); animation:dgFlag 3.6s ease-in-out infinite; }
-@keyframes dgOkPulse{ 0%,100%{ opacity:.55 } 50%{ opacity:1 } }
-@keyframes dgFlag{ 0%,100%{ opacity:.82 } 50%{ opacity:1 } }
-/* the agent: drives in at a constant pace and sweeps straight onto the curved wrong branch,
-   never pausing at the fork. Linear timing = no deceleration at the split. */
-.dg-drv{ position:absolute; left:0; top:0; width:42px; height:42px; margin:-21px; z-index:3;
-  border-radius:13px; display:flex; align-items:center; justify-content:center; color:#fff;
-  background:linear-gradient(158deg,#1b2540,#0c1322); border:1px solid rgba(255,255,255,.26);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.13), 0 12px 28px rgba(0,0,0,.5);
-  offset-path:path("M20 96 H116 C 152 96 190 74 226 48"); offset-rotate:0deg;
-  animation:dgDrive 4.4s linear infinite; }
-.dg-drv svg{ width:23px; height:23px; }
-@keyframes dgDrive{
-  0%   { offset-distance:0%;   opacity:0; border-color:rgba(255,255,255,.28); }
-  5%   { opacity:1; }
-  8%   { offset-distance:5%; }                            /* eased pull-away from rest */
-  25%  { border-color:rgba(255,255,255,.28); }            /* on the shared road, still neutral */
-  32%  { border-color:rgba(238,68,46,.95); }              /* past the fork, committed to the wrong branch */
-  52%  { offset-distance:90%; opacity:1; border-color:rgba(238,68,46,.95); } /* constant speed the whole way */
-  84%  { offset-distance:90%; opacity:1; }                /* dwell at the wrong end */
-  93%  { opacity:0; }
-  100% { offset-distance:90%; opacity:0; }
+/* ---------- 03 · the retry loop: the agent (LEFT) hands work to the human (RIGHT), who rejects it
+   (coral ✕) and sends it back - a couple of times (the mistakes). When it finally passes, a green ✓
+   lands and the work clears to the right. Reuses card 01's shared agent/human nodes + rail. ---------- */
+.dg-fork{ position:relative; width:308px; height:196px; transform:scale(1.12); }
+.dg-fork svg.wire{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; z-index:0; }
+/* the task, bouncing agent <-> human: neutral in flight, coral when kicked back, green when it passes */
+.dg-try{ position:absolute; top:98px; left:95px; width:9px; height:9px; margin:-4.5px 0 0 -4.5px;
+  border-radius:50%; z-index:1; color:#eaf1ff; background:currentColor;
+  filter:drop-shadow(0 0 5px currentColor); animation:dgTry 6.6s cubic-bezier(.45,.05,.55,.95) infinite; }
+@keyframes dgTry{
+  0%   { left:95px;  opacity:0; color:#eaf1ff; }
+  3%   { opacity:1; }
+  12%  { left:200px; color:#eaf1ff; }     /* attempt 1 reaches the human */
+  17%  { color:#EE442E; }                  /* rejected */
+  24%  { left:95px;  color:#EE442E; }      /* kicked back to the agent */
+  28%  { color:#eaf1ff; }                  /* retry */
+  35%  { left:200px; color:#eaf1ff; }      /* attempt 2 */
+  40%  { color:#EE442E; }                  /* rejected again */
+  47%  { left:95px;  color:#EE442E; }      /* back */
+  51%  { color:#eaf1ff; }
+  58%  { left:200px; color:#eaf1ff; }      /* attempt 3 reaches the human */
+  63%  { color:#2fd39b; }                   /* it passes -> green */
+  68%  { left:200px; color:#2fd39b; }       /* a beat at the human */
+  84%  { left:330px; color:#2fd39b; opacity:1; }  /* clears past the human, out to the right */
+  92%  { opacity:0; }
+  100% { left:330px; opacity:0; }
 }
-/* a coral ✕ stamps at the wrong end as the agent lands there = the mistake */
-.dg-x{ position:absolute; left:224px; top:50px; margin:-13px; z-index:2; width:26px; height:26px;
+/* the human's verdict, right where the task lands: coral ✕ on each rejection... */
+.dg-x{ position:absolute; left:200px; top:72px; margin:-13px; z-index:3; width:26px; height:26px;
   display:flex; align-items:center; justify-content:center; color:#EE442E; opacity:0;
-  filter:drop-shadow(0 0 6px rgba(238,68,46,.7)); animation:dgX 4.4s ease-out infinite; }
-.dg-x svg{ width:26px; height:26px; }
-@keyframes dgX{ 0%,50%{ opacity:0; transform:scale(.5) } 58%{ opacity:1; transform:scale(1.08) }
-  66%{ transform:scale(1) } 86%{ opacity:1 } 95%{ opacity:0 } }
+  filter:drop-shadow(0 0 6px rgba(238,68,46,.7)); animation:dgTryX 6.6s ease-out infinite; }
+.dg-x svg{ width:21px; height:21px; }
+@keyframes dgTryX{
+  0%,9%{ opacity:0; transform:scale(.5) }  14%{ opacity:1; transform:scale(1.06) }  20%{ opacity:1 }  24%{ opacity:0 }
+  32%{ opacity:0; transform:scale(.5) }    37%{ opacity:1; transform:scale(1.06) }  43%{ opacity:1 }  47%{ opacity:0 }
+  100%{ opacity:0 } }
+/* ...then a green ✓ when it finally passes */
+.dg-chk{ position:absolute; left:200px; top:72px; margin:-13px; z-index:3; width:26px; height:26px;
+  display:flex; align-items:center; justify-content:center; color:#2fd39b; opacity:0;
+  filter:drop-shadow(0 0 7px rgba(47,211,155,.85)); animation:dgTryChk 6.6s ease-out infinite; }
+.dg-chk svg{ width:23px; height:23px; }
+@keyframes dgTryChk{
+  0%,56%{ opacity:0; transform:scale(.3) }  61%{ opacity:1; transform:scale(1.14) }  67%{ transform:scale(1) }
+  86%{ opacity:1 }  93%{ opacity:0 }  100%{ opacity:0 } }
 
 /* ---------- presentation build: only the LAST-revealed card keeps animating; a passed card freezes
    at its initial resting state (comet / +1 / agent / ✕ gone, bars settled, roads steady). The deck.js
@@ -931,21 +925,19 @@
    .dg-rest until it is revealed, removing it on reveal applies the animation fresh from frame 0, so
    each card also restarts cleanly as it becomes live (e.g. the bars are actually seen growing). QA is
    untouched: the driver skips it and the .qa rules below still freeze every card on a good frame. ---------- */
-.dg-rest .dg-pkt{ animation:none; opacity:0; }
-.dg-rest .dg-plus{ animation:none; opacity:0; }
+.dg-rest .dg-flow{ animation:none; opacity:0; }
 .dg-rest .dg-run{ animation:none; width:var(--w); }
-.dg-rest .dg-drv{ animation:none; opacity:0; }
+.dg-rest .dg-try{ animation:none; opacity:0; }
 .dg-rest .dg-x{ animation:none; opacity:0; }
-.dg-rest .rd-ok, .dg-rest .rd-flag{ animation:none; opacity:1; }
+.dg-rest .dg-chk{ animation:none; opacity:0; }
 
 /* ---------- QA/PDF: force the fragment cards visible and freeze every loop on a good frame ---------- */
 .qa .dg-card{ opacity:1 !important; transform:none !important; }
-.qa .dg-pkt{ animation-delay:-2.6s; animation-play-state:paused; }    /* comet on the coral return leg */
-.qa .dg-plus{ animation-delay:-2.7s; animation-play-state:paused; }
+.qa .dg-flow{ animation-delay:-2.7s; animation-play-state:paused; }   /* dots piled at the human = bottleneck */
 .qa .dg-run{ animation-delay:0s; }                                    /* forwards keyframe holds --w */
-.qa .dg-drv{ animation-play-state:paused; animation-delay:-2.4s; }    /* agent out on the wrong branch */
-.qa .dg-x{ animation:none; opacity:1; transform:scale(1); }          /* coral ✕ shown at the wrong end */
-.qa .rd-ok, .qa .rd-flag{ animation:none; opacity:1; }
+.qa .dg-try{ animation-delay:-4.15s; animation-play-state:paused; }   /* task at the human on the winning attempt */
+.qa .dg-x{ animation:none; opacity:0; }                               /* no reject at the success frame */
+.qa .dg-chk{ animation:none; opacity:1; transform:scale(1); }         /* green ✓ shown */
 
 /* --- reframe slide (10B) · three titles, one per click, each dimming the one before --- */
 .rf-stack{ display:flex; flex-direction:column; gap:46px; width:100%; max-width:1620px;
@@ -989,19 +981,16 @@
       <div class="dg-stage">
         <div class="dg-canvas">
           <svg class="wire" viewBox="0 0 308 196" fill="none" aria-hidden="true">
-            <!-- Drawn BETWEEN the chips (crisp arrowheads, nothing under the squares). SVG attrs
-                 can't read var(), so strokes are literal. out = white, return = coral dashed. -->
-            <path d="M100 68 H201" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/>
-            <path d="M194 62 201 68 194 74" stroke="rgba(255,255,255,.62)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M208 128 H107" stroke="rgba(238,68,46,.5)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 5.5"/>
-            <path d="M114 122 107 128 114 134" stroke="rgba(238,68,46,.62)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- the rail: agent -> human (brighter, the active hand-off), then human -> out (faint,
+                 dashed). SVG attrs can't read var(), so strokes are literal. -->
+            <path d="M92 98 H214" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M276 98 H320" stroke="rgba(255,255,255,.14)" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 6"/>
           </svg>
-          <span class="dg-lbl out">delegated</span>
-          <span class="dg-lbl rew">back to you</span>
-          <span class="dg-node hum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20c0-3.4 2.9-5.6 6.5-5.6s6.5 2.2 6.5 5.6"/></svg></span>
           <span class="dg-node bot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4"/><circle cx="9" cy="13" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.3" fill="currentColor" stroke="none"/></svg></span>
-          <span class="dg-pkt"></span>
-          <span class="dg-plus">+1</span>
+          <span class="dg-node hum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20c0-3.4 2.9-5.6 6.5-5.6s6.5 2.2 6.5 5.6"/></svg></span>
+          <span class="dg-flow" style="--qx:208px; --dly:0s"></span>
+          <span class="dg-flow" style="--qx:198px; --dly:.35s"></span>
+          <span class="dg-flow" style="--qx:188px; --dly:.7s"></span>
         </div>
       </div>
       <div class="dg-meta">
@@ -1028,25 +1017,16 @@
     <article class="dg-card fragment" data-fragment-index="3">
       <div class="dg-stage">
         <div class="dg-fork">
-          <svg class="rd" viewBox="0 0 264 184" fill="none" aria-hidden="true">
-            <!-- incoming road (neutral), correct straight path (blue) to a flag, and a wrong branch
-                 (coral) that curves away. SVG attrs can't read var(), colours literal. -->
-            <defs><linearGradient id="rdFlagGrad" x1="234" y1="71" x2="257" y2="76" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#5E96FF"/><stop offset="1" stop-color="#3768DC"/>
-            </linearGradient></defs>
-            <path d="M20 96 H116" stroke="rgba(255,255,255,.42)" stroke-width="3.5" stroke-linecap="round"/>
-            <path class="rd-ok" d="M116 96 H233" stroke="#4C87FF" stroke-width="3.5" stroke-linecap="round"/>
-            <path class="rd-bad" d="M116 96 C 152 96 190 74 226 48" stroke="#EE442E" stroke-width="3.5" stroke-linecap="round"/>
-            <circle cx="116" cy="96" r="4.5" fill="#0e1424" stroke="rgba(255,255,255,.6)" stroke-width="2"/>
-            <!-- the flag: the correct destination the agent should have reached -->
-            <g class="rd-flag">
-              <path d="M234 96 V70" stroke="#4C87FF" stroke-width="2.5" stroke-linecap="round"/>
-              <circle cx="234" cy="69" r="2.2" fill="#4C87FF"/>
-              <path d="M234 71 C 242 70 249 73 256 76 C 249 78 243 79 234 81 Z" fill="url(#rdFlagGrad)"/>
-            </g>
+          <svg class="wire" viewBox="0 0 308 196" fill="none" aria-hidden="true">
+            <!-- same agent -> human -> out rail as card 01. SVG attrs can't read var(), literal strokes. -->
+            <path d="M92 98 H214" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M276 98 H320" stroke="rgba(255,255,255,.14)" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 6"/>
           </svg>
+          <span class="dg-node bot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4"/><circle cx="9" cy="13" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.3" fill="currentColor" stroke="none"/></svg></span>
+          <span class="dg-node hum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20c0-3.4 2.9-5.6 6.5-5.6s6.5 2.2 6.5 5.6"/></svg></span>
+          <span class="dg-try"></span>
           <span class="dg-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg></span>
-          <span class="dg-drv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4"/><circle cx="9" cy="13" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.3" fill="currentColor" stroke="none"/></svg></span>
+          <span class="dg-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4 10-11"/></svg></span>
         </div>
       </div>
       <div class="dg-meta">
@@ -1552,8 +1532,8 @@
   letter-spacing:-.035em; }
 .om-mission{ margin-top:24px; max-width:840px; font-size:25px; }
 
-/* The beats and the stage list share one grid cell, so swapping them at beat 4 costs
-   no reflow. The taller child (the 6-stage list) sets the cell height for both. */
+/* The beats and the stage list share one grid cell, so swapping them (beats out, list in as we
+   land on Research) costs no reflow. The taller child (the 6-stage list) sets the cell height. */
 .om-swap{ display:grid; align-items:center; transition:opacity .45s ease;
   margin-top:54px; padding-top:36px;
   border-top:1px solid var(--hair); max-width:780px; }
@@ -1569,8 +1549,8 @@
 .reveal section.present .om-beat.fragment.fade-in-up{
   transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1); }
 
-/* left · the six stages (beat 4 onward) */
-.reveal .om-stagelist{ list-style:none; margin:0; padding:0;
+/* left · the six stages (shown from Research onward) */
+.reveal .om-stagelist{ list-style:none; margin:0; padding:0; opacity:0;
   display:flex; flex-direction:column; gap:13px; transition:opacity .6s ease; }
 .om-sl{ display:flex; align-items:baseline; gap:18px; transition:opacity .5s ease; }
 .om-sl .n{ font-family:var(--font-mono); font-size:13px; font-weight:500; letter-spacing:.14em;
@@ -1612,17 +1592,23 @@
   filter:drop-shadow(0 0 6px rgba(190,218,255,.85)) drop-shadow(0 0 18px rgba(76,135,255,.6)); }
 /* one rotating element carries both the tail and the head so they stay in sync.
    The head is a sibling of .om-comet, not a child: the mask would eat it. */
-.om-spin{ position:absolute; inset:0; }
+/* The comet is a stage pointer now, not a continuous circler: it parks on the focused stage and
+   slides along the ring to the next as the tour advances. Rotation is driven by the stage cue
+   (see the stage-focus block below), in cumulative clockwise degrees so every hop runs forward
+   around the loop; the transition animates each slide. */
+.om-spin{ position:absolute; inset:0; transform:rotate(0deg);
+  transition:transform 1.05s cubic-bezier(.45,0,.2,1); }
 .om-head{ position:absolute; left:50%; top:50%; width:9px; height:9px; margin:-4.5px 0 0 -4.5px;
   border-radius:50%; background:#fff; transform:translateY(-220px);
   box-shadow:0 0 10px #fff, 0 0 20px rgba(150,190,255,.95); }
+/* short tail: a modest motion trail behind the head while it slides, and only a small glow when
+   parked (a long tail read as a fixed arc segment stuck to the dot). */
 .om-comet{ position:absolute; left:50%; top:50%; width:442px; height:442px; margin:-221px 0 0 -221px;
   border-radius:50%;
-  background:conic-gradient(from 0deg, rgba(120,170,255,0) 0deg, rgba(120,170,255,0) 268deg,
-    rgba(110,160,255,.45) 316deg, rgba(190,218,255,.92) 348deg, rgba(255,255,255,1) 360deg);
+  background:conic-gradient(from 0deg, rgba(120,170,255,0) 0deg, rgba(120,170,255,0) 322deg,
+    rgba(110,160,255,.5) 340deg, rgba(190,218,255,.95) 352deg, rgba(255,255,255,1) 360deg);
   -webkit-mask:radial-gradient(circle closest-side, #0000 calc(100% - 2px), #000 calc(100% - 2px));
           mask:radial-gradient(circle closest-side, #0000 calc(100% - 2px), #000 calc(100% - 2px)); }
-@keyframes omSpin{ to{ transform:rotate(360deg) } }
 @keyframes omFadeIn{ to{ opacity:1 } }
 
 /* the agents on the loop */
@@ -1686,7 +1672,6 @@
 
 .om-slide:has(.om-b2.visible) .om-arc{ animation:omDraw 1.5s .05s both cubic-bezier(.55,0,.2,1); }
 .om-slide:has(.om-b2.visible) .om-cometwrap{ animation:omFadeIn .7s 1.35s both; }
-.om-slide:has(.om-b2.visible) .om-spin{ animation:omSpin 7s 1.35s linear infinite; }
 
 .om-slide:has(.om-b3.visible) .om-core{ animation:omCoreIn .9s .1s both cubic-bezier(.2,.8,.25,1); }
 .om-slide:has(.om-b3.visible) .om-feed i{ animation:omFeed 2.8s cubic-bezier(.5,0,.6,1) .6s infinite both; }
@@ -1696,53 +1681,24 @@
 .om-slide:has(.om-b3.visible) .om-feed i:nth-child(5){ animation-delay:1.8s }
 .om-slide:has(.om-b3.visible) .om-feed i:nth-child(6){ animation-delay:2.1s }
 
-/* ============ beat 4 · the beats give way to the six stages ============
-   The core leaves via its own filled keyframe rather than `animation:none`, so it
-   actually animates out instead of snapping. The feed dots just stop (their base
-   state is opacity:0), since they only ever fed the core. */
-.om-slide:has(.om-b4.visible) .om-beats{ opacity:0; transition:opacity .45s ease; }
-.om-slide:has(.om-b4.visible) .om-core{ animation:omCoreOut .55s both ease-in; }
-.om-slide:has(.om-b4.visible) .om-feed i{ animation:none; }
+/* ============ entering the component view · the six-stage tour was removed (Sam's call) ============
+   We jump straight from "The knowledge compounds." into the four core components, so the work that
+   used to run as the tour began (retire the core, stop the feed, settle the nodes + comet) now runs
+   on the first component beat, c1. The beats fade with the whole .om-swap (below); the core leaves
+   via its own filled keyframe so it animates out instead of snapping. */
+.om-slide:has(.om-c1.visible) .om-core{ animation:omCoreOut .55s both ease-in; }
+.om-slide:has(.om-c1.visible) .om-feed i{ animation:none; }
 @keyframes omCoreOut{
   from{ opacity:1; transform:translate(-50%,-50%) scale(1) }
   to  { opacity:0; transform:translate(-50%,-50%) scale(.35) } }
-
-/* ============ beats 5-10 · focus one stage at a time ============
-   omNodeIn / omFadeIn are FILLED animations: they pin opacity:1 and would silently
-   outrank every dim rule below (the trap that bit slides 11 and 20). Killing them here
-   hands opacity back to the cascade. omNodeIn's end frame is scale(1), i.e. identity,
-   so dropping it leaves each node exactly where it sits. */
-.om-slide:has(.om-b4.visible) .om-node,
-.om-slide:has(.om-b4.visible) .om-cometwrap{ animation:none; opacity:1;
-  transition:opacity .55s ease; }
-
-/* Each cue dims the stage before it and lights its own, on the ring and in the list at
-   once. Equal specificity, so source order decides: the newest visible cue wins. */
-.om-slide:has(.om-s1.visible) .om-node,
-.om-slide:has(.om-s1.visible) .om-sl{ opacity:.15; }
-.om-slide:has(.om-s1.visible) .om-cometwrap{ opacity:.4; }
-.om-slide:has(.om-s1.visible) .om-node:nth-child(1),
-.om-slide:has(.om-s1.visible) .om-sl:nth-child(1){ opacity:1; }
-.om-slide:has(.om-s2.visible) .om-node:nth-child(1),
-.om-slide:has(.om-s2.visible) .om-sl:nth-child(1){ opacity:.15; }
-.om-slide:has(.om-s2.visible) .om-node:nth-child(2),
-.om-slide:has(.om-s2.visible) .om-sl:nth-child(2){ opacity:1; }
-.om-slide:has(.om-s3.visible) .om-node:nth-child(2),
-.om-slide:has(.om-s3.visible) .om-sl:nth-child(2){ opacity:.15; }
-.om-slide:has(.om-s3.visible) .om-node:nth-child(3),
-.om-slide:has(.om-s3.visible) .om-sl:nth-child(3){ opacity:1; }
-.om-slide:has(.om-s4.visible) .om-node:nth-child(3),
-.om-slide:has(.om-s4.visible) .om-sl:nth-child(3){ opacity:.15; }
-.om-slide:has(.om-s4.visible) .om-node:nth-child(4),
-.om-slide:has(.om-s4.visible) .om-sl:nth-child(4){ opacity:1; }
-.om-slide:has(.om-s5.visible) .om-node:nth-child(4),
-.om-slide:has(.om-s5.visible) .om-sl:nth-child(4){ opacity:.15; }
-.om-slide:has(.om-s5.visible) .om-node:nth-child(5),
-.om-slide:has(.om-s5.visible) .om-sl:nth-child(5){ opacity:1; }
-.om-slide:has(.om-s6.visible) .om-node:nth-child(5),
-.om-slide:has(.om-s6.visible) .om-sl:nth-child(5){ opacity:.15; }
-.om-slide:has(.om-s6.visible) .om-node:nth-child(6),
-.om-slide:has(.om-s6.visible) .om-sl:nth-child(6){ opacity:1; }
+/* omNodeIn / omFadeIn are FILLED (they pin opacity:1 and would outrank the Design-focus dim below),
+   so kill them here to hand opacity back to the cascade. omNodeIn's end frame is identity, so the
+   nodes stay put; the comet needs opacity:1 or it reverts to hidden. */
+.om-slide:has(.om-c1.visible) .om-node{ animation:none; transition:opacity .55s ease; }
+.om-slide:has(.om-c1.visible) .om-cometwrap{ animation:none; opacity:1; transition:opacity .55s ease; }
+/* the comet parks at Research (top) through the beats, then slides onto Design as the component
+   view opens (it used to step through all six stages; that tour is gone). */
+.om-slide:has(.om-c1.visible) .om-spin{ transform:rotate(60deg); }   /* Design (2 o'clock) */
 
 /* ---- the station checklist, standing where the core used to be ---- */
 .om-plans{ position:absolute; left:50%; top:50%; z-index:4; transform:translate(-50%,-50%);
@@ -1840,28 +1796,21 @@
 .om-slide:has(.om-c1.visible) .om-plan.p5,
 .om-slide:has(.om-c1.visible) .om-plan.p6{ opacity:0; }
 .om-slide:has(.om-c1.visible) .om-plan.p2{ opacity:1; }
-/* Hand-drive p2's checks: its auto-run from beat s2 has long finished and would otherwise show
-   all three done. animation:none hands each layer back to these plain opacities. Base state =
-   every station pending (ring visible, spinner + check hidden). */
-.om-slide:has(.om-c1.visible) .om-plan.p2 li .ck .pd{ animation:none; opacity:1; }
-.om-slide:has(.om-c1.visible) .om-plan.p2 li .ck .sp{ animation:none; opacity:0; }
-.om-slide:has(.om-c1.visible) .om-plan.p2 li .ck .dn{ animation:none; opacity:0; }
-/* UI/UX Design is the station we open up: keep it spinning through c1-c3 (does not auto-check) */
-.om-slide:has(.om-c1.visible) .om-plan.p2 li:nth-child(1) .ck .pd{ opacity:0; }
-.om-slide:has(.om-c1.visible) .om-plan.p2 li:nth-child(1) .ck .sp{ opacity:1;
-  animation:omSpRot .8s linear infinite; }
-/* the Review-agents beat (c4) closes it out: UI/UX Design checks, and the line stops there. */
-.om-slide:has(.om-c4.visible) .om-plan.p2 li:nth-child(1) .ck .sp{ animation:none; opacity:0; }
-.om-slide:has(.om-c4.visible) .om-plan.p2 li:nth-child(1) .ck .dn{ opacity:1;
-  animation:omDone .34s both cubic-bezier(.2,.8,.25,1); }
+/* The Design-stations list reads as "we're inside UI/UX Design" (Sam's call): no checkboxes now,
+   just the one focused station bright and the other two faded. p2's row-tick animation belonged to
+   the removed stage tour, so force the title + rows visible here, hide the checkbox, fade rows 2-3. */
+.om-slide:has(.om-c1.visible) .om-plan.p2 .tk{ opacity:1; }
+.om-slide:has(.om-c1.visible) .om-plan.p2 li .ck{ display:none; }
+.om-slide:has(.om-c1.visible) .om-plan.p2 li:nth-child(n+2){ opacity:.32; }
 
 /* The name travels to the top-left and shrinks. Transform sits on the WRAPPER, never the h1:
-   `section.present h1` is a filled riseIn that would pin transform:none. 315.7 - 208 = 107.7,
+   `section.present h1` is a filled riseIn that would pin transform:none. The name's base y rose to
+   359 once the stage list left the text column, so the shrink-up was retuned: 359 - 251 = 108,
    and .34 * 136px lands the wordmark at ~46px. */
 /* transition on the base rule, same reason as .om-stage above */
 .om-namewrap{ transform-origin:left top;
   transition:transform 1s .12s cubic-bezier(.65,0,.35,1); }
-.om-slide:has(.om-c1.visible) .om-namewrap{ transform:translate(0, -208px) scale(.34); }
+.om-slide:has(.om-c1.visible) .om-namewrap{ transform:translate(0, -251px) scale(.34); }
 /* the name's bloom is a big soft ellipse; at 1/3 scale it reads as a smudge */
 /* .nb runs `pulse ... infinite`, which drives opacity every frame, so a cascade opacity:0 can
    never win. Replacing the animation is the only way to put it out. */
@@ -2009,22 +1958,15 @@
 .qa .cw-card, .qa .cw-arrow, .qa .cw-h, .qa .om-tether{ transition:none !important; }
 .qa .om-bloom, .qa .om-namewrap .nb, .qa .om-core .cg{ animation:none !important; }
 .qa .om-arc{ animation:none !important; opacity:1 !important; stroke-dashoffset:0 !important; }
-.qa .om-spin{ animation:none !important; transform:rotate(28deg) !important; }
+.qa .om-spin{ animation:none !important; transform:rotate(60deg) !important; }
 .qa .om-node, .qa .om-cometwrap, .qa .om-core, .qa .om-feed i{ animation:none !important; }
 .qa .om-node, .qa .om-sl, .qa .om-stagelist, .qa .om-plan, .qa .om-cometwrap,
 .qa .om-beats{ transition:none !important; }
-.qa .om-plan .tk{ animation:none !important; opacity:1 !important; transform:none !important; }
-/* QA/PDF freeze on the finished checklist: every station checked, no ring, no spinner */
-.qa .om-plan .ck .pd, .qa .om-plan .ck .sp{ animation:none !important; opacity:0 !important; }
-.qa .om-plan .ck .dn{ animation:none !important; opacity:1 !important; transform:none !important; }
-/* ...but p2 is the panel left on screen in the component view (the QA end state), so freeze it
-   to the c4 beat instead: UI/UX Design done, Design Review + Design Handoff still pending. */
-.qa .om-plan.p2 li:nth-child(1) .ck .pd,
-.qa .om-plan.p2 li:nth-child(1) .ck .sp{ opacity:0 !important; }
-.qa .om-plan.p2 li:nth-child(1) .ck .dn{ opacity:1 !important; }
-.qa .om-plan.p2 li:nth-child(n+2) .ck .pd{ opacity:1 !important; }
-.qa .om-plan.p2 li:nth-child(n+2) .ck .sp,
-.qa .om-plan.p2 li:nth-child(n+2) .ck .dn{ opacity:0 !important; }
+/* QA/PDF freeze: p2 is the only plan on screen (the component view end state). No checkboxes now;
+   title + UI/UX Design bright, the other two faded. */
+.qa .om-plan.p2 li .ck{ display:none !important; }
+.qa .om-plan.p2 .tk{ animation:none !important; opacity:1 !important; transform:none !important; }
+.qa .om-plan.p2 li:nth-child(n+2){ opacity:.32 !important; }
 /* the tally freezes to its revealed (c4) end state so headless/PDF is deterministic */
 .qa .om-tally .eye, .qa .om-tally .cell, .qa .om-tally .rule{ transition:none !important; }
 </style>
@@ -2048,24 +1990,10 @@
           </p>
         </div>
 
-        <ol class="om-stagelist om-b4 fragment" data-fragment-index="4">
-          <li class="om-sl"><span class="n">01</span><span class="t">Research</span></li>
-          <li class="om-sl"><span class="n">02</span><span class="t">Design</span></li>
-          <li class="om-sl"><span class="n">03</span><span class="t">Engineering</span></li>
-          <li class="om-sl"><span class="n">04</span><span class="t">Production</span></li>
-          <li class="om-sl"><span class="n">05</span><span class="t">Testing</span></li>
-          <li class="om-sl"><span class="n">06</span><span class="t">Delivery &amp; Learning</span></li>
-        </ol>
       </div>
 
-      <!-- one cue per stage-focus view; they carry state for the :has() rules only -->
-      <span class="om-cue om-s1 fragment" data-fragment-index="5"></span>
-      <span class="om-cue om-s2 fragment" data-fragment-index="6"></span>
-      <span class="om-cue om-s3 fragment" data-fragment-index="7"></span>
-      <span class="om-cue om-s4 fragment" data-fragment-index="8"></span>
-      <span class="om-cue om-s5 fragment" data-fragment-index="9"></span>
-      <span class="om-cue om-s6 fragment" data-fragment-index="10"></span>
-      <!-- zoom into the Design stage: agent (+ its skills) -> hooks -> review agents -->
+      <!-- the four core-component views (jumped to straight from "The knowledge compounds."):
+           agent (+ its skills) -> hooks -> review agents. The six-stage tour was removed. -->
       <span class="om-cue om-c1 fragment" data-fragment-index="11"></span>
       <span class="om-cue om-c2 fragment" data-fragment-index="12"></span>
       <span class="om-cue om-c3 fragment" data-fragment-index="13"></span>
@@ -2411,10 +2339,14 @@ section.present .bl-act .bl-t:nth-child(1) .bl-v{ animation:blNum .6s .06s both 
 section.present .bl-act .bl-t:nth-child(2) .bl-v{ animation:blNum .6s .17s both cubic-bezier(.2,.7,.2,1); }
 section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both cubic-bezier(.2,.7,.2,1); }
 
+/* particle-assembly overlay: dots swarm in and form the numbers, then cross-fade to the DOM values */
+.bl-fx{ position:absolute; inset:0; width:100%; height:100%; z-index:6; pointer-events:none; }
+
 .qa .bl-act::before{ transform:none !important; }
 .qa .bl-v{ animation:none !important; }
 </style>
-<section class="slide">
+<section class="slide" id="bottomline">
+  <canvas class="bl-fx" aria-hidden="true"></canvas>
   <p class="eyebrow">Part 04 &middot; what it delivered</p>
   <h2 style="font-size:52px">The bottom line.</h2>
 
@@ -2432,12 +2364,12 @@ section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both 
         </div>
         <div class="bl-t">
           <span class="bl-tl">Releases</span>
-          <div class="bl-v"><span class="was">10</span><i class="ar">&rarr;</i>26</div>
-          <span class="bl-m">per month</span>
+          <div class="bl-v"><span class="was">4.7</span><i class="ar">&rarr;</i>9.5</div>
+          <span class="bl-m">per day</span>
         </div>
         <div class="bl-t">
           <span class="bl-tl">Reaching customers</span>
-          <div class="bl-v"><span class="was">months</span><i class="ar">&rarr;</i>&lt;7d</div>
+          <div class="bl-v"><span class="was">months</span><i class="ar">&rarr;</i>7d</div>
         </div>
       </div>
     </div>
@@ -2448,12 +2380,12 @@ section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both 
         <div class="bl-t">
           <span class="bl-tl">Churn</span>
           <div class="bl-v"><span class="sg">&minus;</span>30%</div>
-          <span class="bl-m">down to ~2% / month</span>
+          <span class="bl-m">down to ~3.6% / month</span>
         </div>
         <div class="bl-t">
           <span class="bl-tl">Free to paid</span>
-          <div class="bl-v"><span class="sg">+</span>20%</div>
-          <span class="bl-m">now 23%</span>
+          <div class="bl-v"><span class="sg">+</span>26%</div>
+          <span class="bl-m">now 17%</span>
         </div>
       </div>
     </div>
@@ -2478,48 +2410,199 @@ section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both 
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 04</span></div>
 </section>
 
-<!-- ================= 18 · THE MOAT ================= -->
-<section class="slide">
+<script>
+/* "The bottom line" — the metric numbers assemble from thousands of drifting dots, then cross-fade
+   to the crisp DOM values. Dots are sampled from the real rendered glyphs via canvas fillText (no
+   taint on file://), tinted per row accent. Auto-plays on slide enter; skips entirely in ?qa. */
+(function(){
+  var qa = /(^|[?&])qa($|[=&])/.test(location.search);
+  var SEC = document.getElementById('bottomline');
+  if(!SEC) return;
+  var canvas = SEC.querySelector('.bl-fx');
+  if(!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var vals = [].slice.call(SEC.querySelectorAll('.bl-v'));
+  var SS = 2, raf = 0, running = false;
+
+  function accentOf(el){
+    var act = el.closest('.bl-act'), n = act && act.querySelector('.bl-num');
+    return n ? getComputedStyle(n).color : 'rgb(76,135,255)';
+  }
+  function drawValue(c, blv, x0, baseY){
+    var x = x0;
+    [].forEach.call(blv.childNodes, function(node){
+      var text, st;
+      if(node.nodeType===3){ text=node.nodeValue; st=getComputedStyle(blv); }
+      else if(node.nodeType===1){ text=node.textContent; st=getComputedStyle(node); }
+      else return;
+      if(text==null) return;
+      text = text.replace(/ /g,' ');
+      if(text==='') return;
+      var fs = parseFloat(st.fontSize)||0;
+      c.font = st.fontStyle+' '+st.fontWeight+' '+(fs*SS)+'px '+st.fontFamily;
+      c.fillStyle = st.color; c.textBaseline='alphabetic';
+      x += (parseFloat(st.marginLeft)||0)*SS;
+      c.fillText(text, x, baseY);
+      x += c.measureText(text).width + (parseFloat(st.marginRight)||0)*SS;
+    });
+  }
+  function build(){
+    var sr = SEC.getBoundingClientRect(), scale = sr.width/SEC.offsetWidth || 1;
+    canvas.width = Math.round(SEC.offsetWidth*SS);
+    canvas.height = Math.round(SEC.offsetHeight*SS);
+    var W = canvas.width, H = canvas.height, groups = {};
+    vals.forEach(function(blv){
+      var r = blv.getBoundingClientRect();
+      var x=(r.left-sr.left)/scale, y=(r.top-sr.top)/scale;
+      var fs = parseFloat(getComputedStyle(blv).fontSize)||60;
+      var X0 = x*SS, topB = y*SS, baseY = topB + fs*SS*0.78, col = accentOf(blv);
+      ctx.clearRect(0,0,W,H);
+      drawValue(ctx, blv, X0, baseY);
+      var rx=Math.max(0,Math.floor(X0-4)), ry=Math.max(0,Math.floor(topB-fs*SS*0.3));
+      var rw=Math.min(W-rx,Math.ceil((r.width/scale)*SS+fs*SS*1.4)), rh=Math.min(H-ry,Math.ceil(fs*SS*1.3));
+      if(rw<=0||rh<=0) return;
+      var d = ctx.getImageData(rx,ry,rw,rh).data, STEP=6;
+      groups[col] = groups[col] || [];
+      for(var py=0;py<rh;py+=STEP) for(var px=0;px<rw;px+=STEP){
+        if(d[(py*rw+px)*4+3]>128) groups[col].push({tx:rx+px, ty:ry+py});
+      }
+    });
+    ctx.clearRect(0,0,W,H);
+    Object.keys(groups).forEach(function(col){ groups[col].forEach(function(p){
+      p.sx=Math.random()*W; p.sy=Math.random()*H; p.delay=Math.random()*700; p.dur=1000+Math.random()*450;
+    });});
+    return {groups:groups, W:W, H:H};
+  }
+  function cancel(){ running=false; if(raf) cancelAnimationFrame(raf); raf=0; if(ctx) ctx.clearRect(0,0,canvas.width,canvas.height); }
+  function run(){
+    cancel(); if(qa) return;
+    var s; try{ s=build(); }catch(e){ vals.forEach(function(v){ v.style.opacity='1'; }); return; }
+    var start = performance.now(), END = 700+1450, FADE = 420, revealed = false;
+    running = true;
+    (function frame(now){
+      if(!running) return;
+      var t = now-start, W=s.W, H=s.H;
+      ctx.clearRect(0,0,W,H);
+      var ga = t>END ? Math.max(0, 1-(t-END)/FADE) : 1;
+      Object.keys(s.groups).forEach(function(col){
+        ctx.fillStyle=col; ctx.globalAlpha=ga;
+        var arr=s.groups[col], dd=1.5*SS;
+        for(var i=0;i<arr.length;i++){ var p=arr[i];
+          var lt=(t-p.delay)/p.dur; lt = lt<0?0:(lt>1?1:lt); var e=1-Math.pow(1-lt,3);
+          ctx.fillRect(p.sx+(p.tx-p.sx)*e, p.sy+(p.ty-p.sy)*e, dd, dd);
+        }
+      });
+      ctx.globalAlpha=1;
+      if(t>END && !revealed){ revealed=true; vals.forEach(function(v){ v.style.transition='opacity '+FADE+'ms ease'; v.style.opacity='1'; }); }
+      if(ga<=0){ ctx.clearRect(0,0,W,H); running=false; return; }
+      raf = requestAnimationFrame(frame);
+    })(start);
+  }
+  function onChange(){
+    var cur = (typeof Reveal!=='undefined' && Reveal.getCurrentSlide) ? Reveal.getCurrentSlide() : null;
+    if(cur===SEC){
+      if(!qa) vals.forEach(function(v){ v.style.transition='none'; v.style.opacity='0'; });
+      if(document.fonts && document.fonts.ready) document.fonts.ready.then(run); else run();
+    } else {
+      cancel();
+      vals.forEach(function(v){ v.style.transition='none'; v.style.opacity=''; });
+    }
+  }
+  function init(){
+    if(typeof Reveal==='undefined' || !Reveal.on){ return setTimeout(init,150); }
+    Reveal.on('slidechanged', onChange);
+    if(Reveal.isReady && Reveal.isReady()) onChange(); else Reveal.on('ready', onChange);
+  }
+  if(document.readyState!=='loading') init(); else document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+<!-- ================= 18 · THE MOAT (redesign · compounding workflow loops) =================
+     A few workflow loops sit at one size (colour = purpose, dot-count = steps): a workflow is a
+     commodity, everyone can build one. On a manual advance the blue loop (ours) scales up while the
+     rest hold their size - that gap IS the compounding, and the moat. Scoped .cw-. No em dashes. -->
+<style>
+  .moat-hl{ font-size:60px; max-width:1180px; }
+  .cw-stage{ position:relative; width:100%; height:600px; margin-top:6px; }
+  /* colour tokens per loop: --c solid (dots/core), --ca ring border, --cg glow */
+  .c-blue{   --c:#4C87FF; --ca:rgba(76,135,255,.6);  --cg:rgba(76,135,255,.42); }
+  .c-mint{   --c:#5FD0A6; --ca:rgba(95,208,166,.5);  --cg:rgba(95,208,166,.36); }
+  .c-coral{  --c:#EE442E; --ca:rgba(238,68,46,.52);  --cg:rgba(238,68,46,.34); }
+  .c-purple{ --c:#9B26F0; --ca:rgba(155,38,240,.55); --cg:rgba(155,38,240,.4); }
+  .c-amber{  --c:#F5C24B; --ca:rgba(245,194,75,.5);  --cg:rgba(245,194,75,.34); }
+  .cw{ position:absolute; opacity:0; transform:translate(-50%,-50%) scale(1);
+    transition:transform 1s cubic-bezier(.2,.75,.2,1); }
+  .cw-ring{ position:relative; width:var(--d); height:var(--d); border-radius:50%;
+    border:1.5px solid var(--ca);
+    box-shadow:0 0 30px -4px var(--cg), inset 0 0 22px -9px var(--cg);
+    transition:border-color 1s ease, box-shadow 1s ease; }
+  .cw-core{ position:absolute; left:50%; top:50%; width:15%; height:15%; transform:translate(-50%,-50%);
+    border-radius:50%; background:radial-gradient(circle,#fff 0%,var(--c) 66%,transparent 100%);
+    box-shadow:0 0 14px var(--cg); }
+  .cw-st{ position:absolute; left:50%; top:50%; width:calc(var(--d)*.05); height:calc(var(--d)*.05);
+    min-width:5px; min-height:5px; margin:calc(var(--d)*-.025); border-radius:50%; background:var(--c);
+    box-shadow:0 0 7px var(--c); transform:rotate(var(--a)) translateY(calc(var(--d)/-2)); }
+  .cw-comet{ position:absolute; inset:0; border-radius:50%; animation:cwSpin var(--sp,9s) linear infinite; }
+  .cw-comet::before{ content:''; position:absolute; left:50%; top:0; transform:translate(-50%,-50%);
+    width:calc(var(--d)*.058); height:calc(var(--d)*.058); min-width:6px; min-height:6px;
+    border-radius:50%; background:#fff; box-shadow:0 0 11px var(--c), 0 0 5px #fff; }
+  .cw-name{ position:absolute; left:50%; top:calc(100% + 14px); transform:translateX(-50%);
+    font-family:var(--font-mono); font-size:13.5px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--c); white-space:nowrap; }
+  @keyframes cwSpin{ to{ transform:rotate(360deg) } }
+  @keyframes cwFade{ from{ opacity:0 } to{ opacity:1 } }
+  .reveal section.present .cw{ animation:cwFade .7s both ease; }
+  .reveal section.present .cw:nth-child(1){ animation-delay:.30s }
+  .reveal section.present .cw:nth-child(2){ animation-delay:.16s }
+  .reveal section.present .cw:nth-child(3){ animation-delay:.44s }
+  .reveal section.present .cw:nth-child(4){ animation-delay:.24s }
+  .reveal section.present .cw:nth-child(5){ animation-delay:.52s }
+  /* the manual advance: the blue loop compounds; the rest hold their size */
+  .moat:has(.cwtrig.visible) .cw.hero{ transform:translate(-50%,-50%) scale(2.7); z-index:6; }
+  .moat:has(.cwtrig.visible) .cw.hero .cw-ring{ border-color:rgba(76,135,255,.9);
+    box-shadow:0 0 72px -6px rgba(76,135,255,.5), inset 0 0 48px -12px rgba(76,135,255,.5); }
+  .cwtrig{ position:absolute; width:0; height:0; overflow:hidden; }
+  .moat-pay{ font-family:var(--font-body); font-weight:300; font-size:25px; color:var(--g2);
+    margin-top:18px; max-width:1150px; --emph:500; opacity:0; transition:opacity .7s .3s ease; }
+  .moat-pay b{ color:#fff; }
+  .moat:has(.cwtrig.visible) .moat-pay{ opacity:1; }
+  .qa .cw-comet{ animation:none !important; }
+</style>
+<section class="slide moat">
   <p class="eyebrow">"So where's your moat?"</p>
-  <h2 style="font-size:64px; max-width:1180px">It was never the agents.<br>It's the <b>compounding.</b></h2>
+  <h2 class="moat-hl">It was never the agents.<br>It's the <b>compounding.</b></h2>
 
-  <!-- three-beat story: commodity parts -> our workflow -> compounding moat -->
-  <div style="display:flex; align-items:stretch; gap:0; margin-top:54px; max-width:1600px">
-
-    <!-- Beat 1 · the parts (commodity, dim) -->
-    <div class="glass card-pad" style="flex:1; display:flex; flex-direction:column; gap:13px; opacity:.66">
-      <span class="idx" style="color:var(--g3); font-size:12.5px; letter-spacing:.16em; text-transform:uppercase">Commodity · the tools'</span>
-      <h3 style="font-size:27px; color:var(--g1)">Skills · Agents · Hooks</h3>
-      <p class="muted" style="font-size:16.5px; line-height:1.5">Capabilities of Claude Code. Anyone can get them.</p>
+  <span class="cwtrig fragment"></span>
+  <div class="cw-stage">
+    <div class="cw c-mint" style="--d:152px; --sp:11s; left:19%; top:27%">
+      <div class="cw-ring"><span class="cw-core"></span>
+        <i class="cw-st" style="--a:0deg"></i><i class="cw-st" style="--a:72deg"></i><i class="cw-st" style="--a:144deg"></i><i class="cw-st" style="--a:216deg"></i><i class="cw-st" style="--a:288deg"></i>
+        <span class="cw-comet"></span></div>
     </div>
-
-    <div style="display:flex; align-items:center; padding:0 20px; font-family:var(--font-mono); color:var(--blue-elec); font-size:26px; opacity:.7">&rarr;</div>
-
-    <!-- Beat 2 · the workflow (ours, blue) -->
-    <div class="glass card-pad accent-blue card-glow" style="flex:1; display:flex; flex-direction:column; gap:13px">
-      <span class="idx" style="color:var(--blue-elec); font-size:12.5px; letter-spacing:.16em; text-transform:uppercase">What we built</span>
-      <h3 style="font-size:29px">The workflow</h3>
-      <p class="muted" style="font-size:16.5px; line-height:1.5">Autonomy inside your process, quality gates, approvals &mdash; and what &ldquo;done&rdquo; means.</p>
+    <div class="cw c-coral" style="--d:152px; --sp:9.5s; left:81%; top:25%">
+      <div class="cw-ring"><span class="cw-core"></span>
+        <i class="cw-st" style="--a:0deg"></i><i class="cw-st" style="--a:90deg"></i><i class="cw-st" style="--a:180deg"></i><i class="cw-st" style="--a:270deg"></i>
+        <span class="cw-comet"></span></div>
     </div>
-
-    <div style="display:flex; align-items:center; padding:0 20px; font-family:var(--font-mono); color:var(--mint); font-size:26px">&rarr;</div>
-
-    <!-- Beat 3 · the moat (compounding, mint, glowing) -->
-    <div class="glass card-pad accent-mint card-glow" style="flex:1.2; display:flex; flex-direction:column; gap:13px; position:relative; overflow:hidden">
-      <span class="idx" style="color:var(--mint); font-size:12.5px; letter-spacing:.16em; text-transform:uppercase">Can't be copied</span>
-      <h3 style="font-size:29px">Compounding experience</h3>
-      <p class="muted" style="font-size:16.5px; line-height:1.5">Every feature leaves a better <b style="color:var(--g1)">rule</b>, <b style="color:var(--g1)">eval</b> &amp; <b style="color:var(--g1)">safeguard</b>.</p>
-      <svg viewBox="0 0 132 42" width="132" height="42" style="margin-top:auto" aria-hidden="true">
-        <rect x="2"   y="30" width="18" height="12" rx="3" fill="var(--mint)" opacity=".28"/>
-        <rect x="30"  y="22" width="18" height="20" rx="3" fill="var(--mint)" opacity=".45"/>
-        <rect x="58"  y="13" width="18" height="29" rx="3" fill="var(--mint)" opacity=".65"/>
-        <rect x="86"  y="4"  width="18" height="38" rx="3" fill="var(--mint)"/>
-        <path d="M6 34 L39 26 L67 17 L95 8" fill="none" stroke="var(--mint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
-      </svg>
+    <div class="cw c-purple" style="--d:152px; --sp:12.5s; left:17%; top:75%">
+      <div class="cw-ring"><span class="cw-core"></span>
+        <i class="cw-st" style="--a:0deg"></i><i class="cw-st" style="--a:51deg"></i><i class="cw-st" style="--a:103deg"></i><i class="cw-st" style="--a:154deg"></i><i class="cw-st" style="--a:206deg"></i><i class="cw-st" style="--a:257deg"></i><i class="cw-st" style="--a:309deg"></i>
+        <span class="cw-comet"></span></div>
+    </div>
+    <div class="cw c-amber" style="--d:152px; --sp:10.5s; left:83%; top:74%">
+      <div class="cw-ring"><span class="cw-core"></span>
+        <i class="cw-st" style="--a:30deg"></i><i class="cw-st" style="--a:102deg"></i><i class="cw-st" style="--a:174deg"></i><i class="cw-st" style="--a:246deg"></i><i class="cw-st" style="--a:318deg"></i>
+        <span class="cw-comet"></span></div>
+    </div>
+    <div class="cw c-blue hero" style="--d:152px; --sp:8s; left:49.5%; top:53%">
+      <div class="cw-ring"><span class="cw-core"></span>
+        <i class="cw-st" style="--a:0deg"></i><i class="cw-st" style="--a:60deg"></i><i class="cw-st" style="--a:120deg"></i><i class="cw-st" style="--a:180deg"></i><i class="cw-st" style="--a:240deg"></i><i class="cw-st" style="--a:300deg"></i>
+        <span class="cw-comet"></span>
+        <span class="cw-name">Ours</span></div>
     </div>
   </div>
 
-  <p class="lead" style="margin-top:42px; max-width:1000px">The workflow is easy to copy. <b>Everything it has learned isn't</b> &mdash; that's the moat.</p>
+  <p class="moat-pay">The workflow is easy to copy. <b>What it's learned isn't.</b></p>
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 04</span></div>
 </section>
 
@@ -2679,7 +2762,7 @@ section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both 
   <h3>We didn&rsquo;t stop at product. We ran the <b>same model</b> everywhere.</h3>
 
   <div class="dept-row">
-    <!-- Tous · 2 scopes, so 2 agents evenly spaced = top and bottom -->
+    <!-- Tous · 6 dots for the six production stages (Research to Delivery), evenly spaced 60deg apart -->
     <div class="dept a-blue d1">
       <div class="dept-stage">
         <span class="dept-bloom"></span>
@@ -2687,10 +2770,14 @@ section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both 
           <circle class="dept-track" cx="150" cy="150" r="140"/>
           <circle class="dept-arc" cx="150" cy="150" r="140" transform="rotate(-90 150 150)"/>
         </svg>
-        <div class="dept-spokes"><i style="--a:-90deg"></i><i style="--a:90deg"></i></div>
+        <div class="dept-spokes"><i style="--a:-90deg"></i><i style="--a:-30deg"></i><i style="--a:30deg"></i><i style="--a:90deg"></i><i style="--a:150deg"></i><i style="--a:210deg"></i></div>
         <span class="dept-cometwrap"><span class="dept-spin"><span class="dept-comet"></span><i class="dept-head"></i></span></span>
         <span class="dept-sc" style="--x:0px; --y:-140px"></span>
+        <span class="dept-sc" style="--x:121.2px; --y:-70px"></span>
+        <span class="dept-sc" style="--x:121.2px; --y:70px"></span>
         <span class="dept-sc" style="--x:0px; --y:140px"></span>
+        <span class="dept-sc" style="--x:-121.2px; --y:70px"></span>
+        <span class="dept-sc" style="--x:-121.2px; --y:-70px"></span>
         <div class="dept-core">
           <span class="cw">
             <span class="cg"></span>
@@ -3125,7 +3212,7 @@ section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both 
 
 <script src="vendor/reveal.js"></script>
 <script src="js/deck.js?v=6"></script>
-<script src="js/walkthrough.js?v=22"></script>
+<script src="js/walkthrough.js?v=28"></script>
 <!-- Introducing Tous (11C): auto-advance the six-stage tour so the presenter never clicks
      through each stage (Sam's call, 2026-07-17). It steps Research -> ... -> Delivery & Learning
      and then STOPS on the last stage; the four core components stay MANUAL (Sam's call, 2026-07-17).
@@ -3176,8 +3263,9 @@ section.present .bl-act .bl-t:nth-child(3) .bl-v{ animation:blNum .6s .28s both 
   function boot() {
     if (!window.Reveal) return;
     // Resolve the boundaries now that reveal has renumbered data-fragment-index to its contiguous
-    // 0-based run. om-b4 is the stage list; om-s6 is the last stage (Delivery & Learning).
-    FIRST = frag('.om-b4'); STOP_AT = frag('.om-s6');
+    // 0-based run. om-s1 is Research, the tour's first stage (the old "all stages at once" list
+    // beat was removed); om-s6 is the last stage (Delivery & Learning), where the tour stops.
+    FIRST = frag('.om-s1'); STOP_AT = frag('.om-s6');
     Reveal.on('fragmentshown', schedule);   // each stage that appears queues the next
     Reveal.on('fragmenthidden', clearTimer); // stepping back pauses the tour
     Reveal.on('slidechanged', clearTimer);   // leaving the slide cancels it

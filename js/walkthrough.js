@@ -73,7 +73,6 @@
     { id: 'plan', d: 2, t: 'md', name: 'plan.md', hidden: 1 },
     { id: 'dlv', d: 1, t: 'diro', name: 'delivery' },
     { id: 'changelog', d: 2, t: 'md', name: 'CHANGELOG.md', hidden: 1 },
-    { id: 'nidoc', d: 2, t: 'md', name: 'docs.md', hidden: 1 },
     { id: 'learn', d: 2, t: 'md', name: 'learnings.md', hidden: 1 },
     { id: 'readme', d: 1, t: 'md', name: 'README.md', tail: 1 },
     { id: 'docs', d: 0, t: 'diro', name: 'notify-me-docs' },
@@ -119,19 +118,34 @@
     lead: 'Where Notify Me demand signals meet <b>Nosto personalization.</b>',
     blocks: [
       { sec: 'The signal' },
-      { p: 'Merchants run Notify Me for demand capture and Nosto for personalization, but the two never talk. Unmet-demand signals never reach the personalization layer.' },
+      { p: 'Merchants run Notify Me for demand capture and Nosto for personalization, but the two never talk. The strongest first-party signal a store owns, what a shopper is waiting for, never reaches the layer that decides what they see.' },
+      { p: 'Every back-in-stock subscription, wishlist add, and pre-order is an explicit statement of intent. Today that intent expires inside Notify Me instead of shaping the storefront.' },
       { sec: 'Market' },
       { ul: [
-        'Nosto is a leading Shopify personalization platform, deployed across thousands of SI-built stores.',
-        '<b>Back-in-stock, wishlist and pre-order</b> intent are the strongest buy signals a store owns.',
-        'Today they sit inside Notify Me, invisible to Nosto segments and campaigns.'
+        'Nosto is a leading Shopify personalization and CDP platform, deployed across thousands of SI-built stores.',
+        '"Ask-your-data" segmentation on real behavior is now a baseline merchant expectation.',
+        '<b>Back-in-stock, wishlist and pre-order</b> intent are the highest-signal events a store has.',
+        'Today they sit inside Notify Me, invisible to Nosto segments, triggers and campaigns.'
+      ] },
+      { sec: 'Competitive landscape' },
+      { ul: [
+        'Klaviyo and Omnisend consume back-in-stock events, but only for email, not on-site personalization.',
+        'Generic Zapier bridges exist, but they are brittle, unscoped, and drop consent.',
+        'No competitor writes demand intent into Nosto profiles natively. That is the gap.'
       ] },
       { sec: 'Opportunity' },
       { ul: [
         'Stream Notify Me demand events into Nosto as <b>segments and events</b>.',
-        'Power restock campaigns, out-of-stock recovery, and demand-ranked recommendations.'
+        'Power restock campaigns, out-of-stock recovery, and demand-ranked recommendations.',
+        'Cross-shop history (30k+ shops) becomes peer benchmarks Nosto alone cannot see.'
       ] },
-      { note: { lbl: 'Recommendation', text: 'Build a native, two-way Nosto integration: OAuth connect, a demand-event stream, and synced audience segments.' } }
+      { sec: 'Risks' },
+      { ul: [
+        'Consent and data residency: only sync opted-in shoppers, scoped per shop.',
+        'Token handling: Nosto issues long-lived tokens; store and rotate them safely.',
+        'Sync starts from connect; there is no historical backfill in v1. Set expectations in the UI.'
+      ] },
+      { note: { lbl: 'Recommendation', text: 'Build a native Nosto integration: OAuth-style token connect, a consented demand-event stream, and synced audience segments. Ship a read-and-write v1; defer two-way segment sync to phase 2.' } }
     ]
   };
   var DOC_PRD = {
@@ -140,18 +154,35 @@
     lead: 'Bridge Notify Me demand data into Nosto, <b>natively.</b>',
     blocks: [
       { sec: 'Problem' },
-      { p: 'Demand signals live in Notify Me; personalization lives in Nosto. Merchants rebuild the bridge by hand, or go without.' },
+      { p: 'Demand signals live in Notify Me; personalization lives in Nosto. Merchants rebuild the bridge by hand with brittle automations, or go without and personalize blind to what shoppers are actually waiting for.' },
       { sec: 'Users & jobs' },
-      { p: 'Shopify merchants running both platforms. SI partners configuring the connection at setup.' },
+      { ul: [
+        'Merchant admin (all plans): connect Nosto once, then segment and personalize on demand.',
+        'SI partner: configure the connection at store setup, with clear scope and consent.',
+        'Shopper: sees more relevant restock nudges and recommendations, never spam.'
+      ] },
       { sec: 'Capabilities · v1' },
       { chk: [
-        [1, 'Connect a Nosto account (OAuth)'],
-        [1, 'Stream back-in-stock / wishlist / pre-order events'],
-        [1, 'Sync demand segments as Nosto audiences'],
-        [1, 'Campaign recipes: restock, out-of-stock recovery'],
-        [0, 'Two-way sync of Nosto segments back (phase 2)']
+        [1, 'Connect a Nosto account with an API token, validated inline'],
+        [1, 'Stream back-in-stock / wishlist / pre-order events to Nosto profiles'],
+        [1, 'Sync demand segments as Nosto audiences, keyed by shopper email'],
+        [1, 'Campaign recipes: restock, out-of-stock recovery, demand-ranked recs'],
+        [1, 'Respect consent; skip opted-out shoppers'],
+        [0, 'Two-way sync of Nosto segments back into Notify Me (phase 2)']
       ] },
-      { note: { lbl: 'Rollout', text: 'Shopify App Store listing · opt-in connect · gradual rollout behind <code>nosto_sync</code>.' } }
+      { sec: 'Non-goals' },
+      { ul: [
+        'No historical backfill in v1; sync begins at connect.',
+        'No PII beyond email and the demand flags listed in the data map.',
+        'No storefront rendering; Nosto owns the on-site experience.'
+      ] },
+      { sec: 'Success metrics' },
+      { ul: [
+        'Connect completion rate for merchants who start setup.',
+        'Share of demand events delivered to Nosto within SLA.',
+        'Merchant-reported lift on restock and recovery campaigns.'
+      ] },
+      { note: { lbl: 'Rollout', text: 'Shopify App Store listing · opt-in connect · gradual rollout behind <code>nosto_sync</code>, starting at 10% of shops.' } }
     ]
   };
   var DOC_HANDOFF = {
@@ -164,15 +195,27 @@
       { sec: 'Anatomy' },
       { ul: [
         'Integrations list gains a <b>Nosto</b> card (pink mark, Beta) with a Connect action.',
-        'Detail page: an API-token field with inline validation, then Connect.',
-        'Two banners: a blue prerequisite note and an amber sync-scope warning.'
+        'Detail page: an API-token field with inline validation, then a primary Connect.',
+        'A "Data sent to Nosto" card lists every attribute, grouped by Identity and Intent.'
       ] },
       { sec: 'Tokens & states' },
       { ul: [
         'Primary action uses the Notify Me button style, disabled until the token validates.',
-        'States: empty · validating · valid · connecting · connected · error.'
+        'States: empty · validating · valid · connecting · connected · error.',
+        'Valid token shows a masked value and a green check; errors surface inline, not as a toast.'
       ] },
-      { note: { lbl: 'Delivered to', text: 'nm-frontend · Settings module. Polaris components matched to the app shell.' } }
+      { sec: 'Interaction' },
+      { ul: [
+        'Validation runs on paste and on blur; the button enables only on success.',
+        'Connecting shows a spinner in the button; success swaps the card to a Connected state.',
+        'Disconnect is a low-emphasis destructive action behind a confirm.'
+      ] },
+      { sec: 'Accessibility' },
+      { ul: [
+        'Every field has a visible label; banners use role="status" / role="alert".',
+        'Focus order: token field, Connect, then the data card. Contrast meets AA.'
+      ] },
+      { note: { lbl: 'Delivered to', text: 'nm-frontend · Settings module. Polaris components matched to the app shell, tokens in the design system.' } }
     ]
   };
   var DOC_DOD = {
@@ -182,13 +225,29 @@
     blocks: [
       { sec: 'Done when' },
       { chk: [
-        [1, 'OAuth connect + token validation against the Nosto API'],
+        [1, 'Token connect + validation against the Nosto API'],
         [1, 'Demand events (BIS / wishlist / pre-order) stream to Nosto profiles'],
         [1, 'Attributes written idempotently, keyed by shopper email'],
         [1, 'Consent respected; nothing sent for opted-out shoppers'],
         [1, 'Zero cross-shop leakage; shop_id scoped server-side']
       ] },
-      { note: { lbl: 'Guardrail', text: 'Grounded-or-skip: a profile write only fires on a real, consented demand event.' } }
+      { sec: 'Reliability' },
+      { chk: [
+        [1, 'Retries with backoff; a dead-letter queue after repeated failure'],
+        [1, 'Per-shop rate limits honor the Nosto API budget'],
+        [1, 'Sync is resumable; a restart never double-writes']
+      ] },
+      { sec: 'Observability' },
+      { ul: [
+        'Structured logs per event: shop, type, result, latency.',
+        'A dashboard tile for delivery rate and queue depth, alerting on backlog.'
+      ] },
+      { sec: 'Security' },
+      { ul: [
+        'Tokens encrypted at rest, never logged, rotatable without downtime.',
+        'Every write carries a shop scope; a missing scope fails closed.'
+      ] },
+      { note: { lbl: 'Guardrail', text: 'Grounded-or-skip: a profile write only ever fires on a real, consented demand event. No inferred writes.' } }
     ]
   };
   var DOC_PLAN = {
@@ -199,12 +258,22 @@
       { sec: 'Shape' },
       { ul: [
         '<b>nm-backend</b>: a Nosto client + an event mapper (demand event to profile attributes).',
-        '<b>nm-frontend</b>: the Connect settings page + token validation.',
-        'A queue drains demand events to Nosto, retried with backoff.'
+        '<b>nm-frontend</b>: the Connect settings page + inline token validation.',
+        'A durable queue drains demand events to Nosto, retried with backoff.'
       ] },
+      { sec: 'Data flow' },
+      { p: 'A demand event fires in Notify Me, is enqueued with its shop scope, mapped to nm_* attributes, and written to the matching Nosto profile by email. Consent is checked at enqueue and again at write.' },
       { sec: 'Contract' },
-      { p: 'profile-write { email, attributes{}, source: "notify-me" }, behind the <code>nosto_sync</code> flag.' },
-      { note: { lbl: 'Review', text: 'Plan reviewed: idempotent writes, per-shop rate limits, dead-letter on repeated failure.' } }
+      { p: 'profile-write { email, attributes{}, source: "notify-me", shop_id }, behind the <code>nosto_sync</code> flag. Writes are idempotent on (shop_id, email, attribute).' },
+      { sec: 'Failure modes' },
+      { ul: [
+        'Nosto 5xx or timeout: retry with backoff, then dead-letter after N attempts.',
+        'Invalid or revoked token: pause the shop, surface a reconnect prompt in Settings.',
+        'Rate limit: shed load per shop, never globally.'
+      ] },
+      { sec: 'Rollout' },
+      { p: 'Ship behind nosto_sync at 10% of shops, watch delivery rate and queue depth, then ramp. Backwards-compatible; disabling the flag stops writes cleanly.' },
+      { note: { lbl: 'Review', text: 'Plan reviewed: idempotent writes, per-shop rate limits, dead-letter on repeated failure, clean flag-off path.' } }
     ]
   };
   var DOC_ANNOUNCE = {
@@ -218,7 +287,20 @@
         'Back-in-stock, wishlist and pre-order intent sync to Nosto profiles.',
         'Segment and personalize on real demand, keyed by shopper email.'
       ] },
-      { note: { lbl: 'Rollout', text: 'Available on all plans · opt-in · gradual rollout behind nosto_sync.' } }
+      { sec: 'How it works' },
+      { p: 'Once connected, new demand activity streams to each shopper\'s Nosto customer profile as attributes you can segment and trigger on. Nothing is sent for shoppers who have not opted in.' },
+      { sec: 'What you can build' },
+      { ul: [
+        'A "waiting to buy" segment for restock campaigns.',
+        'Out-of-stock recovery flows that fire the moment stock returns.',
+        'Demand-ranked recommendations on the storefront.'
+      ] },
+      { sec: 'Who it is for' },
+      { ul: [
+        'Merchants running both Notify Me and Nosto.',
+        'SI partners configuring personalization at setup.'
+      ] },
+      { note: { lbl: 'Rollout', text: 'Available on all plans · opt-in · gradual rollout behind nosto_sync. Sync starts at connect; no historical backfill.' } }
     ]
   };
   var DOC_DOCS = {
@@ -232,9 +314,23 @@
         'In Notify Me, open Settings › Integrations › Nosto and paste the token.',
         'Connect. New demand activity starts syncing to Nosto profiles.'
       ] },
-      { sec: 'Attributes' },
-      { p: 'nm_email, nm_bis_active, nm_wishlist_active, nm_preorder_customer, nm_notified_not_purchased.' },
-      { note: { lbl: 'Note', text: 'Sync starts from connect; historical demand is not backfilled.' } }
+      { sec: 'Attributes written' },
+      { ul: [
+        '<code>nm_email</code> — the key Nosto matches on.',
+        '<code>nm_bis_active</code> — waitlisting a back-in-stock item.',
+        '<code>nm_wishlist_active</code> — has an active wishlist.',
+        '<code>nm_preorder_customer</code> — placed a pre-order.',
+        '<code>nm_notified_not_purchased</code> — notified of a restock, not yet bought.'
+      ] },
+      { sec: 'Segments & campaigns' },
+      { p: 'Build a Nosto segment on any nm_* attribute, then attach it to a pop-up, email trigger, or recommendation. Restock recovery is the highest-converting starting point.' },
+      { sec: 'Troubleshooting' },
+      { ul: [
+        'No data flowing? Confirm the token is valid and the flag is on for your shop.',
+        'Missing a shopper? They may not have opted in, or have no demand event yet.',
+        'Token revoked in Nosto? Reconnect from Settings to resume.'
+      ] },
+      { note: { lbl: 'Note', text: 'Sync starts from connect; historical demand is not backfilled in this release.' } }
     ]
   };
   var DOC_LEARN = {
@@ -244,11 +340,24 @@
     blocks: [
       { sec: 'Kept' },
       { ul: [
-        'A reusable Shopify-app OAuth-connect + token-validation pattern.',
+        'A reusable Shopify-app token-connect + validation pattern.',
         'The demand-event to profile-attribute mapper, ready for the next CDP.',
-        'A settings-integration card + detail page template.'
+        'A settings-integration card + detail-page template.',
+        'A consented, shop-scoped event stream with retries and a dead-letter queue.'
       ] },
-      { note: { lbl: 'Compounds', text: 'The next integration (any CDP) reuses this connect flow and mapper. The loop closes.' } }
+      { sec: 'What worked' },
+      { ul: [
+        'Grounded-or-skip kept the sync honest: no inferred writes, ever.',
+        'Shipping v1 read-and-write and deferring two-way sync kept scope tight.'
+      ] },
+      { sec: 'What to improve' },
+      { ul: [
+        'Add historical backfill behind a one-time, rate-limited job.',
+        'Surface delivery health to merchants, not just internal dashboards.'
+      ] },
+      { sec: 'Next' },
+      { p: 'The same connect flow and mapper generalize to any CDP. The next integration starts from this template, not from zero.' },
+      { note: { lbl: 'Compounds', text: 'Each integration makes the next one cheaper. The factory keeps the pattern, not just the feature. The loop closes.' } }
     ]
   };
   var DOCS = { mr: DOC_MR, prd: DOC_PRD, handoff: DOC_HANDOFF, dod: DOC_DOD, plan: DOC_PLAN, announce: DOC_ANNOUNCE, docs: DOC_DOCS, learn: DOC_LEARN };
@@ -330,27 +439,19 @@
   var WARN_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 22 20H2z"/><path d="M12 10v4M12 17v.01"/></svg>';
   var NOSTO_MARK = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 6h20a8 8 0 0 1 8 8v20L20 20 6 6z" fill="#FF66BF"/></svg>';
 
-  function designPreviewHTML(v) {
-    var reviewed = v === 'v2';
-    var token = reviewed
-      ? '<div class="dp-input ok"><span class="dp-tok">nosto_sk_live_••••••••4f2a</span><span class="dp-valid">' + CHECK + 'Valid token</span></div>'
-      : '<div class="dp-input"><span class="dp-ph">Paste your Nosto API token</span></div>';
-    var connect = reviewed
-      ? '<button class="dp-btn primary">Connect to Nosto</button>'
-      : '<button class="dp-btn muted">Connect to Nosto</button>';
+  function designPreviewHTML() {
     return '<div class="dp">' +
       '<div class="dp-bar"><span class="dp-dots"><i></i><i></i><i></i></span>' +
         '<span class="dp-url">localhost:3000  ·  Settings › Integrations › Nosto</span>' +
-        '<span class="dp-tag' + (reviewed ? ' rev' : '') + '">' + (reviewed ? 'review · v2' : 'design · v1') + '</span></div>' +
+        '<span class="dp-tag">preview</span></div>' +
       '<div class="dp-page">' +
         '<div class="dp-back"><span class="dp-chev">‹</span><span class="dp-title">Connect to Nosto</span><span class="dp-beta">Beta</span></div>' +
         '<div class="dp-card">' +
           '<div class="dp-h">Connect with an API token</div>' +
           '<div class="dp-desc">Enter a Nosto API token with customer-data access. Nosto issues this token; request it from your Nosto account manager.</div>' +
-          '<div class="dp-label">Nosto API token</div>' + token +
-          '<div class="dp-banner info"><span class="dp-ic">' + INFO_ICON + '</span><span>You need an active Nosto account with the Nosto Shopify app installed to connect.</span></div>' +
-          '<div class="dp-banner warn"><span class="dp-ic">' + WARN_ICON + '</span><span>Connecting starts the sync from now on. Notify Me does not backfill existing subscribers, wishlists, pre-orders, or past orders.</span></div>' +
-          '<div class="dp-foot">' + connect + '</div>' +
+          '<div class="dp-label">Nosto API token</div>' +
+          '<div class="dp-input ok"><span class="dp-tok">nosto_sk_live_••••••••4f2a</span><span class="dp-valid">' + CHECK + 'Valid token</span></div>' +
+          '<div class="dp-foot"><button class="dp-btn primary">Connect to Nosto</button></div>' +
         '</div>' +
         '<div class="dp-card soft">' +
           '<div class="dp-h row"><span>Data sent to Nosto</span><span class="dp-link">Learn more</span></div>' +
@@ -362,7 +463,6 @@
           '<div class="dp-attr"><b>nm_preorder_customer</b><span>Placed a pre-order.</span></div>' +
         '</div>' +
       '</div>' +
-      (reviewed ? '<div class="dp-fix">' + CHECK + '<span>Review fix: token now validates, and the primary action reads as enabled.</span></div>' : '') +
     '</div>';
   }
   // a small static thumbnail of the design, embedded in the handoff doc as a "screenshot"
@@ -374,7 +474,7 @@
         '<div class="dpt-card">' +
           '<div class="dpt-line w60"></div><div class="dpt-line w90 sm"></div>' +
           '<div class="dpt-field"><span class="dpt-tok">nosto_sk_live_••••4f2a</span><span class="dpt-ck">' + CHECK + '</span></div>' +
-          '<div class="dpt-ban info"></div><div class="dpt-ban warn"></div>' +
+          '<div class="dpt-line w90"></div><div class="dpt-line w60 sm"></div>' +
           '<div class="dpt-foot"><span class="dpt-btn"></span></div>' +
         '</div>' +
       '</div></div>';
@@ -444,21 +544,84 @@
     return '<div class="tm"><div class="tm-head"><span class="tm-on">' + esc(title || 'Terminal') + '</span><span>Problems</span><span>Output</span><span>Ports</span></div><div class="tm-body">' + body + '</div></div>';
   }
 
+  /* ============================================================
+     Intercom article view (Delivery · Documentation station) —
+     the factory writes the help article straight into Intercom.
+     ============================================================ */
+  var INTERCOM_MARK = '<svg viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="8" fill="#1F8DED"/><path d="M8 8.5h12a1.6 1.6 0 0 1 1.6 1.6v5.4a1.6 1.6 0 0 1-1.6 1.6h-5.2L11 21v-3.4H8a1.6 1.6 0 0 1-1.6-1.6v-5.4A1.6 1.6 0 0 1 8 8.5z" fill="#fff"/><path d="M9.7 12.2v1.8M14 11.8v2.6M18.3 12.2v1.8" stroke="#1F8DED" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  function intercomHTML() {
+    var blocks = [
+      { h: 'Before you start' },
+      { p: 'You need an active Nosto account with the Nosto Shopify app installed, plus a Nosto API token with customer-data access.' },
+      { h: 'Connect Nosto' },
+      { ol: [
+        'In Nosto, request an API token with customer-data access.',
+        'In Notify Me, open Settings → Integrations → Nosto.',
+        'Paste the token and select Connect.'
+      ] },
+      { p: 'New demand activity starts syncing to Nosto right away. Historical demand is not backfilled.' },
+      { h: 'What syncs to Nosto' },
+      { ul: [
+        'Back-in-stock waitlist activity',
+        'Wishlist adds',
+        'Pre-order intent'
+      ] },
+      { p: 'Each is written to the shopper\'s Nosto customer profile, keyed by email, as an attribute you can segment and personalize on.' },
+      { h: 'Build your first campaign' },
+      { p: 'Create a Nosto segment on any demand attribute, then attach it to a pop-up, email, or recommendation. Restock recovery is the highest-converting place to start.' }
+    ];
+    var body = blocks.map(function (b) {
+      if (b.h) return '<div class="ic-h">' + esc(b.h) + '</div>';
+      if (b.ol) return '<ol class="ic-ol">' + b.ol.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>';
+      if (b.ul) return '<ul class="ic-ul">' + b.ul.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+      return '<p class="ic-p">' + esc(b.p) + '</p>';
+    }).join('');
+    return '<div class="icv">' +
+      '<div class="ic-bar"><span class="ic-mark">' + INTERCOM_MARK + '</span>' +
+        '<span class="ic-url">app.intercom.com  ·  Help Center  ·  Articles</span>' +
+        '<span class="ic-chip">Published</span></div>' +
+      '<div class="ic-page"><div class="ic-article">' +
+        '<div class="ic-crumb">All Collections<span class="ic-sep">›</span>Integrations<span class="ic-sep">›</span>Nosto</div>' +
+        '<div class="ic-title">Set up the Nosto integration</div>' +
+        '<div class="ic-meta"><span class="ic-av">T</span><span>Written by <b>Tous</b></span><span class="ic-mdot">·</span><span>Updated just now</span></div>' +
+        body +
+        '<div class="ic-foot"><span>Did this answer your question?</span><span class="ic-faces">😞&nbsp;&nbsp;😐&nbsp;&nbsp;😃</span></div>' +
+      '</div></div>' +
+    '</div>';
+  }
+
   /* code + terminal content, keyed for setContent */
   var NOSTO_SYNC =
     'import { NostoClient } from \'./client\'\n' +
-    'import { mapDemandEvent } from \'./mapper\'\n' +
+    'import type { DemandEvent } from \'./types\'\n' +
     '\n' +
-    '// Stream a Notify Me demand event to the shopper\'s Nosto profile.\n' +
+    '// Map a Notify Me demand event to Nosto profile attributes (nm_*).\n' +
+    'export function mapDemandEvent(event: DemandEvent) {\n' +
+    '  return {\n' +
+    '    nm_email: event.email,\n' +
+    '    nm_bis_active: event.type === \'back_in_stock\',\n' +
+    '    nm_wishlist_active: event.type === \'wishlist\',\n' +
+    '    nm_preorder_customer: event.type === \'pre_order\',\n' +
+    '    nm_last_intent_at: event.createdAt,\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '// Stream one consented demand event to the shopper\'s Nosto profile.\n' +
     'export async function syncDemandEvent(shopId: number, event: DemandEvent) {\n' +
     '  if (!event.consented) return skip(\'no-consent\')\n' +
+    '\n' +
     '  const client = NostoClient.forShop(shopId)   // token scoped per shop\n' +
-    '  const attrs = mapDemandEvent(event)          // BIS / wishlist / pre-order -> nm_*\n' +
-    '  await client.updateProfile(event.email, {\n' +
-    '    ...attrs,\n' +
-    '    source: \'notify-me\',\n' +
-    '  })\n' +
-    '  return ok(event.email)\n' +
+    '  const attrs = mapDemandEvent(event)          // BIS / wishlist / pre-order\n' +
+    '\n' +
+    '  try {\n' +
+    '    await client.updateProfile(event.email, {\n' +
+    '      ...attrs,\n' +
+    '      source: \'notify-me\',\n' +
+    '    })\n' +
+    '    return ok(event.email)\n' +
+    '  } catch (err) {\n' +
+    '    return retryLater(shopId, event, err)      // backoff, then dead-letter\n' +
+    '  }\n' +
     '}';
   var CODE_SPECS = {
     coding: { lang: 'ts', crumb: 'nm-backend  ›  src  ›  nosto  ›  sync.ts',
@@ -558,14 +721,13 @@
       ],
       status: 'product-designer · UI/UX', ctx: 'context 48%' },
 
-    /* 7 — Design Review: a noticeable fix (token validation + real primary action) */
+    /* 7 — Design Review: no view change; the UI/UX design stays up, only the tracker step ticks */
     { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 1, wfExpand: 1,
-      content: 'design:v2', check: [['design', 'review', 'done']],
+      check: [['design', 'review', 'done']],
       agent: [
         T('Task', 'design-reviewer', 'review'),
-        L('review', 'primary action reads disabled; token has **no validation**'),
-        T('Edit', 'NostoConnect.tsx', 'validate token · enable primary'),
-        R('design', 'fixed · v2', 'coral')
+        L('review', 'states, contrast and copy checked against the PRD'),
+        R('design', 'reviewed · ready for handoff', 'coral')
       ],
       status: 'reviewer · design' },
 
@@ -672,12 +834,16 @@
       ],
       status: 'delivery · announcement' },
 
-    /* 18 — Documentation */
+    /* 18 — Documentation: write the help article straight into Intercom */
     { view: 'ide', claude: 'dock', agentState: 'run', wfMode: 'full', wfActive: 5, wfExpand: 1,
-      content: 'doc:docs', show: ['nidoc'], activeFile: 'nidoc',
+      content: 'intercom',
       check: [['delivery', 'documentation', 'done']],
-      agent: [ T('Write', 'delivery/docs.md', 'setup · attributes') ],
-      status: 'delivery · docs' },
+      agent: [
+        T('Skill', 'documentation', 'SOP loaded'),
+        T('Intercom', 'create-article', 'Set up the Nosto integration'),
+        R('help article', 'published to the Help Center', 'mint')
+      ],
+      status: 'delivery · documentation' },
 
     /* 19 — Learning: the ledger updates, the factory loops back */
     { view: 'ide', claude: 'dock', agentState: 'done', wfMode: 'full', wfActive: 5, wfExpand: 1,
@@ -711,12 +877,12 @@
     'delivery', 'delivery', 'delivery', 'delivery'                         // 16-19
   ];
   var BEAT_HOLD = [
-    2800, 2200, 3400, 3800, 4400, 0,   // research
-    3800, 3600, 0,                     // design (UI/UX, review, handoff-stop)
-    2600, 0,                           // engineering (DoD, plan-stop) — fast
-    3400, 0,                           // production (coding, review-stop)
-    2800, 2800, 0,                     // testing (tech, product, visual-stop)
-    3000, 3200, 3200, 0                // delivery (release, announce, docs, learning-stop)
+    2100, 1600, 2600, 2600, 3000, 0,   // research
+    2600, 1400, 0,                     // design (UI/UX, review-quick, handoff-stop)
+    2000, 0,                           // engineering (DoD, plan-stop) — fast
+    2400, 0,                           // production (coding, review-stop)
+    2000, 2000, 0,                     // testing (tech, product, visual-stop)
+    2100, 2300, 2300, 0                // delivery (release, announce, docs, learning-stop)
   ];
 
   /* ============================================================
@@ -827,25 +993,69 @@
     },
 
     /* ---- content viewport ---- */
-    setContent: function (spec) {
-      var E = this.els, self = this;
+    setContent: function (spec, animate) {
+      var E = this.els, live = animate && !STATIC;
       if (!spec) { E.view.innerHTML = ''; return; }
       if (spec === 'browser') { E.view.innerHTML = browserHTML(); return; }
       if (spec === 'plan') { E.view.innerHTML = planHTML(); return; }
       if (spec.indexOf('design:') === 0) { E.view.innerHTML = designPreviewHTML(spec.slice(7)); return; }
-      if (spec.indexOf('code:') === 0) { E.view.innerHTML = codeHTML(CODE_SPECS[spec.slice(5)]); return; }
-      if (spec.indexOf('term:') === 0) { var ts = TERM_SPECS[spec.slice(5)]; E.view.innerHTML = terminalHTML(ts.title, ts.lines); return; }
+      if (spec.indexOf('code:') === 0) {
+        // the file is written line by line, like real coding, with a caret
+        E.view.innerHTML = codeHTML(CODE_SPECS[spec.slice(5)]);
+        var codeEl = E.view.querySelector('.cv-code'), rev = E.view.querySelector('.cv-review');
+        if (rev) { rev.style.opacity = live ? '0' : '1'; }
+        this.playWrite(codeEl, [].slice.call(E.view.querySelectorAll('.ck-line')), 42, live, function () {
+          if (rev) { rev.style.transition = 'opacity .45s ease'; rev.style.opacity = '1'; }
+        });
+        return;
+      }
+      if (spec.indexOf('term:') === 0) {
+        var ts = TERM_SPECS[spec.slice(5)]; E.view.innerHTML = terminalHTML(ts.title, ts.lines);
+        this.playWrite(E.view.querySelector('.tm-body'), [].slice.call(E.view.querySelectorAll('.tm-l')), 150, live);
+        return;
+      }
+      if (spec === 'intercom') {
+        // the help article is written straight into Intercom, block by block
+        E.view.innerHTML = intercomHTML();
+        this.playWrite(E.view.querySelector('.ic-page'), [].slice.call(E.view.querySelectorAll('.ic-article > *')), 110, live);
+        return;
+      }
       if (spec.indexOf('doc:') === 0) {
+        // the doc is written block by block, scrolling to follow the writing head
         E.view.innerHTML = docHTML(DOCS[spec.slice(4)]);
-        var page = E.view.querySelector('.doc-page');
-        if (page) {
-          if (STATIC) page.classList.add('in');
-          else this.at(function () { page.classList.add('in'); }, 60);
-          if (!STATIC) [].forEach.call(page.children, function (c, k) { c.style.animationDelay = (k * 70) + 'ms'; });
-        }
+        var scroll = E.view.querySelector('.doc-scroll'), page = E.view.querySelector('.doc-page');
+        if (page) this.playWrite(scroll, [].slice.call(page.children), 100, live);
         return;
       }
       E.view.innerHTML = '';
+    },
+
+    /* ---- write a view out sequentially: reveal items one by one with a caret,
+           and scroll the container so the writing head stays in view (long docs
+           feel long). animate=false reveals everything instantly, scrolled to top. ---- */
+    playWrite: function (scrollEl, items, perMs, animate, done) {
+      var self = this;
+      if (!items || !items.length) { if (done) done(); return; }
+      if (!animate) {
+        items.forEach(function (el) { el.classList.add('in'); });
+        if (scrollEl) scrollEl.scrollTop = 0;
+        if (done) done();
+        return;
+      }
+      var caret = node('<span class="wr-caret"></span>'), i = 0;
+      function step() {
+        if (i >= items.length) { if (caret.parentNode) caret.parentNode.removeChild(caret); if (done) done(); return; }
+        var el = items[i]; el.classList.add('in'); el.appendChild(caret);
+        if (scrollEl) {
+          // viewport-relative: how far the just-written block's bottom sits past the fold
+          var er = el.getBoundingClientRect(), sr = scrollEl.getBoundingClientRect();
+          var over = er.bottom - sr.bottom;
+          if (over > -24) scrollEl.scrollTop += over + 40;   // keep the writing head just above the fold
+        }
+        i++;
+        self.at(step, perMs);
+      }
+      step();
     },
 
     /* ---- append this beat's transcript lines ---- */
@@ -855,7 +1065,7 @@
       (beat.agent || []).forEach(function (it) { var d = node(agentItemHTML(it)); E.agentBody.appendChild(d); els.push(d); });
       if (animate) {
         var t = 40;
-        els.forEach(function (el) { self.at(function () { el.classList.add('in'); E.agentBody.scrollTop = E.agentBody.scrollHeight; }, t); t += 300; });
+        els.forEach(function (el) { self.at(function () { el.classList.add('in'); E.agentBody.scrollTop = E.agentBody.scrollHeight; }, t); t += 210; });
       } else {
         els.forEach(function (el) { el.classList.add('in'); });
         E.agentBody.scrollTop = E.agentBody.scrollHeight;
@@ -869,12 +1079,12 @@
       function step() {
         if (i > text.length) {
           if (E.input) { E.input.classList.remove('focus'); E.input.classList.add('send'); }
-          self.at(function () { if (E.input) E.input.classList.remove('send'); if (E.ph) { E.ph.textContent = PLACEHOLDER; E.ph.classList.remove('typed'); } done(); }, 300);
+          self.at(function () { if (E.input) E.input.classList.remove('send'); if (E.ph) { E.ph.textContent = PLACEHOLDER; E.ph.classList.remove('typed'); } done(); }, 200);
           return;
         }
         if (E.ph) { E.ph.classList.add('typed'); E.ph.innerHTML = esc(text.slice(0, i)) + '<span class="cur"></span>'; }
         i++;
-        self.at(step, 13);
+        self.at(step, 10);
       }
       step();
     },
@@ -929,7 +1139,7 @@
       if (beat.ready) { E.agentBody.classList.remove('convo'); E.agentBody.innerHTML = readyHTML(); }
 
       // content
-      if (beat.content !== undefined) this.setContent(beat.content);
+      if (beat.content !== undefined) this.setContent(beat.content, animate);
 
       // transcript + typing. doAgent(anim) reveals this beat's lines; _pending lets a fast
       // advance force-complete it (so the prompt + boot lines are never skipped).
@@ -971,7 +1181,10 @@
       this.gen++; this.clearTimers();
       if (this._pending) { var p = this._pending; this._pending = null; p(); }
       [].forEach.call(this.els.agentBody.querySelectorAll('.ag-line'), function (el) { el.classList.add('in'); });
-      var page = this.els.view.querySelector('.doc-page'); if (page) page.classList.add('in');
+      // finish any in-flight written view (doc blocks / code lines / terminal / intercom) + drop the caret
+      [].forEach.call(this.els.view.querySelectorAll('.doc-page > *, .ck-line, .tm-l, .ic-article > *'), function (el) { el.classList.add('in'); });
+      var cr = this.els.view.querySelector('.wr-caret'); if (cr && cr.parentNode) cr.parentNode.removeChild(cr);
+      var rev = this.els.view.querySelector('.cv-review'); if (rev) rev.style.opacity = '1';
       this.els.agentBody.scrollTop = this.els.agentBody.scrollHeight;
     },
 

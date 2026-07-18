@@ -105,7 +105,7 @@ Reveal.initialize({
   var TRAVEL     = { fast: 1920 };         // fast rail per-gap travel (halved speed = 2x duration)
   var SWEEP_SLOW = 40000;                  // slow rail: one continuous sweep, tip to tip
   var CYCLE      = 44000;                  // slow finishes at 40s (fast ~32s), ~4s hold, then loop
-  var FREEZE_AT  = 17000;                  // slow mid-flow past Design, fast stopped at Coding
+  var FREEZE_AT  = 0;                  // slow mid-flow past Design, fast stopped at Coding
 
   function wire() {
     var slide = document.querySelector('.pl-slide');
