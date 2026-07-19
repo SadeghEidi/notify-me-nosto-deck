@@ -264,6 +264,9 @@
 </section>
 
 <!-- ================= 09 · THE AI WEEK ================= -->
+<!-- ARCHIVED (2026-07-18, Sam's call): removed from the running deck via data-visibility="hidden"
+     on the <section> below. Kept in place so it's restorable — delete that attribute to bring it back. -->
+
 <style>
 /* --- AI Week (scoped) --- */
 .aiw-week{ margin-top:52px; }
@@ -419,7 +422,7 @@
   box-shadow:0 10px 26px rgba(0,0,0,.45), 0 0 22px rgba(16,163,127,.3) !important; }
 .qa .wf-ck{ animation:none !important; opacity:1 !important; transform:scale(1) !important; }
 </style>
-<section class="slide">
+<section class="slide" data-visibility="hidden">
   <p class="eyebrow">2025 &middot; the AI pivot</p>
   <h2 style="font-size:56px; max-width:1500px">First, we stopped <b>everything</b> for a week.</h2>
   <p class="lead" style="margin-top:16px; max-width:1180px">Normal work on hold. The whole company pointed at one thing.</p>
@@ -825,15 +828,40 @@
 .dg-flow{ position:absolute; top:98px; left:92px; width:9px; height:9px; margin:-4.5px 0 0 -4.5px;
   border-radius:50%; z-index:1; color:#eaf1ff; background:currentColor;
   filter:drop-shadow(0 0 5px currentColor);
-  animation:dgFlow 5s cubic-bezier(.45,.05,.55,.95) infinite; animation-delay:var(--dly,0s); }
-@keyframes dgFlow{
+  animation:dgFlowA 5s cubic-bezier(.45,.05,.55,.95) infinite; }
+/* Each dot rides its OWN track so the queue releases one at a time: all three still pile up behind
+   the human together (coral = friction), then f1 (front of queue) clears, then f2, then f3. A single
+   shared keyframe made them arrive AND leave together; the staggered exit is what reads as a queue. */
+.dg-flow.f2{ animation-name:dgFlowB; }
+.dg-flow.f3{ animation-name:dgFlowC; }
+@keyframes dgFlowA{
   0%   { left:92px;  opacity:0; color:#eaf1ff; }
   5%   { opacity:1; }
-  22%  { left:var(--qx); color:#eaf1ff; }             /* reaches the human, joins the queue */
-  34%  { color:#ff6a52; }                              /* the wait flushes it coral = friction */
-  58%  { left:var(--qx); color:#ff6a52; opacity:1; }   /* held at the bottleneck (a few seconds) */
-  82%  { left:330px; color:#ff8a76; opacity:1; }       /* clears past the human, out to the right */
-  92%  { opacity:0; }
+  20%  { left:var(--qx); color:#eaf1ff; }             /* reaches the human, joins the queue */
+  30%  { color:#ff6a52; }                              /* the wait flushes it coral = friction */
+  46%  { left:var(--qx); color:#ff6a52; opacity:1; }   /* held at the bottleneck */
+  58%  { left:330px; color:#ff8a76; opacity:1; }       /* front of queue clears first */
+  66%  { opacity:0; }
+  100% { left:330px; opacity:0; }
+}
+@keyframes dgFlowB{
+  0%   { left:92px;  opacity:0; color:#eaf1ff; }
+  6%   { opacity:1; }
+  24%  { left:var(--qx); color:#eaf1ff; }
+  34%  { color:#ff6a52; }
+  58%  { left:var(--qx); color:#ff6a52; opacity:1; }   /* held longer: waits its turn */
+  70%  { left:330px; color:#ff8a76; opacity:1; }       /* clears second */
+  78%  { opacity:0; }
+  100% { left:330px; opacity:0; }
+}
+@keyframes dgFlowC{
+  0%   { left:92px;  opacity:0; color:#eaf1ff; }
+  7%   { opacity:1; }
+  28%  { left:var(--qx); color:#eaf1ff; }
+  38%  { color:#ff6a52; }
+  70%  { left:var(--qx); color:#ff6a52; opacity:1; }   /* held longest: last in line */
+  82%  { left:330px; color:#ff8a76; opacity:1; }       /* clears third */
+  90%  { opacity:0; }
   100% { left:330px; opacity:0; }
 }
 
@@ -937,7 +965,7 @@
 
 /* ---------- QA/PDF: force the fragment cards visible and freeze every loop on a good frame ---------- */
 .qa .dg-card{ opacity:1 !important; transform:none !important; }
-.qa .dg-flow{ animation-delay:-2.7s; animation-play-state:paused; }   /* dots piled at the human = bottleneck */
+.qa .dg-flow{ animation-delay:-2s; animation-play-state:paused; }   /* frozen mid-hold: all three piled at the human = bottleneck */
 .qa .dg-run{ animation-delay:0s; }                                    /* forwards keyframe holds --w */
 .qa .dg-try{ animation-delay:-5.4s; animation-play-state:paused; }   /* task at the human on the winning attempt */
 .qa .dg-x{ animation:none; opacity:0; }                               /* no reject at the success frame */
@@ -992,9 +1020,9 @@
           </svg>
           <span class="dg-node bot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4"/><circle cx="9" cy="13" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.3" fill="currentColor" stroke="none"/></svg></span>
           <span class="dg-node hum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20c0-3.4 2.9-5.6 6.5-5.6s6.5 2.2 6.5 5.6"/></svg></span>
-          <span class="dg-flow" style="--qx:208px; --dly:0s"></span>
-          <span class="dg-flow" style="--qx:198px; --dly:.35s"></span>
-          <span class="dg-flow" style="--qx:188px; --dly:.7s"></span>
+          <span class="dg-flow f1" style="--qx:208px"></span>
+          <span class="dg-flow f2" style="--qx:198px"></span>
+          <span class="dg-flow f3" style="--qx:188px"></span>
         </div>
       </div>
       <div class="dg-meta">
@@ -2321,13 +2349,13 @@ section.present .bl-act::before{ transform:scaleY(1); }
           <span class="bl-m">per day</span>
         </div>
         <div class="bl-t">
-          <span class="bl-tl">Reaching customers</span>
+          <span class="bl-tl">Development cycle</span>
           <div class="bl-v"><span class="was">months</span><i class="ar">&rarr;</i>7d</div>
         </div>
       </div>
     </div>
 
-    <div class="bl-act accent-mint">
+    <div class="bl-act accent-mint last">
       <div class="bl-rail"><span class="bl-num">02</span><span class="bl-lab">Business</span></div>
       <div class="bl-cells">
         <div class="bl-t">
@@ -2343,21 +2371,6 @@ section.present .bl-act::before{ transform:scaleY(1); }
       </div>
     </div>
 
-    <div class="bl-act accent-coral last">
-      <div class="bl-rail"><span class="bl-num">03</span><span class="bl-lab">Costs</span></div>
-      <div class="bl-cells">
-        <div class="bl-t">
-          <span class="bl-tl">We spend</span>
-          <div class="bl-v">$20K</div>
-          <span class="bl-m">per month, on AI</span>
-        </div>
-        <div class="bl-t">
-          <span class="bl-tl">Tokens burned</span>
-          <div class="bl-v">3<i class="tw">to</i>10<span class="x">&times;</span></div>
-          <span class="bl-m">vs a single-agent workflow</span>
-        </div>
-      </div>
-    </div>
   </div>
 
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 04</span></div>
@@ -2369,7 +2382,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
      one by one at scattered positions and, as their count climbs, they all shrink together: that is
      the compounding. A third of the way in, the Tous six-stage workflow ring rises in the dead centre
      of the field and grows, with the mint Knowledge spark at its core, then everything decelerates to
-     a frozen radiant end state. The Skills/Agents tally climbs to the real 120+/28+. Driven by an
+     a frozen radiant end state. Driven by an
      inline paint(p) wall-clock ticker (headless-renderable; ?qa freezes the final frame). Scoped
      .cx-. No em dashes. -->
 <style>
@@ -2435,35 +2448,12 @@ section.present .bl-act::before{ transform:scaleY(1); }
     font-size:12px; font-weight:500; letter-spacing:.34em; text-transform:uppercase; color:#bff0dc;
     text-shadow:0 0 10px rgba(95,208,166,.5); }
 
-  /* the Skills / Agents tally, same look as the Tous slide (solid accent + two-layer glow) */
-  .cx-tally{ position:absolute; top:150px; right:110px; z-index:6; text-align:right; }
-  .cx-tally .eye{ margin:0 0 20px; font-family:var(--font-mono); font-size:13px; font-weight:500;
-    letter-spacing:.26em; text-transform:uppercase; color:var(--g2); }
-  .cx-tally .row{ display:flex; justify-content:flex-end; gap:44px; }
-  .cx-cell{ display:flex; flex-direction:column; align-items:flex-end; --ac:var(--blue-elec); --acr:76,135,255; }
-  .cx-cell.agents{ --ac:var(--purple); --acr:155,38,240; }
-  .cx-num{ font-family:var(--font-display); font-weight:700; --emph:700; font-size:76px; line-height:.9;
-    letter-spacing:-.02em; color:var(--ac); text-shadow:0 0 4px rgba(var(--acr),.3), 0 0 34px rgba(var(--acr),.5); }
-  .cx-num .plus{ font-size:.4em; font-weight:700; vertical-align:.66em; margin-left:.02em; }
-  .cx-rule{ width:100%; height:2px; margin:15px 0 13px; border-radius:2px;
-    background:linear-gradient(90deg, transparent, var(--ac)); transform:scaleX(var(--rs,0)); transform-origin:right; }
-  .cx-lab{ font-family:var(--font-body); font-size:15px; letter-spacing:.2em; text-transform:uppercase; color:var(--g1); }
-
-
   /* QA / reduced-motion: the driver paints the final frame; pin the looping comet to a fixed angle */
   .qa .cx-orbit{ animation:none !important; transform:rotate(-42deg) !important; }
 </style>
 <section class="slide cx-slide">
   <p class="eyebrow">So where&rsquo;s the moat?</p>
   <h2 class="cx-hl">It was never the agents.<br>It&rsquo;s the <b>compounding.</b></h2>
-
-  <div class="cx-tally" aria-hidden="true">
-    <p class="eye">In total</p>
-    <div class="row">
-      <div class="cx-cell skills"><span class="cx-num"><span class="cx-nsk">0</span><span class="plus">+</span></span><span class="cx-rule"></span><span class="cx-lab">Skills</span></div>
-      <div class="cx-cell agents"><span class="cx-num"><span class="cx-nag">0</span><span class="plus">+</span></span><span class="cx-rule"></span><span class="cx-lab">Agents</span></div>
-    </div>
-  </div>
 
   <div class="cx-stage" aria-hidden="true">
     <div class="cx-field"></div>
@@ -2501,9 +2491,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
   'use strict';
   var slide=document.querySelector('.reveal .slides .cx-slide'); if(!slide) return;
   var field=slide.querySelector('.cx-field'), ring=slide.querySelector('.cx-ring'),
-      band=slide.querySelector('.cx-band'),
-      nSk=slide.querySelector('.cx-nsk'), nAg=slide.querySelector('.cx-nag'),
-      rules=slide.querySelectorAll('.cx-rule');
+      band=slide.querySelector('.cx-band');
   var FICON='<svg class="cx-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';
   // wide name pools + a per-type running index => neighbours never repeat a filename
   var TYPES=[
@@ -2553,8 +2541,6 @@ section.present .bl-act::before{ transform:scaleY(1); }
     ring.style.setProperty('--k',(.22+.78*re).toFixed(3));
     band.style.opacity=(.95*re).toFixed(3);
     band.style.setProperty('--bs',(.34+.66*re).toFixed(3));
-    var ez=p*p; nSk.textContent=Math.round(ez*120); nAg.textContent=Math.round(ez*28);
-    rules.forEach(function(r){ r.style.setProperty('--rs',clamp(p*1.4,0,1)); });
   }
 
   // computed at call time, NOT parse time: deck.js adds the `qa` class after this inline script parses
@@ -2587,7 +2573,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
      other label, so proximity groups them into the wrong department. A caption keeps
      each column self-contained and lets the names stay full-length. -->
 <style>
-.dept-row{ display:grid; grid-template-columns:repeat(3,1fr); align-items:start;
+.dept-row{ display:grid; grid-template-columns:repeat(4,1fr); align-items:start;
   width:100%; max-width:1700px; margin:36px auto 0; }
 .dept{ position:relative; display:flex; flex-direction:column; align-items:center; opacity:0; }
 /* --ac is the glow, --ac2 its near-white tint (the spark fill and the comet's last
@@ -2597,6 +2583,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
 .dept.a-blue  { --ac:#4C87FF; --ac2:#D7E4FF; --acr:76,135,255; }
 .dept.a-purple{ --ac:#A93FF5; --ac2:#EEDCFF; --acr:169,63,245; }
 .dept.a-coral { --ac:#EE442E; --ac2:#FFDBD5; --acr:238,68,46; }
+.dept.a-green { --ac:#5FD0A6; --ac2:#D6F7EB; --acr:95,208,166; }
 .dept-stage{ position:relative; width:300px; height:300px; flex:none; }
 
 /* each department's field of presence - a bloom rather than card chrome */
@@ -2698,27 +2685,33 @@ section.present .bl-act::before{ transform:scaleY(1); }
 .reveal section.present .dept.d1{ animation-delay:.26s }
 .reveal section.present .dept.d2{ animation-delay:.40s }
 .reveal section.present .dept.d3{ animation-delay:.54s }
+.reveal section.present .dept.d4{ animation-delay:.68s }
 .reveal section.present .dept-arc{ animation:deptDraw 1.4s both cubic-bezier(.55,0,.2,1); }
 .reveal section.present .d1 .dept-arc{ animation-delay:.40s }
 .reveal section.present .d2 .dept-arc{ animation-delay:.54s }
 .reveal section.present .d3 .dept-arc{ animation-delay:.68s }
+.reveal section.present .d4 .dept-arc{ animation-delay:.82s }
 .reveal section.present .dept-core{ animation:deptCoreIn .8s both cubic-bezier(.2,.8,.25,1); }
 .reveal section.present .d1 .dept-core{ animation-delay:.62s }
 .reveal section.present .d2 .dept-core{ animation-delay:.76s }
 .reveal section.present .d3 .dept-core{ animation-delay:.90s }
+.reveal section.present .d4 .dept-core{ animation-delay:1.04s }
 .reveal section.present .dept-sc{ animation:deptScIn .5s both cubic-bezier(.2,.7,.2,1); }
 .reveal section.present .d1 .dept-sc{ animation-delay:1.02s }
 .reveal section.present .d2 .dept-sc{ animation-delay:1.16s }
 .reveal section.present .d3 .dept-sc{ animation-delay:1.30s }
+.reveal section.present .d4 .dept-sc{ animation-delay:1.44s }
 .reveal section.present .dept-scopes{ animation:riseIn .7s both cubic-bezier(.2,.7,.2,1); }
 .reveal section.present .d1 .dept-scopes{ animation-delay:1.18s }
 .reveal section.present .d2 .dept-scopes{ animation-delay:1.32s }
 .reveal section.present .d3 .dept-scopes{ animation-delay:1.46s }
+.reveal section.present .d4 .dept-scopes{ animation-delay:1.60s }
 .reveal section.present .dept-cometwrap{ animation:deptFade .7s 1.5s both; }
 /* different periods so the three never fall into lockstep */
 .reveal section.present .d1 .dept-spin{ animation:deptSpin 9s 1.5s linear infinite; }
 .reveal section.present .d2 .dept-spin{ animation:deptSpin 11s 1.5s linear infinite; }
 .reveal section.present .d3 .dept-spin{ animation:deptSpin 10s 1.5s linear infinite; }
+.reveal section.present .d4 .dept-spin{ animation:deptSpin 10.5s 1.5s linear infinite; }
 
 /* QA (?qa) settles the build on its own; pin the looping motion to a fixed frame */
 .qa .dept{ animation:none !important; opacity:1 !important; }
@@ -2819,6 +2812,36 @@ section.present .bl-act::before{ transform:scaleY(1); }
         <span class="dept-sn">Customer Analysis</span>
         <span class="dept-sn">Segmentation</span>
         <span class="dept-sn">Customer Success Insights</span>
+      </div>
+    </div>
+
+    <!-- Kotlers · marketing, 4 scopes evenly spaced 90deg apart -->
+    <div class="dept a-green d4">
+      <div class="dept-stage">
+        <span class="dept-bloom"></span>
+        <svg class="dept-svg" viewBox="0 0 300 300" aria-hidden="true">
+          <circle class="dept-track" cx="150" cy="150" r="140"/>
+          <circle class="dept-arc" cx="150" cy="150" r="140" transform="rotate(-90 150 150)"/>
+        </svg>
+        <div class="dept-spokes"><i style="--a:-90deg"></i><i style="--a:0deg"></i><i style="--a:90deg"></i><i style="--a:180deg"></i></div>
+        <span class="dept-cometwrap"><span class="dept-spin"><span class="dept-comet"></span><i class="dept-head"></i></span></span>
+        <span class="dept-sc" style="--x:0px; --y:-140px"></span>
+        <span class="dept-sc" style="--x:140px; --y:0px"></span>
+        <span class="dept-sc" style="--x:0px; --y:140px"></span>
+        <span class="dept-sc" style="--x:-140px; --y:0px"></span>
+        <div class="dept-core">
+          <span class="cw">
+            <span class="cg"></span>
+            <svg class="cs" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 1.5 C52.4 26 74 47.6 98.5 50 C74 52.4 52.4 74 50 98.5 C47.6 74 26 52.4 1.5 50 C26 47.6 47.6 26 50 1.5 Z"/></svg>
+          </span>
+          <span class="cn">Kotlers</span>
+        </div>
+      </div>
+      <div class="dept-scopes">
+        <span class="dept-sn">App Store optimizer</span>
+        <span class="dept-sn">Shopify ads manager</span>
+        <span class="dept-sn">Website manager</span>
+        <span class="dept-sn">Social monitoring</span>
       </div>
     </div>
   </div>
@@ -3178,6 +3201,12 @@ section.present .bl-act::before{ transform:scaleY(1); }
   <h2 style="text-align:center; font-size:72px">Let's rebuild it together.</h2>
   <p class="lead" style="text-align:center; margin:28px auto 0">If this is the transition you're navigating, or you'd just like to keep talking, I'd love to connect.</p>
   <div class="pill" style="margin-top:46px"><span class="dot"></span>Hamidreza · Notify&nbsp;Me! · notify-me.io</div>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:18px; margin-top:42px">
+    <span style="font-family:var(--font-body); font-weight:300; font-size:22px; color:var(--g2)">Let's connect on LinkedIn</span>
+    <div style="background:#fff; padding:15px; border-radius:20px; box-shadow:0 12px 48px rgba(0,0,0,.45); line-height:0">
+      <img src="img/qr.png" alt="LinkedIn QR code" width="170" height="170" style="display:block; width:170px; height:170px">
+    </div>
+  </div>
   <p class="eyebrow" style="justify-content:center; margin-top:40px">Thank you</p>
 </section>
 
