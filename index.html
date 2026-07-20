@@ -1979,28 +1979,20 @@
 .om-slide:has(.om-c3.visible) .cw-hooks{ opacity:1; }
 .om-slide:has(.om-c3.visible) .cw-hooks{ transition-delay:.18s; }
 
-/* QA (?qa) shows every fragment, so the build settles on its own and the LAST cue wins:
-   the finished state is now the **component view** (name at top, ring left with Design lit,
-   the three cards on the right). Pin the looping motion to a fixed frame so renders/PDF are
-   deterministic, but do NOT force opacity on anything the beat-4+ cascade owns (core, nodes,
-   feed, comet) or QA renders a hybrid with the core and the stage list on screen at once. */
-.qa .om-namewrap, .qa .om-stage, .qa .cw-skills{ transition:none !important; }
-.qa .om-txt > .eyebrow, .qa .om-mission, .qa .om-swap, .qa .om-plans,
+/* QA (?qa) shows every fragment, so the build settles on its own. The component view was removed,
+   so the finished state is now the LOOP end-state: name + the three beats on the left, the full ring
+   with all six stage nodes and the Knowledge core on the right. Pin the looping motion to a fixed
+   frame and force the built pieces visible (their entrances are keyed off .om-bN.visible, which QA
+   doesn't reliably resolve in a static headless frame). */
+.qa .om-namewrap, .qa .om-stage{ transition:none !important; }
+.qa .om-txt > .eyebrow, .qa .om-mission, .qa .om-swap,
 .qa .om-namewrap .nb{ transition:none !important; }
-.qa .cw-card, .qa .cw-arrow, .qa .cw-h, .qa .om-tether{ transition:none !important; }
 .qa .om-bloom, .qa .om-namewrap .nb, .qa .om-core .cg{ animation:none !important; }
 .qa .om-arc{ animation:none !important; opacity:1 !important; stroke-dashoffset:0 !important; }
 .qa .om-spin{ animation:none !important; transform:rotate(60deg) !important; }
 .qa .om-node, .qa .om-cometwrap, .qa .om-core, .qa .om-feed i{ animation:none !important; }
-.qa .om-node, .qa .om-sl, .qa .om-stagelist, .qa .om-plan, .qa .om-cometwrap,
-.qa .om-beats{ transition:none !important; }
-/* QA/PDF freeze: p2 is the only plan on screen (the component view end state). No checkboxes now;
-   title + UI/UX Design bright, the other two faded. */
-.qa .om-plan.p2 li .ck{ display:none !important; }
-.qa .om-plan.p2 .tk{ animation:none !important; opacity:1 !important; transform:none !important; }
-.qa .om-plan.p2 li:nth-child(n+2){ opacity:.32 !important; }
-/* the tally freezes to its revealed (c4) end state so headless/PDF is deterministic */
-.qa .om-tally .eye, .qa .om-tally .cell, .qa .om-tally .rule{ transition:none !important; }
+.qa .om-node, .qa .om-cometwrap, .qa .om-core{ opacity:1 !important; }
+.qa .om-node, .qa .om-cometwrap, .qa .om-beats{ transition:none !important; }
 </style>
 <section class="slide om-slide">
   <div class="om-grid">
@@ -2024,11 +2016,6 @@
 
       </div>
 
-      <!-- the four core-component views (jumped to straight from "The knowledge compounds."):
-           agent (+ its skills) -> hooks. The six-stage tour was removed. -->
-      <span class="om-cue om-c1 fragment" data-fragment-index="11"></span>
-      <span class="om-cue om-c2 fragment" data-fragment-index="12"></span>
-      <span class="om-cue om-c3 fragment" data-fragment-index="13"></span>
     </div>
 
     <div class="om-stagewrap">
@@ -2062,81 +2049,10 @@
         <span class="cl">Knowledge</span>
       </div>
 
-      <!-- The stations of each stage, ticking through where the core stood. The stage title
-           carries the word "Station" once, so every row can drop it and set larger. Same
-           stations as the walkthrough's `notes` arrays, minus that suffix (and Engineering's
-           "Technical" prefix, which the Engineering title already implies). -->
-      <div class="om-plans">
-        <!-- Only p2 (Design stations) remains: the component view drills into the Design stage.
-             The other five stage panels went with the removed six-stage tour. -->
-        <div class="om-plan p2">
-          <span class="pt tk" style="--i:0">Design stations</span>
-          <ul>
-            <li class="tk" style="--i:1"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>UI/UX Design</span></li>
-            <li class="tk" style="--i:2"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Design Review</span></li>
-            <li class="tk" style="--i:3"><i class="ck"><span class="pd"></span><span class="sp"></span><span class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span></i><span>Design Handoff</span></li>
-          </ul>
-        </div>
-      </div>
     </div>
     </div>
   </div>
 
-  <p class="om-ct">The <b>3</b> core components</p>
-
-  <!-- Top-right tally, revealed with the Hooks view (c3): the reusable machinery the factory
-       has built so far. Skills = blue (the skills box), Agents = purple (the agent card). -->
-  <div class="om-tally" aria-hidden="true">
-    <p class="eye">In total</p>
-    <div class="row">
-      <div class="cell skills"><span class="num">120<span class="plus">+</span></span><span class="rule"></span><span class="lab">Skills</span></div>
-      <div class="cell agents"><span class="num">28<span class="plus">+</span></span><span class="rule"></span><span class="lab">Agents</span></div>
-    </div>
-  </div>
-
-  <!-- Ties the right-hand flow to the Design node on the ring: once the stage has slid left,
-       Design sits at (700,430) in slide coords and the panel's edge at x=960. viewBox is 1:1
-       with the 1920x1080 slide. Starts past the node's own "Design" label, not at the dot.
-       Lands at y=561, the agent card's centre, which is the one point that holds still whether
-       the skills box is closed or open. -->
-  <svg class="om-tether" viewBox="0 0 1920 1080" aria-hidden="true">
-    <path d="M796,430 C880,430 886,561 960,561"/>
-    <circle cx="960" cy="561" r="4"/>
-  </svg>
-
-  <!-- The atomic process inside one stage. Three core components, colour-coded to match the
-       rest of the deck: Agents purple, Skills blue, Hooks coral. Two boxes across,
-       because Skills live inside the Agent rather than following it. -->
-  <div class="om-comp">
-    <span class="cw-h">Inside each station</span>
-    <div class="cw-flow">
-      <div class="cw-card cw-agent">
-        <span class="cw-kind">Agent</span>
-        <span class="cw-fname"><svg class="cw-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>design-agent.md</span>
-        <div class="cw-skills">
-          <div>
-            <div class="in">
-              <span class="cw-kind">Skills</span>
-              <ul class="cw-list">
-                <li><svg class="cw-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>polaris-guidelines.md</li>
-                <li><svg class="cw-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>ux-ui-designer.md</li>
-                <li><svg class="cw-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>design-playground.md</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <span class="cw-arrow cw-a1"></span>
-
-      <div class="cw-card cw-hooks">
-        <span class="cw-kind">Hooks</span>
-        <ul class="cw-list">
-          <li><svg class="cw-fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>polaris-guard.md</li>
-        </ul>
-      </div>
-    </div>
-  </div>
 
   <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">Part 02</span></div>
 </section>
