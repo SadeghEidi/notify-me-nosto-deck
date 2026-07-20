@@ -207,30 +207,6 @@ Reveal.initialize({
   else Reveal.on('ready', wire);
 })();
 
-/* czb numbered focus-list ("Why the speed disappears"): the focused row advances by CLICK, not a
-   timer. Each lower row carries an empty .fx fragment marker, so a click just steps reveal's
-   fragment pointer; here we count how many markers are shown and move .is-active to that row
-   (row 0 on entry, +1 per click). CSS transitions animate the hand-off. In QA, fragments render
-   all-shown and CSS pins row 01, so we skip. Pure-CSS :has() was tried first and dropped: this
-   engine doesn't re-style the ancestor row when reveal moves .current-fragment. */
-(function () {
-  function wire() {
-    var items = [].slice.call(document.querySelectorAll('.czb-item'));
-    if (!items.length) return;
-    if (document.documentElement.classList.contains('qa')) return;   // QA: CSS pins row 01
-    function update() {
-      var shown = document.querySelectorAll('.czb-item .fx.visible').length;   // 0, 1 or 2
-      items.forEach(function (it, i) { it.classList.toggle('is-active', i === shown); });
-    }
-    Reveal.on('fragmentshown', update);
-    Reveal.on('fragmenthidden', update);
-    Reveal.on('slidechanged', update);
-    update();
-  }
-  if (Reveal.isReady()) wire();
-  else Reveal.on('ready', wire);
-})();
-
 /* Diagnosis slide (the three friction cards, "Still wasn't the outcome we were hoping for"): only the
    LAST-revealed card keeps animating; once a card is passed it freezes at its initial resting state.
    We mark every card that is NOT the current frontier fragment with .dg-rest; the slide's inline CSS
@@ -238,7 +214,7 @@ Reveal.initialize({
    card also carries .dg-rest until it is first revealed, so REMOVING it on reveal applies the card's
    animation fresh from frame 0 - each card restarts cleanly as it becomes live (the race bars are
    actually seen growing, the agent drives from the start). QA renders every card frozen via the .qa
-   rules, so skip it. Same fragment-driven shape as the czb list above. */
+   rules, so skip it. Same fragment-driven shape as the other click-focus lists. */
 (function () {
   function wire() {
     var wrap = document.querySelector('.reveal .slides .dg-wrap');

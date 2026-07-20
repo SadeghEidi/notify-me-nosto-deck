@@ -180,53 +180,6 @@
   <div class="foot"><img src="img/lockup-white.png" alt="Notify Me!"><span class="sep"></span><span class="pg">The problem</span></div>
 </section>
 
-<!-- ========= 03B · WHY THE SPEED DISAPPEARS (numbered click-focus list, variant of 03) ========= -->
-<style>
-  /* Same eyebrow + headline as the archived icon panel, three causes as a NUMBERED list. All three
-     are visible from the first frame; the focus is advanced BY CLICK (01 on entry, then 02, then
-     03). Each lower row holds an empty .fx fragment marker so clicks are consumed on this slide; a
-     handler in deck.js counts the shown markers and toggles .is-active onto the matching row, and
-     the CSS transitions below (not a timer) animate the hand-off. Scoped czb- block. */
-  .czb-list{ list-style:none; margin:6px 0 0; padding:0; display:flex; flex-direction:column; gap:30px; }
-  .czb-item{ position:relative; display:flex; align-items:baseline; gap:24px; padding-left:28px;
-    opacity:.45; transform:translateX(0);           /* inactive rows recede but stay readable */
-    transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1); }
-  /* the accent bar that lands on the active row */
-  .czb-item::before{ content:''; position:absolute; left:0; top:4px; bottom:4px; width:3px;
-    border-radius:2px; background:var(--coral); box-shadow:0 0 14px var(--coral);
-    transform:scaleY(.2); transform-origin:center; opacity:0;
-    transition:transform .5s cubic-bezier(.2,.7,.2,1), opacity .5s ease; }
-  /* the numeric bullet */
-  .czb-num{ font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--coral);
-    letter-spacing:.02em; flex:none; min-width:42px; }
-  /* medium size: bigger than body, clearly under the 44px headline */
-  .reveal .czb-item .txt{ font-family:var(--font-display); font-weight:400; font-size:34px;
-    line-height:1.1; letter-spacing:-.01em; color:#fff; }
-  /* the focus markers carry no visual and take no space; they only step reveal's fragment pointer
-     on each click. deck.js reads how many are shown and toggles .is-active onto the matching row. */
-  .czb-item .fx{ position:absolute; width:0; height:0; overflow:hidden; }
-  /* the focused row (deck.js sets .is-active; row 01 on entry, +1 per click) */
-  .czb-item.is-active{ opacity:1; transform:translateX(10px); }
-  .czb-item.is-active::before{ transform:scaleY(1); opacity:1; }
-  /* the list rises in as one unit on entry (container only, so it never fights the row opacities) */
-  .reveal section.present .czb-list{ animation:riseIn .7s .12s both cubic-bezier(.2,.7,.2,1); }
-  /* QA/PDF shows every fragment at once and the JS is skipped, so pin row 01 focused here. */
-  .qa .czb-item:first-child{ opacity:1 !important; transform:translateX(10px) !important; }
-  .qa .czb-item:first-child::before{ transform:scaleY(1) !important; opacity:1 !important; }
-  .qa .czb-item:not(:first-child){ opacity:.45 !important; transform:none !important; }
-  .qa .czb-item:not(:first-child)::before{ opacity:0 !important; transform:scaleY(.2) !important; }
-</style>
-<section class="slide">
-  <p class="eyebrow">Why the speed disappears</p>
-  <h3 style="font-size:44px; margin-bottom:52px">We found several causes. These were the <b>three biggest.</b></h3>
-  <ul class="czb-list">
-    <li class="czb-item"><span class="czb-num">01</span><span class="txt">Humans are the bottleneck</span></li>
-    <li class="czb-item"><span class="fx fragment"></span><span class="czb-num">02</span><span class="txt">Uneven AI maturity</span></li>
-    <li class="czb-item"><span class="fx fragment"></span><span class="czb-num">03</span><span class="txt">Agents still make mistakes</span></li>
-  </ul>
-  <div class="foot"><img src="img/lockup-white.png" alt=""><span class="sep"></span><span class="pg">The problem</span></div>
-</section>
-
 <!-- ================= 05 · SPEAKER ================= -->
 <section class="slide">
   <div class="row between center-x" style="width:100%">
@@ -3130,7 +3083,7 @@ section.present .bl-act::before{ transform:scaleY(1); }
 </div>
 
 <script src="vendor/reveal.js"></script>
-<script src="js/deck.js?v=10"></script>
+<script src="js/deck.js?v=11"></script>
 <script src="js/walkthrough.js?v=31"></script>
 <!-- The Tous ring slide is fully manual now: the six-stage tour was removed, so the beats (b1-b3)
      and the four component views (c1-c4) all advance on click. No auto-advance script needed. -->
